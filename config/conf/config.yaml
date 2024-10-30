@@ -1,0 +1,41 @@
+system:
+  domain: trade
+  version: 1.0
+  env: "dev"
+  HttpPort: ":5001"
+  Host: "localhost"
+  UploadModel: "local"
+
+mysql:
+  default:
+    dialect: "mysql"
+    dbHost: "127.0.0.1"
+    dbPort: "3306"
+    dbName: "trade_db"
+    userName: "root"
+    password: "123456"
+    charset: "utf8mb4"
+
+#redis:
+#  redisDbName: 4
+#  redisHost: 127.0.0.1
+#  redisPort: 6379
+#  redisPassword: 123456
+#  redisNetwork: "tcp"
+
+#cache:
+#  cacheType: redis
+#  cacheEmpires: 600
+#  cacheWarmUp:
+#  cacheServer:
+
+#email:
+#  address: http://localhost:8080/#/vaild/email/
+#  smtpHost:
+#  smtpEmail:
+#  smtpPass:
+
+#photoPath:
+#  photoHost: http://127.0.0.1
+#  ProductPath: /static/imgs/product/
+#  AvatarPath: /static/imgs/avatar/
