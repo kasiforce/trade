@@ -2,18 +2,17 @@ package main
 
 import (
 	"fmt"
-	_ "fmt"
-	"github.com/CocaineCong/gin-mall/routes"
 	conf "github.com/kasiforce/trade/config"
 	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/repository/db/dao"
+	"github.com/kasiforce/trade/routes"
 )
 
 func main() {
 	loading()
 	r := routes.NewRouter()
-	_ = r.Run(conf.Config.System.HttpPort)
 	fmt.Println("启动成功...")
+	_ = r.Run(conf.Config.System.HttpPort)
 }
 
 func loading() {
