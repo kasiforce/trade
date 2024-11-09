@@ -1,0 +1,2389 @@
+openapi: 3.0.1
+info:
+  title: 二手交易平台
+  version: 1.0.0
+servers:
+- url: /
+tags:
+- name: 管理员平台
+- name: 管理员平台/用户管理页
+- name: 管理员平台/管理员管理页
+- name: 管理员平台/公告管理页
+- name: 用户平台
+- name: 用户平台/收货地址
+- name: 用户平台/购物相关
+- name: 用户平台/订单页面
+paths:
+  /admin/user:
+    get:
+      deprecated: false
+      parameters: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+          x-apifox-name: 成功
+      security: []
+      summary: 查询用户
+      tags:
+      - 管理员平台/用户管理页
+      x-apifox-folder: 管理员平台/用户管理页
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-220081910-run
+    post:
+      deprecated: false
+      parameters:
+      - explode: true
+        in: query
+        name: userName
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: password
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: schoolID
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: mail
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+          x-apifox-name: 成功
+      security: []
+      summary: 添加用户
+      tags:
+      - 管理员平台/用户管理页
+      x-apifox-folder: 管理员平台/用户管理页
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-220081925-run
+  /admin/user/{userID}:
+    get:
+      deprecated: false
+      parameters:
+      - explode: false
+        in: path
+        name: userID
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+          x-apifox-name: 成功
+      security: []
+      summary: 根据ID查用户
+      tags:
+      - 管理员平台/用户管理页
+      x-apifox-folder: 管理员平台/用户管理页
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-220081920-run
+    put:
+      deprecated: false
+      parameters:
+      - explode: false
+        in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: userName
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: schoolID
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: picture
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: tel
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: mail
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: gender
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: status
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+          x-apifox-name: 成功
+      security: []
+      summary: 修改用户
+      tags:
+      - 管理员平台/用户管理页
+      x-apifox-folder: 管理员平台/用户管理页
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-225305691-run
+  /admin/admin:
+    post:
+      deprecated: false
+      parameters: []
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object'
+        content:
+          application/json:
+            schema:
+              properties:
+                adminID:
+                  type: integer
+                password:
+                  type: string
+                tel:
+                  type: string
+                mail:
+                  type: string
+                gender:
+                  type: integer
+                age:
+                  type: integer
+              required:
+              - adminID
+              - password
+              type: object
+              x-apifox-orders:
+              - 01J910ZCAD5R6175A8P9BD0MTB
+              x-apifox-refs:
+                "01J910ZCAD5R6175A8P9BD0MTB":
+                  $ref: '#/components/schemas/Admin'
+              x-apifox-ignore-properties:
+              - adminID
+              - password
+              - tel
+              - mail
+              - gender
+              - age
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+          x-apifox-name: 成功
+      security: []
+      summary: 添加管理员
+      tags:
+      - 管理员平台/管理员管理页
+      x-apifox-folder: 管理员平台/管理员管理页
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-220031102-run
+  /announcement:
+    delete:
+      deprecated: false
+      parameters:
+      - explode: true
+        in: query
+        name: announcementID
+        required: true
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+          x-apifox-name: 成功
+      security: []
+      summary: 删除公告
+      tags:
+      - 管理员平台/公告管理页
+      x-apifox-folder: 管理员平台/公告管理页
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-225305578-run
+    post:
+      deprecated: false
+      parameters:
+      - explode: true
+        in: query
+        name: anTitle
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: anContent
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+          x-apifox-name: 成功
+      security: []
+      summary: 添加公告
+      tags:
+      - 管理员平台/公告管理页
+      x-apifox-folder: 管理员平台/公告管理页
+      x-apifox-status: developing
+      x-apifox-maintainer: whiteby
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-225305269-run
+  /admin/login:
+    post:
+      deprecated: false
+      parameters: []
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_1'
+        content:
+          application/json:
+            schema:
+              properties:
+                mail:
+                  description: 邮箱
+                  type: string
+                password:
+                  description: 密码
+                  type: string
+              required:
+              - mail
+              - password
+              type: object
+              x-apifox-orders:
+              - mail
+              - password
+              x-apifox-ignore-properties: []
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                "1":
+                  summary: 成功示例
+                  value:
+                    code: 1
+                    data:
+                      adminID: 1
+                      password: admin
+                      tel: "18188155061"
+                      mail: 1919191919@qq.com
+                      gender: 1
+                      age: 20
+                      token: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjUwMCwicmlkIjowLCJpYXQiOjE1MTI1NDQyOTksImV4cCI6MTUxMjYzMDY5OX0.eGrsrvwHm-tPsO9r_pxHIQ5i5L1kX9RX444uwnRGaIM
+                    msg: 登陆成功
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+          x-apifox-name: 成功
+      security: []
+      summary: 登录-管理员
+      tags:
+      - 管理员平台
+      x-apifox-folder: 管理员平台
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-219209545-run
+  /member/address:
+    get:
+      deprecated: false
+      parameters:
+      - description: token值
+        explode: false
+        in: header
+        name: Authorization
+        required: false
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_4'
+          x-apifox-name: 成功
+      security: []
+      summary: 获取-收货地址
+      tags:
+      - 用户平台/收货地址
+      x-apifox-folder: 用户平台/收货地址
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-224844004-run
+    post:
+      deprecated: false
+      description: 地址省份城市是否要分开？
+      parameters: []
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_2'
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  description: 地址唯一ID
+                  title: 地址唯一ID
+                  type: integer
+                userID:
+                  description: 拥有地址的用户ID
+                  title: 拥有地址的用户ID
+                  type: integer
+                name:
+                  description: 收件人姓名
+                  title: 收件人姓名
+                  type: string
+                tel:
+                  description: 电话号码
+                  title: 电话号码
+                  type: string
+                address:
+                  description: 详细地址
+                  title: 详细地址
+                  type: string
+                isDefault:
+                  description: 是否为默认，0是，1不是
+                  title: 是否为默认
+                  type: integer
+              required:
+              - address
+              - id
+              - isDefault
+              - name
+              - tel
+              - userID
+              type: object
+              x-apifox-orders:
+              - 01JAJKV50GG9TRGEV0Z5XNPKJS
+              x-apifox-refs:
+                "01JAJKV50GG9TRGEV0Z5XNPKJS":
+                  $ref: '#/components/schemas/Address'
+              x-apifox-ignore-properties:
+              - id
+              - userID
+              - name
+              - tel
+              - address
+              - isDefault
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_5'
+          x-apifox-name: 成功
+      security: []
+      summary: 添加-收货地址
+      tags:
+      - 用户平台/收货地址
+      x-apifox-folder: 用户平台/收货地址
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-224843901-run
+  /member/address/{id}:
+    delete:
+      deprecated: false
+      parameters:
+      - description: 收货地址id
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: Authorization
+        required: false
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_6'
+          x-apifox-name: 成功
+      security: []
+      summary: 删除-收货地址
+      tags:
+      - 用户平台/收货地址
+      x-apifox-folder: 用户平台/收货地址
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-225027646-run
+    put:
+      deprecated: false
+      parameters:
+      - description: 收货地址id
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: token
+        explode: false
+        in: header
+        name: Authorization
+        required: false
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_4'
+          x-apifox-name: 成功
+      security: []
+      summary: 修改-收货地址
+      tags:
+      - 用户平台/收货地址
+      x-apifox-folder: 用户平台/收货地址
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-224844304-run
+  /home/category:
+    get:
+      deprecated: false
+      description: 获取分类标签
+      parameters: []
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                "1":
+                  summary: 成功示例
+                  value:
+                    code: 1
+                    msg: 操作成功
+                    data:
+                    - categoryID: 1
+                      categoryName: 日常用品
+                      description: 日常生活中使用的物品，如衣物、文具等
+                    - categoryID: 2
+                      categoryName: 数码产品
+                      description: 如手机、平板、耳机
+                    - categoryID: 3
+                      categoryName: 二手教材
+                      description: 旧教材
+              schema:
+                $ref: '#/components/schemas/inline_response_200_7'
+          x-apifox-name: 成功
+      security: []
+      summary: 获取-全部分类
+      tags:
+      - 用户平台/购物相关
+      x-apifox-folder: 用户平台/购物相关
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-225115299-run
+  /products:
+    get:
+      deprecated: false
+      description: 获取首页商品卡片
+      parameters:
+      - description: 商品分类，0为全部
+        example: "0"
+        explode: true
+        in: query
+        name: category
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 页数
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: 需要的数据条数（后台默认设置12）
+        example: 12
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                "1":
+                  summary: 成功示例
+                  value:
+                    code: 1
+                    msg: 操作成功
+                    data:
+                    - id: 2
+                      name: 拍立得mini9
+                      price: 400
+                      picture: http://image.com/400x400
+                      categoryID: "2"
+                    - id: 3
+                      name: 小熊玩偶
+                      price: 10
+                      picture: http://image.com/400x400
+                      categoryID: "1"
+                    - id: 4
+                      name: 小老虎玩偶
+                      price: 10
+                      picture: http://image.com/400x400
+                      categoryID: "1"
+                    - id: 5
+                      name: 小企鹅玩偶
+                      price: 10
+                      picture: http://image.com/400x400
+                      categoryID: "1"
+                    - id: 6
+                      name: 小老鼠玩偶
+                      price: 10
+                      picture: http://image.com/400x400
+                      categoryID: "1"
+                    - id: 7
+                      name: 小马玩偶
+                      price: 10
+                      picture: http://image.com/400x400
+                      categoryID: "1"
+                    - id: 8
+                      name: 小猪玩偶
+                      price: 10
+                      picture: http://image.com/400x400
+                      categoryID: "1"
+                    - id: 9
+                      name: 小猫玩偶
+                      price: 10
+                      picture: http://image.com/400x400
+                      categoryID: "1"
+                    - id: 10
+                      name: 小狼玩偶
+                      price: 10
+                      picture: http://image.com/400x400
+                      categoryID: "1"
+                    - id: 11
+                      name: 小兔玩偶
+                      price: 10
+                      picture: http://image.com/400x400
+                      categoryID: "1"
+                    - id: 12
+                      name: 小羊玩偶
+                      price: 10
+                      picture: http://image.com/400x400
+                      categoryID: "1"
+                    - id: 13
+                      name: 小狗玩偶
+                      price: 10
+                      picture: http://image.com/400x400
+                      categoryID: "1"
+              schema:
+                $ref: '#/components/schemas/inline_response_200_8'
+          x-apifox-name: 成功
+      security: []
+      summary: 获取-商品列表
+      tags:
+      - 用户平台/购物相关
+      x-apifox-folder: 用户平台/购物相关
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-225151685-run
+  /detail:
+    get:
+      deprecated: false
+      parameters:
+      - description: ID 编号
+        explode: true
+        in: query
+        name: id
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                "1":
+                  summary: 成功示例
+                  value:
+                    code: 200
+                    msg: 操作成功
+                    data:
+                      id: 56
+                      name: 小狗玩偶
+                      price: 98
+                      categoryID: 2
+                      describe: 一只99新的小狗玩偶，24年9月购入，闲置出
+                      image: http://dummyimage.com/400x400
+                      shippingCost: 8
+                      userName: 北风
+                      address: 广东省珠海市香洲区
+                      postTime: 2024-10-06 15:45:43
+                      deliveryMethod: 邮寄
+                      views: 18
+                      stars: 2
+                      isSold: 0
+              schema:
+                $ref: '#/components/schemas/inline_response_200_9'
+          x-apifox-name: 成功
+      security: []
+      summary: 获取-商品详情
+      tags:
+      - 用户平台/购物相关
+      x-apifox-folder: 用户平台/购物相关
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-225157725-run
+  /postGoods:
+    post:
+      deprecated: false
+      description: 响应信息待修改
+      parameters: []
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_3'
+        content:
+          application/json:
+            schema:
+              properties:
+                userID:
+                  description: 发布者ID
+                  title: 发布者ID
+                  type: string
+                name:
+                  description: 商品名
+                  title: 商品名
+                  type: string
+                describe:
+                  description: 商品描述
+                  title: 商品描述
+                  type: string
+                price:
+                  description: 售价
+                  title: 售价
+                  type: string
+                category:
+                  description: 商品类别
+                  title: 商品类别
+                  type: integer
+                image:
+                  description: 图片url
+                  title: 图片url
+                  type: string
+                address:
+                  description: 地址
+                  title: 地址
+                  type: string
+                delivery:
+                  description: 配送方式，1邮寄，2自提， 3无需快递
+                  title: 配送方式
+                  type: integer
+                fare:
+                  description: 运费，delivery为2或3时，此项为0
+                  title: 运费
+                  type: string
+              required:
+              - address
+              - category
+              - delivery
+              - describe
+              - fare
+              - image
+              - name
+              - price
+              - userID
+              type: object
+              x-apifox-orders:
+              - userID
+              - name
+              - describe
+              - price
+              - category
+              - image
+              - address
+              - delivery
+              - fare
+              x-apifox-refs: {}
+              x-apifox-ignore-properties: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_9'
+          x-apifox-name: 成功
+      security: []
+      summary: 添加-发布闲置
+      tags:
+      - 用户平台/购物相关
+      x-apifox-folder: 用户平台/购物相关
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-225720371-run
+  /product/select:
+    get:
+      deprecated: false
+      description: 按照不同条件筛选商品
+      parameters:
+      - description: 省
+        explode: true
+        in: query
+        name: province
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 市
+        explode: true
+        in: query
+        name: city
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 区
+        explode: true
+        in: query
+        name: ' area'
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 配送方式
+        explode: true
+        in: query
+        name: deliveryMethod
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 最低价
+        explode: true
+        in: query
+        name: priceMin
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 最高价
+        explode: true
+        in: query
+        name: priceMax
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 运费
+        explode: true
+        in: query
+        name: shippingCost
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 发布时间范围
+        example:
+        - ""
+        explode: true
+        in: query
+        name: publishDate
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_10'
+          x-apifox-name: 成功
+      security: []
+      summary: 筛选商品
+      tags:
+      - 用户平台/购物相关
+      x-apifox-folder: 用户平台/购物相关
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-226987293-run
+  /orders/purchased:
+    get:
+      deprecated: false
+      description: 有很多要改的
+      parameters:
+      - description: 用户ID
+        explode: true
+        in: query
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: form
+      - description: 页码，默认为1
+        example: 0
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: 每页条数，默认5
+        explode: true
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                "1":
+                  summary: 成功示例
+                  value:
+                    code: 200
+                    msg: 操作成功
+                    data:
+                    - tradeID: 34
+                      sellerID: 49
+                      sellerName: 明萨拉
+                      goodsID: 36
+                      goodsName: 杏鲍菇草菇茶树菇大礼盒
+                      price: 49
+                      deliveryMethod: 邮寄
+                      shippingCost: 8
+                      SenderAddress:
+                        province: 四川省
+                        city: 成都市
+                        area: 青羊区
+                        detailArea: 新世界小区
+                      shippingAddress:
+                        province: 云南省
+                        city: 玉溪市
+                        area: 红塔区
+                        detailArea: 蕈人栖息地
+                      orderTime: 2000-02-24 18:59:56
+                      payTime: 2000-02-24 19:00:21
+                      shippingTime: ""
+                      turnoverTime: ""
+                      status: 未发货
+                    - tradeID: 21
+                      sellerID: 18
+                      sellerName: 奥林
+                      goodsID: 87
+                      goodsName: 提夫林主题油画
+                      price: 199
+                      deliveryMethod: 自提
+                      shippingCost: 0
+                      SenderAddress:
+                        province: 广东省
+                        city: 珠海市
+                        area: 香洲区
+                        detailArea: 唐家湾镇中山大学珠海校区
+                      shippingAddress:
+                        province: 广东省
+                        city: 珠海市
+                        area: 香洲区
+                        detailArea: 唐家湾镇中山大学珠海校区
+                      orderTime: 2022-07-04 17:08:01
+                      payTime: 2023-05-26 23:27:11
+                      shippingTime: 2004-12-26 00:26:13
+                      turnoverTime: ""
+                      status: 已发货
+                    - tradeID: 11
+                      sellerID: 98
+                      sellerName: 塔夫
+                      goodsID: 17
+                      goodsName: 小熊玩偶
+                      price: 20
+                      deliveryMethod: 无需快递
+                      shippingCost: 8
+                      SenderAddress:
+                        province: ""
+                        city: ""
+                        area: ""
+                        detailArea: ""
+                      shippingAddress:
+                        province: ""
+                        city: ""
+                        area: ""
+                        detailArea: ""
+                      orderTime: 2022-07-04 17:08:01
+                      payTime: 2023-05-26 23:27:11
+                      shippingTime: 2004-12-26 00:26:13
+                      turnoverTime: 2023-05-26 23:27:11
+                      status: 交易完成
+                    - tradeID: 34
+                      sellerID: 49
+                      sellerName: 明萨拉
+                      goodsID: 36
+                      goodsName: 杏鲍菇草菇茶树菇大礼盒
+                      price: 49
+                      deliveryMethod: 邮寄
+                      shippingCost: 8
+                      SenderAddress:
+                        province: 四川省
+                        city: 成都市
+                        area: 青羊区
+                        detailArea: 新世界小区
+                      shippingAddress:
+                        province: 云南省
+                        city: 玉溪市
+                        area: 红塔区
+                        detailArea: 蕈人栖息地
+                      orderTime: 2000-02-24 18:59:56
+                      payTime: 2000-02-24 19:00:21
+                      shippingTime: ""
+                      turnoverTime: ""
+                      status: 退款中
+              schema:
+                $ref: '#/components/schemas/inline_response_200_11'
+          x-apifox-name: 成功
+      security: []
+      summary: 获取-我买到的
+      tags:
+      - 用户平台/订单页面
+      x-apifox-folder: 用户平台/订单页面
+      x-apifox-status: testing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-228522793-run
+  /orders/selled:
+    get:
+      deprecated: false
+      parameters:
+      - description: 用户ID
+        explode: true
+        in: query
+        name: userId
+        required: true
+        schema:
+          type: integer
+        style: form
+      - description: 页码，默认为1
+        example: 0
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: 每页条数，默认5
+        explode: true
+        in: query
+        name: pageSize
+        required: false
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                "1":
+                  summary: 成功示例
+                  value:
+                    code: 200
+                    msg: 操作成功
+                    data:
+                    - tradeID: 34
+                      sellerID: 49
+                      sellerName: 明萨拉
+                      goodsID: 36
+                      goodsName: 杏鲍菇草菇茶树菇大礼盒
+                      price: 49
+                      deliveryMethod: 邮寄
+                      shippingCost: 8
+                      SenderAddress:
+                        province: 四川省
+                        city: 成都市
+                        area: 青羊区
+                        detailArea: 新世界小区
+                      shippingAddress:
+                        province: 云南省
+                        city: 玉溪市
+                        area: 红塔区
+                        detailArea: 蕈人栖息地
+                      orderTime: 2000-02-24 18:59:56
+                      payTime: 2000-02-24 19:00:21
+                      shippingTime: ""
+                      turnoverTime: ""
+                      status: 未发货
+                    - tradeID: 21
+                      sellerID: 18
+                      sellerName: 奥林
+                      goodsID: 87
+                      goodsName: 提夫林主题油画
+                      price: 199
+                      deliveryMethod: 自提
+                      shippingCost: 0
+                      SenderAddress:
+                        province: 广东省
+                        city: 珠海市
+                        area: 香洲区
+                        detailArea: 唐家湾镇中山大学珠海校区
+                      shippingAddress:
+                        province: 广东省
+                        city: 珠海市
+                        area: 香洲区
+                        detailArea: 唐家湾镇中山大学珠海校区
+                      orderTime: 2022-07-04 17:08:01
+                      payTime: 2023-05-26 23:27:11
+                      shippingTime: 2004-12-26 00:26:13
+                      turnoverTime: ""
+                      status: 已发货
+                    - tradeID: 11
+                      sellerID: 98
+                      sellerName: 塔夫
+                      goodsID: 17
+                      goodsName: 小熊玩偶
+                      price: 20
+                      deliveryMethod: 无需快递
+                      shippingCost: 8
+                      SenderAddress:
+                        province: ""
+                        city: ""
+                        area: ""
+                        detailArea: ""
+                      shippingAddress:
+                        province: ""
+                        city: ""
+                        area: ""
+                        detailArea: ""
+                      orderTime: 2022-07-04 17:08:01
+                      payTime: 2023-05-26 23:27:11
+                      shippingTime: 2004-12-26 00:26:13
+                      turnoverTime: 2023-05-26 23:27:11
+                      status: 交易完成
+                    - tradeID: 11
+                      sellerID: 98
+                      sellerName: 塔夫
+                      goodsID: 17
+                      goodsName: 小熊玩偶
+                      price: 20
+                      deliveryMethod: 无需快递
+                      shippingCost: 8
+                      SenderAddress:
+                        province: ""
+                        city: ""
+                        area: ""
+                        detailArea: ""
+                      shippingAddress:
+                        province: ""
+                        city: ""
+                        area: ""
+                        detailArea: ""
+                      orderTime: 2022-07-04 17:08:01
+                      payTime: 2023-05-26 23:27:11
+                      shippingTime: 2004-12-26 00:26:13
+                      turnoverTime: 2023-05-26 23:27:11
+                      status: 退款中
+              schema:
+                $ref: '#/components/schemas/inline_response_200_11'
+          x-apifox-name: 成功
+      security: []
+      summary: 获取-我卖出的
+      tags:
+      - 用户平台/订单页面
+      x-apifox-folder: 用户平台/订单页面
+      x-apifox-status: developing
+      x-run-in-apifox: https://apifox.com/web/project/5227100/apis/api-229933840-run
+components:
+  requestBodies:
+    inline_object_1:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_1'
+    inline_object:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object'
+    inline_object_3:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_3'
+    inline_object_2:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_2'
+  schemas:
+    DiZhi:
+      properties:
+        province:
+          description: 省
+          title: 省
+          type: string
+        city:
+          description: 市
+          title: 市
+          type: string
+        area:
+          description: 区
+          title: 区
+          type: string
+        detailArea:
+          description: 详细地址
+          title: 详细地址
+          type: string
+      required:
+      - area
+      - city
+      - detailArea
+      - province
+      type: object
+      x-apifox-orders:
+      - province
+      - city
+      - area
+      - detailArea
+      x-apifox-ignore-properties: []
+      x-apifox-folder: 系统数据类
+    DingDan:
+      example:
+        shippingCost: 2.3021358869347655
+        SenderAddress:
+          area: area
+          province: province
+          city: city
+          detailArea: detailArea
+        deliveryMethod: deliveryMethod
+        payTime: payTime
+        goodsID: 5
+        sellerName: sellerName
+        sellerID: 1
+        orderTime: orderTime
+        turnoverTime: turnoverTime
+        price: 5.637376656633329
+        shippingAddress:
+          area: area
+          province: province
+          city: city
+          detailArea: detailArea
+        shippingTime: shippingTime
+        goodsName: goodsName
+        tradeID: 6
+        status: status
+      properties:
+        tradeID:
+          description: 订单ID
+          title: 订单ID
+          type: integer
+        sellerID:
+          description: 卖家ID
+          title: 卖家ID
+          type: integer
+        sellerName:
+          description: 卖家昵称
+          title: 卖家昵称
+          type: string
+        goodsID:
+          description: 商品ID
+          title: 商品ID
+          type: integer
+        goodsName:
+          description: 商品名称
+          title: 商品名称
+          type: string
+        price:
+          description: 价格
+          title: 价格
+          type: number
+        deliveryMethod:
+          description: 交易方式，邮寄、自提、无需快递
+          title: 交易方式
+          type: string
+        shippingCost:
+          description: 运费
+          title: 运费
+          type: number
+        SenderAddress:
+          $ref: '#/components/schemas/_____1'
+        shippingAddress:
+          $ref: '#/components/schemas/_____2'
+        orderTime:
+          description: 下单时间
+          title: 下单时间
+          type: string
+        payTime:
+          description: 支付时间
+          title: 支付时间
+          type: string
+        shippingTime:
+          description: 发货时间
+          title: 发货时间
+          type: string
+        turnoverTime:
+          description: 成交时间
+          title: 成交时间
+          type: string
+        status:
+          description: 订单状态
+          title: 订单状态
+          type: string
+      required:
+      - SenderAddress
+      - deliveryMethod
+      - goodsID
+      - goodsName
+      - price
+      - sellerID
+      - sellerName
+      - shippingCost
+      - status
+      - tradeID
+      type: object
+      x-apifox-orders:
+      - tradeID
+      - sellerID
+      - sellerName
+      - goodsID
+      - goodsName
+      - price
+      - deliveryMethod
+      - shippingCost
+      - SenderAddress
+      - shippingAddress
+      - orderTime
+      - payTime
+      - shippingTime
+      - turnoverTime
+      - status
+      x-apifox-refs: {}
+      x-apifox-ignore-properties: []
+      x-apifox-folder: 订单类
+    User:
+      properties:
+        userID:
+          type: integer
+        userName:
+          type: string
+        password:
+          type: string
+        schoolID:
+          type: integer
+        picture:
+          type: string
+        tel:
+          type: string
+        mail:
+          type: string
+        gender:
+          type: integer
+        status:
+          type: integer
+      required:
+      - mail
+      - password
+      - schoolID
+      - status
+      - userID
+      - userName
+      type: object
+      x-apifox-orders:
+      - userID
+      - userName
+      - password
+      - schoolID
+      - picture
+      - tel
+      - mail
+      - gender
+      - status
+      x-apifox-ignore-properties: []
+      x-apifox-folder: 用户类
+    GoodsDetaIl:
+      description: 商品详情
+      example:
+        image: image
+        shippingCost: 5.637376656633329
+        address: address
+        deliveryMethod: deliveryMethod
+        stars: 7
+        userName: userName
+        postTime: postTime
+        price: 1.4658129805029452
+        isSold: 9
+        name: name
+        id: 6
+        describe: describe
+        categoryID: 5
+        views: 2
+      properties:
+        id:
+          description: 商品id
+          title: 商品id
+          type: integer
+        name:
+          description: 商品名
+          title: 商品名
+          type: string
+        price:
+          description: 价格
+          title: 价格
+          type: number
+        categoryID:
+          description: 分类ID
+          title: 分类ID
+          type: integer
+        describe:
+          description: 物品描述
+          title: 物品描述
+          type: string
+        image:
+          description: 图片URL
+          title: 图片URL
+          type: string
+        shippingCost:
+          description: 邮费
+          title: 邮费
+          type: number
+        userName:
+          description: 发布者名
+          title: 发布者名
+          type: string
+        address:
+          description: 发货地址，仅需省市区
+          title: 发货地址
+          type: string
+        postTime:
+          description: 发布时间
+          title: 发布时间
+          type: string
+        deliveryMethod:
+          description: 配送方式
+          title: 配送方式
+          type: string
+        views:
+          description: 浏览量
+          title: 浏览量
+          type: integer
+        stars:
+          description: 收藏量
+          title: 收藏量
+          type: integer
+        isSold:
+          description: 是否卖出，1为已卖出，0为未卖出
+          title: 是否卖出
+          type: integer
+      required:
+      - address
+      - categoryID
+      - deliveryMethod
+      - describe
+      - id
+      - image
+      - isSold
+      - name
+      - postTime
+      - price
+      - stars
+      - userName
+      - views
+      title: 商品详情
+      type: object
+      x-apifox-orders:
+      - id
+      - name
+      - price
+      - categoryID
+      - describe
+      - image
+      - shippingCost
+      - userName
+      - address
+      - postTime
+      - deliveryMethod
+      - views
+      - stars
+      - isSold
+      x-apifox-ignore-properties: []
+      x-apifox-folder: 商品类
+    CategoryShangPinFenLei:
+      example:
+        description: description
+        categoryName: categoryName
+        categoryID: 6
+      properties:
+        categoryID:
+          type: integer
+        categoryName:
+          type: string
+        description:
+          type: string
+      required:
+      - categoryID
+      - categoryName
+      type: object
+      x-apifox-orders:
+      - categoryID
+      - categoryName
+      - description
+      x-apifox-ignore-properties: []
+      x-apifox-folder: 商品类
+    Address:
+      properties:
+        id:
+          description: 地址唯一ID
+          title: 地址唯一ID
+          type: integer
+        userID:
+          description: 拥有地址的用户ID
+          title: 拥有地址的用户ID
+          type: integer
+        name:
+          description: 收件人姓名
+          title: 收件人姓名
+          type: string
+        tel:
+          description: 电话号码
+          title: 电话号码
+          type: string
+        address:
+          description: 详细地址
+          title: 详细地址
+          type: string
+        isDefault:
+          description: 是否为默认，0是，1不是
+          title: 是否为默认
+          type: integer
+      required:
+      - address
+      - id
+      - isDefault
+      - name
+      - tel
+      - userID
+      type: object
+      x-apifox-orders:
+      - id
+      - userID
+      - name
+      - tel
+      - address
+      - isDefault
+      x-apifox-ignore-properties: []
+      x-apifox-folder: 个人数据类
+    Admin:
+      properties:
+        adminID:
+          type: integer
+        password:
+          type: string
+        tel:
+          type: string
+        mail:
+          type: string
+        gender:
+          type: integer
+        age:
+          type: integer
+      required:
+      - adminID
+      - password
+      type: object
+      x-apifox-orders:
+      - adminID
+      - password
+      - tel
+      - mail
+      - gender
+      - age
+      x-apifox-ignore-properties: []
+      x-apifox-folder: 用户类
+    inline_response_200_data:
+      example:
+        password: password
+        mail: mail
+        gender: 5
+        schoolID: 1
+        tel: tel
+        userName: userName
+        userID: 6
+        picture: picture
+        status: 5
+      properties:
+        userID:
+          type: integer
+        userName:
+          type: string
+        password:
+          type: string
+        schoolID:
+          type: integer
+        picture:
+          type: string
+        tel:
+          type: string
+        mail:
+          type: string
+        gender:
+          type: integer
+        status:
+          type: integer
+      required:
+      - mail
+      - password
+      - schoolID
+      - status
+      - userID
+      - userName
+    inline_response_200:
+      example:
+        msg: msg
+        code: 0
+        data:
+          password: password
+          mail: mail
+          gender: 5
+          schoolID: 1
+          tel: tel
+          userName: userName
+          userID: 6
+          picture: picture
+          status: 5
+      properties:
+        code:
+          type: integer
+        data:
+          $ref: '#/components/schemas/inline_response_200_data'
+        msg:
+          type: string
+      required:
+      - code
+      - data
+      - msg
+    inline_response_200_1:
+      example:
+        msg: msg
+        code: 0
+        data: '{}'
+      properties:
+        code:
+          type: integer
+        data:
+          properties: {}
+          required:
+          - 01J8YWGFF12P5PKDQVM31PPW70
+          type: object
+          x-apifox-orders:
+          - 01J8YWGFF12P5PKDQVM31PPW70
+          x-apifox-ignore-properties: []
+        msg:
+          type: string
+      required:
+      - code
+      - data
+      - msg
+    inline_response_200_2:
+      example:
+        msg: msg
+        code: 0
+        data: '{}'
+      properties:
+        code:
+          description: 业务状态码，1为成功
+          title: 业务状态码，1为成功
+          type: integer
+        msg:
+          description: 响应消息
+          title: 响应消息
+          type: string
+        data:
+          description: 响应结果
+          properties: {}
+          required:
+          - 01J8YWGFF12P5PKDQVM31PPW70
+          title: 响应结果
+          type: object
+          x-apifox-orders:
+          - 01J8YWGFF12P5PKDQVM31PPW70
+          x-apifox-ignore-properties: []
+      required:
+      - code
+      - data
+      - msg
+    inline_object:
+      properties:
+        adminID:
+          type: integer
+        password:
+          type: string
+        tel:
+          type: string
+        mail:
+          type: string
+        gender:
+          type: integer
+        age:
+          type: integer
+      required:
+      - adminID
+      - password
+      type: object
+      x-apifox-orders:
+      - 01J910ZCAD5R6175A8P9BD0MTB
+      x-apifox-refs:
+        "01J910ZCAD5R6175A8P9BD0MTB":
+          $ref: '#/components/schemas/Admin'
+      x-apifox-ignore-properties:
+      - adminID
+      - password
+      - tel
+      - mail
+      - gender
+      - age
+    inline_object_1:
+      properties:
+        mail:
+          description: 邮箱
+          type: string
+        password:
+          description: 密码
+          type: string
+      required:
+      - mail
+      - password
+      type: object
+      x-apifox-orders:
+      - mail
+      - password
+      x-apifox-ignore-properties: []
+    inline_response_200_3_data:
+      example:
+        password: password
+        mail: mail
+        gender: 1
+        adminID: 6
+        tel: tel
+        age: 5
+        token: token
+      properties:
+        adminID:
+          type: integer
+        password:
+          type: string
+        tel:
+          type: string
+        mail:
+          type: string
+        gender:
+          type: integer
+        age:
+          type: integer
+        token:
+          type: string
+      required:
+      - adminID
+      - password
+      - token
+    inline_response_200_3:
+      example:
+        msg: msg
+        code: 0
+        data:
+          password: password
+          mail: mail
+          gender: 1
+          adminID: 6
+          tel: tel
+          age: 5
+          token: token
+      properties:
+        code:
+          type: integer
+        data:
+          $ref: '#/components/schemas/inline_response_200_3_data'
+        msg:
+          type: string
+      required:
+      - 01JASC3G30DDZA7N39WJ66T04H
+      - code
+      - data
+      - msg
+    inline_response_200_4_data:
+      example:
+        isDefault: 5
+        address: address
+        name: name
+        tel: tel
+        id: 6
+        userID: 1
+      properties:
+        id:
+          description: 地址唯一ID
+          title: 地址唯一ID
+          type: integer
+        userID:
+          description: 拥有地址的用户ID
+          title: 拥有地址的用户ID
+          type: integer
+        name:
+          description: 收件人姓名
+          title: 收件人姓名
+          type: string
+        tel:
+          description: 电话号码
+          title: 电话号码
+          type: string
+        address:
+          description: 详细地址
+          title: 详细地址
+          type: string
+        isDefault:
+          description: 是否为默认，0是，1不是
+          title: 是否为默认
+          type: integer
+      required:
+      - address
+      - id
+      - isDefault
+      - name
+      - tel
+      - userID
+    inline_response_200_4:
+      example:
+        msg: msg
+        code: 0
+        data:
+          isDefault: 5
+          address: address
+          name: name
+          tel: tel
+          id: 6
+          userID: 1
+      properties:
+        code:
+          type: integer
+        data:
+          $ref: '#/components/schemas/inline_response_200_4_data'
+        msg:
+          type: string
+      required:
+      - code
+      - data
+      - msg
+    inline_object_2:
+      properties:
+        id:
+          description: 地址唯一ID
+          title: 地址唯一ID
+          type: integer
+        userID:
+          description: 拥有地址的用户ID
+          title: 拥有地址的用户ID
+          type: integer
+        name:
+          description: 收件人姓名
+          title: 收件人姓名
+          type: string
+        tel:
+          description: 电话号码
+          title: 电话号码
+          type: string
+        address:
+          description: 详细地址
+          title: 详细地址
+          type: string
+        isDefault:
+          description: 是否为默认，0是，1不是
+          title: 是否为默认
+          type: integer
+      required:
+      - address
+      - id
+      - isDefault
+      - name
+      - tel
+      - userID
+      type: object
+      x-apifox-orders:
+      - 01JAJKV50GG9TRGEV0Z5XNPKJS
+      x-apifox-refs:
+        "01JAJKV50GG9TRGEV0Z5XNPKJS":
+          $ref: '#/components/schemas/Address'
+      x-apifox-ignore-properties:
+      - id
+      - userID
+      - name
+      - tel
+      - address
+      - isDefault
+    inline_response_200_5:
+      example:
+        msg: msg
+        code: 0
+        data: '{}'
+        id: id
+      properties:
+        code:
+          type: integer
+        msg:
+          type: string
+        data:
+          properties: {}
+          required:
+          - 01J8YWGFF12P5PKDQVM31PPW70
+          type: object
+          x-apifox-orders:
+          - 01J8YWGFF12P5PKDQVM31PPW70
+          x-apifox-ignore-properties: []
+        id:
+          description: 收货地址id
+          title: 收货地址id
+          type: string
+      required:
+      - code
+      - data
+      - id
+      - msg
+    inline_response_200_6_data:
+      example:
+        id: id
+      properties:
+        id:
+          description: 收货地址ID，ID 编号
+          title: 收货地址ID
+          type: string
+      required:
+      - id
+    inline_response_200_6:
+      example:
+        msg: msg
+        code: 0
+        data:
+          id: id
+      properties:
+        code:
+          type: integer
+        data:
+          $ref: '#/components/schemas/inline_response_200_6_data'
+        msg:
+          type: string
+      required:
+      - code
+      - data
+      - msg
+    inline_response_200_7:
+      example:
+        msg: msg
+        code: 0
+        data:
+        - description: description
+          categoryName: categoryName
+          categoryID: 6
+        - description: description
+          categoryName: categoryName
+          categoryID: 6
+      properties:
+        code:
+          description: 业务状态码，1为成功
+          title: 业务状态码，1为成功
+          type: integer
+        msg:
+          description: 响应消息
+          title: 响应消息
+          type: string
+        data:
+          description: 响应结果
+          items:
+            $ref: '#/components/schemas/CategoryShangPinFenLei'
+          title: 响应结果
+          type: array
+      required:
+      - code
+      - data
+      - msg
+    inline_response_200_8_data:
+      example:
+        price: 1
+        name: name
+        id: 6
+        picture: picture
+        categoryID: categoryID
+      properties:
+        id:
+          description: 商品ID，ID 编号
+          title: 商品ID
+          type: integer
+        name:
+          description: 商品名
+          title: 商品名
+          type: string
+        price:
+          description: 价格
+          title: 价格
+          type: integer
+        picture:
+          description: 商品首图
+          title: 商品首图
+          type: string
+        categoryID:
+          description: 分类ID，分组
+          title: 分类ID
+          type: string
+      required:
+      - categoryID
+      - id
+      - name
+      - picture
+      - price
+    inline_response_200_8:
+      example:
+        msg: msg
+        code: 0
+        data:
+        - price: 1
+          name: name
+          id: 6
+          picture: picture
+          categoryID: categoryID
+        - price: 1
+          name: name
+          id: 6
+          picture: picture
+          categoryID: categoryID
+      properties:
+        code:
+          description: 业务状态码，1为成功
+          title: 业务状态码，1为成功
+          type: integer
+        msg:
+          description: 响应消息
+          title: 响应消息
+          type: string
+        data:
+          description: 响应结果
+          items:
+            $ref: '#/components/schemas/inline_response_200_8_data'
+          title: 响应结果
+          type: array
+      required:
+      - code
+      - data
+      - msg
+    ____:
+      description: 响应结果
+      example:
+        image: image
+        shippingCost: 5.637376656633329
+        address: address
+        deliveryMethod: deliveryMethod
+        stars: 7
+        userName: userName
+        postTime: postTime
+        price: 1.4658129805029452
+        isSold: 9
+        name: name
+        id: 6
+        describe: describe
+        categoryID: 5
+        views: 2
+      properties:
+        id:
+          description: 商品id
+          title: 商品id
+          type: integer
+        name:
+          description: 商品名
+          title: 商品名
+          type: string
+        price:
+          description: 价格
+          title: 价格
+          type: number
+        categoryID:
+          description: 分类ID
+          title: 分类ID
+          type: integer
+        describe:
+          description: 物品描述
+          title: 物品描述
+          type: string
+        image:
+          description: 图片URL
+          title: 图片URL
+          type: string
+        shippingCost:
+          description: 邮费
+          title: 邮费
+          type: number
+        userName:
+          description: 发布者名
+          title: 发布者名
+          type: string
+        address:
+          description: 发货地址，仅需省市区
+          title: 发货地址
+          type: string
+        postTime:
+          description: 发布时间
+          title: 发布时间
+          type: string
+        deliveryMethod:
+          description: 配送方式
+          title: 配送方式
+          type: string
+        views:
+          description: 浏览量
+          title: 浏览量
+          type: integer
+        stars:
+          description: 收藏量
+          title: 收藏量
+          type: integer
+        isSold:
+          description: 是否卖出，1为已卖出，0为未卖出
+          title: 是否卖出
+          type: integer
+      required:
+      - address
+      - categoryID
+      - deliveryMethod
+      - describe
+      - id
+      - image
+      - isSold
+      - name
+      - postTime
+      - price
+      - stars
+      - userName
+      - views
+    inline_response_200_9:
+      example:
+        msg: msg
+        code: 0
+        data:
+          image: image
+          shippingCost: 5.637376656633329
+          address: address
+          deliveryMethod: deliveryMethod
+          stars: 7
+          userName: userName
+          postTime: postTime
+          price: 1.4658129805029452
+          isSold: 9
+          name: name
+          id: 6
+          describe: describe
+          categoryID: 5
+          views: 2
+      properties:
+        code:
+          description: 业务状态码，1为成功
+          title: 业务状态码，1为成功
+          type: integer
+        msg:
+          description: 响应消息
+          title: 响应消息
+          type: string
+        data:
+          $ref: '#/components/schemas/____'
+      required:
+      - code
+      - data
+      - msg
+    inline_object_3:
+      properties:
+        userID:
+          description: 发布者ID
+          title: 发布者ID
+          type: string
+        name:
+          description: 商品名
+          title: 商品名
+          type: string
+        describe:
+          description: 商品描述
+          title: 商品描述
+          type: string
+        price:
+          description: 售价
+          title: 售价
+          type: string
+        category:
+          description: 商品类别
+          title: 商品类别
+          type: integer
+        image:
+          description: 图片url
+          title: 图片url
+          type: string
+        address:
+          description: 地址
+          title: 地址
+          type: string
+        delivery:
+          description: 配送方式，1邮寄，2自提， 3无需快递
+          title: 配送方式
+          type: integer
+        fare:
+          description: 运费，delivery为2或3时，此项为0
+          title: 运费
+          type: string
+      required:
+      - address
+      - category
+      - delivery
+      - describe
+      - fare
+      - image
+      - name
+      - price
+      - userID
+      type: object
+      x-apifox-orders:
+      - userID
+      - name
+      - describe
+      - price
+      - category
+      - image
+      - address
+      - delivery
+      - fare
+      x-apifox-refs: {}
+      x-apifox-ignore-properties: []
+    inline_response_200_10:
+      example:
+        msg: msg
+        code: 0
+        data:
+        - image: image
+          shippingCost: 5.637376656633329
+          address: address
+          deliveryMethod: deliveryMethod
+          stars: 7
+          userName: userName
+          postTime: postTime
+          price: 1.4658129805029452
+          isSold: 9
+          name: name
+          id: 6
+          describe: describe
+          categoryID: 5
+          views: 2
+        - image: image
+          shippingCost: 5.637376656633329
+          address: address
+          deliveryMethod: deliveryMethod
+          stars: 7
+          userName: userName
+          postTime: postTime
+          price: 1.4658129805029452
+          isSold: 9
+          name: name
+          id: 6
+          describe: describe
+          categoryID: 5
+          views: 2
+      properties:
+        code:
+          description: 业务状态码，1为成功
+          title: 业务状态码，1为成功
+          type: integer
+        msg:
+          description: 响应消息
+          title: 响应消息
+          type: string
+        data:
+          description: 响应结果
+          items:
+            $ref: '#/components/schemas/GoodsDetaIl'
+          title: 响应结果
+          type: array
+      required:
+      - code
+      - data
+      - msg
+    inline_response_200_11:
+      example:
+        msg: msg
+        code: 0
+        data:
+        - shippingCost: 2.3021358869347655
+          SenderAddress:
+            area: area
+            province: province
+            city: city
+            detailArea: detailArea
+          deliveryMethod: deliveryMethod
+          payTime: payTime
+          goodsID: 5
+          sellerName: sellerName
+          sellerID: 1
+          orderTime: orderTime
+          turnoverTime: turnoverTime
+          price: 5.637376656633329
+          shippingAddress:
+            area: area
+            province: province
+            city: city
+            detailArea: detailArea
+          shippingTime: shippingTime
+          goodsName: goodsName
+          tradeID: 6
+          status: status
+        - shippingCost: 2.3021358869347655
+          SenderAddress:
+            area: area
+            province: province
+            city: city
+            detailArea: detailArea
+          deliveryMethod: deliveryMethod
+          payTime: payTime
+          goodsID: 5
+          sellerName: sellerName
+          sellerID: 1
+          orderTime: orderTime
+          turnoverTime: turnoverTime
+          price: 5.637376656633329
+          shippingAddress:
+            area: area
+            province: province
+            city: city
+            detailArea: detailArea
+          shippingTime: shippingTime
+          goodsName: goodsName
+          tradeID: 6
+          status: status
+      properties:
+        code:
+          description: 业务状态码，1为成功
+          title: 业务状态码，1为成功
+          type: integer
+        msg:
+          description: 响应消息
+          title: 响应消息
+          type: string
+        data:
+          description: 响应结果
+          items:
+            $ref: '#/components/schemas/DingDan'
+          title: 响应结果
+          type: array
+      required:
+      - code
+      - data
+      - msg
+    _____1:
+      description: 发货地址
+      example:
+        area: area
+        province: province
+        city: city
+        detailArea: detailArea
+      properties:
+        province:
+          description: 省
+          title: 省
+          type: string
+        city:
+          description: 市
+          title: 市
+          type: string
+        area:
+          description: 区
+          title: 区
+          type: string
+        detailArea:
+          description: 详细地址
+          title: 详细地址
+          type: string
+      required:
+      - area
+      - city
+      - detailArea
+      - province
+    _____2:
+      description: 收货地址
+      example:
+        area: area
+        province: province
+        city: city
+        detailArea: detailArea
+      properties:
+        province:
+          description: 省
+          title: 省
+          type: string
+        city:
+          description: 市
+          title: 市
+          type: string
+        area:
+          description: 区
+          title: 区
+          type: string
+        detailArea:
+          description: 详细地址
+          title: 详细地址
+          type: string
+      required:
+      - area
+      - city
+      - detailArea
+      - province
+  securitySchemes: {}
