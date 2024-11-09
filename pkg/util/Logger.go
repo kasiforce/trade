@@ -8,12 +8,12 @@ import (
 	"time"
 )
 
-var logrusObj *logrus.Logger
+var LogrusObj *logrus.Logger
 
 func InitLog() {
-	if logrusObj != nil {
+	if LogrusObj != nil {
 		src, _ := setOutputFile()
-		logrusObj.Out = src
+		LogrusObj.Out = src
 		return
 	}
 	logger := logrus.New()
@@ -26,14 +26,14 @@ func InitLog() {
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
 
-	logrusObj = logger
+	LogrusObj = logger
 }
 
 // 设置日志输出的文件路径
 func setOutputFile() (*os.File, error) {
 	now := time.Now()
 	logFilePath := ""
-	if dir, err := os.Getwd(); err != nil {
+	if dir, err := os.Getwd(); err == nil {
 		logFilePath = dir + "/logs/"
 	}
 	_, err := os.Stat(logFilePath)
