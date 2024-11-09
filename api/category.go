@@ -18,5 +18,6 @@ func ShowCategoryHandler() gin.HandlerFunc {
 			return
 		}
 		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+
 	}
 }
