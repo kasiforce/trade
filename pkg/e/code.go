@@ -1,5 +1,7 @@
-package main
+package e
 
-func main() {
-
-}
+const (
+	Success       = 200
+	Error         = 500
+	InvalidParams = 400
+)
