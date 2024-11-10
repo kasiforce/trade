@@ -9,11 +9,11 @@ conf : 用于存储配置文件
 
 middleware : 应用中间件
 
-pkg/e : 封装错误码
+pkg/ctl : 封装响应
 
-pkg/logging : 日志打印
+pkg/e : 封装业务状态码
 
-pkg/util : 工具函数
+pkg/util : 工具函数(日志打印)
 
 repository: 仓库放置所有存储
 
@@ -29,4 +29,4 @@ routes : 路由逻辑处理
 
 service : 接口函数的实现
 
-types : 放置所有的定义的结构体
+types : 放置请求/响应信息的结构体
