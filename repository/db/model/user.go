@@ -1,15 +1,20 @@
 package model
 
 type User struct {
-	userID     int    `gorm:"primaryKey;autoIncrement;column:userID"`
-	userName   string `gorm:"type:varchar(30);unique;not null;column:userName"`
-	passwords  string `gorm:"type:varchar(30);not null;column:passwords"`
-	schoolID   int    `gorm:"not null;column:schoolID"`
-	picture    string `gorm:"type:varchar(256);column:picture"`
-	tel        string `gorm:"type:varchar(20);column:tel"`
-	mail       string `gorm:"type:varchar(40);unique;not null;column:mail"`
-	gender     int    `gorm:"type:tinyint;column:gender"`
-	userStatus int    `gorm:"type:tinyint;column:userStatus;default:1"`
+	UserID     int    `gorm:"primaryKey;autoIncrement;column:userID"`
+	UserName   string `gorm:"type:varchar(30);unique;not null;column:userName"`
+	Passwords  string `gorm:"type:varchar(30);not null;column:passwords"`
+	SchoolID   int    `gorm:"not null;column:schoolID"`
+	Picture    string `gorm:"type:varchar(256);column:picture"`
+	Tel        string `gorm:"type:varchar(20);column:tel"`
+	Mail       string `gorm:"type:varchar(40);unique;not null;column:mail"`
+	Gender     int    `gorm:"type:tinyint;column:gender"`
+	UserStatus int    `gorm:"type:tinyint;column:userStatus;default:1"`
+	School     School `gorm:"foreignKey:SchoolID"`
+}
+type UserWithSchool struct {
+	User
+	SchoolName string
 }
 
 func (User) TableName() string {
