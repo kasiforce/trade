@@ -1,9 +1,8 @@
 package e
 
 var Msg = map[int]string{
-	Success:       "操作成功",
-	Error:         "操作失败",
-	InvalidParams: "请求参数错误",
+	Success: "操作成功",
+	Error:   "操作失败",
 }
 
 func GetMsg(code int) string {
