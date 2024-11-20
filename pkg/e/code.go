@@ -1,7 +1,7 @@
 package e
 
+// 业务状态码
 const (
-	Success       = 200
-	Error         = 500
-	InvalidParams = 400
+	Success = 1
+	Error   = 0
 )
