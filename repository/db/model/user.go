@@ -9,12 +9,8 @@ type User struct {
 	Tel        string `gorm:"type:varchar(20);column:tel"`
 	Mail       string `gorm:"type:varchar(40);unique;not null;column:mail"`
 	Gender     int    `gorm:"type:tinyint;column:gender"`
-	UserStatus int    `gorm:"type:tinyint;column:userStatus;default:1"`
-	School     School `gorm:"foreignKey:SchoolID"`
-}
-type UserWithSchool struct {
-	User
-	SchoolName string
+	UserStatus int    `gorm:"type:tinyint;column:userStatus"`
+	School     School `gorm:"foreignKey:SchoolID;references:SchoolID"`
 }
 
 func (User) TableName() string {
