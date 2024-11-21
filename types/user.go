@@ -1,31 +1,53 @@
 package types
 
-type UserInfoResp struct {
+type UserInfo struct {
+	UserID     int    `json:"userID"`
+	UserName   string `json:"userName"`
+	Password   string `json:"password"`
+	SchoolName string `json:"schoolName"`
+	Picture    string `json:"picture"`
+	Tel        string `json:"tel"`
+	Mail       string `json:"mail"`
+	Gender     int    `json:"gender"`
+	Status     int    `json:"status"`
+}
+type UserListResp struct {
+	UsersList []UserInfo `json:"usersList"`
+	Total     int        `json:"total"`
+	PageNum   int        `json:"pageNum"`
+}
+type ShowUserReq struct {
+	SearchQuery string `form:"searchQuery" json:"searchQuery"`
+	PageNum     int    `form:"pageNum" json:"pageNum"`
+	PageSize    int    `form:"pageSize" json:"pageSize"`
+}
+
+// IntroductionResp 获取个人介绍
+type IntroductionResp struct {
+	UserID   int    `json:"userID"`
+	UserName string `json:"userName"`
+	Picture  string `json:"avatarUrl"`
+	Gender   int    `json:"gender"`
+	School   string `json:"school"`
+}
+
+type UpdateUserReq struct {
 	UserID   int    `json:"userID"`
 	UserName string `json:"userName"`
 	Password string `json:"password"`
-	SchoolID int    `json:"schoolID"`
 	Picture  string `json:"picture"`
 	Tel      string `json:"tel"`
-	Mail     string `json:"mail"`
 	Gender   int    `json:"gender"`
-	Status   int    `json:"status"`
 }
 
-type UserAddReq struct {
-	UserName string `form:"userName" json:"userName"`
+type UserLoginReq struct {
+	Mail     string `form:"mail" json:"mail"`
 	Password string `form:"password" json:"password"`
-	SchoolID int    `form:"schoolID" json:"schoolID"`
-	Mail     string `form:"mail" json:"mail"`
 }
 
-type UserInfoUpdateReq struct {
-	UserID   int    `url:"userID" json:"userID"`
-	UserName string `form:"userName" json:"userName"`
-	SchoolID int    `form:"schoolID" json:"schoolID"`
-	Picture  string `form:"picture" json:"picture"`
-	Tel      string `form:"tel" json:"tel"`
-	Mail     string `form:"mail" json:"mail"`
-	Gender   int    `form:"gender" json:"gender"`
-	Status   int    `form:"status" json:"status"`
+type UserRegisterReq struct {
+	Mail       string `form:"mail" json:"mail"`
+	Password   string `form:"password" json:"password"`
+	SchoolName string `form:"schoolName" json:"schoolName"`
+	Code       string `form:"code" json:"code"`
 }
