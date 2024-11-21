@@ -12,24 +12,14 @@ import (
 
 func ShowAllUserHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		s := service.GetUserService()
-		resp, err := s.ShowAllUser(c)
-		if err != nil {
+		var req types.ShowUserReq
+		if err := c.ShouldBindQuery(&req); err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
-			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
 			return
 		}
-		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
-	}
-}
-
-func ShowUserInfoHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		userIDstr := c.Param("id")
-		userID, err := strconv.Atoi(userIDstr)
-		ctx := ctl.NewContext(c.Request.Context(), &ctl.UserInfo{UserID: userID})
 		s := service.GetUserService()
-		resp, err := s.ShowUserInfoByID(ctx)
+		resp, err := s.ShowAllUser(c, req)
 		if err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
@@ -41,14 +31,14 @@ func ShowUserInfoHandler() gin.HandlerFunc {
 
 func AddUserHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req types.UserAddReq
+		var req types.UserInfo
 		if err := c.ShouldBind(&req); err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
 			return
 		}
 		s := service.GetUserService()
-		resp, err := s.AddUser(c.Request.Context(), &req)
+		resp, err := s.AddUser(c.Request.Context(), req)
 		if err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
@@ -58,9 +48,10 @@ func AddUserHandler() gin.HandlerFunc {
 	}
 }
 
+// UpdateUserHandler 管理员更新用户信息
 func UpdateUserHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req types.UserInfoUpdateReq
+		var req types.UserInfo
 		if err := c.ShouldBind(&req); err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
@@ -70,7 +61,87 @@ func UpdateUserHandler() gin.HandlerFunc {
 		id, err := strconv.Atoi(idStr)
 		ctx := ctl.NewContext(c.Request.Context(), &ctl.UserInfo{UserID: id})
 		s := service.GetUserService()
-		resp, err := s.UpdateUser(ctx, &req)
+		resp, err := s.UpdateUser(ctx, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+func DeleteUserHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idStr := c.Param("id")
+		id, err := strconv.Atoi(idStr)
+		ctx := ctl.NewContext(c.Request.Context(), &ctl.UserInfo{UserID: id})
+		s := service.GetUserService()
+		resp, err := s.DeleteUser(ctx)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+func ShowIntroductionHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		s := service.GetUserService()
+		resp, err := s.ShowIntroduction(c)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+func ShowUserByIDHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		s := service.GetUserService()
+		resp, err := s.ShowUserByID(c)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+func UpdateHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.UpdateUserReq
+		if err := c.ShouldBind(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		s := service.GetUserService()
+		resp, err := s.Update(c, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+func UserLoginHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.UserLoginReq
+		if err := c.ShouldBind(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		s := service.GetUserService()
+		resp, err := s.UserLogin(c, req)
 		if err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
