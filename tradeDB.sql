@@ -101,6 +101,7 @@ CREATE TABLE refund_records (
 CREATE TABLE admin (
     adminID INT NOT NULL AUTO_INCREMENT,
     passwords VARCHAR(30) NOT NULL,
+    adminName varchar(30) not null unique,
     tel VARCHAR(20),
     mail VARCHAR(40) NOT NULL,
     gender TINYINT,

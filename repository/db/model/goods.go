@@ -12,6 +12,8 @@ type Goods struct {
 	IsSold      bool      `gorm:"type:tinyint;not null;default:0;column:isSold"`
 	GoodsImages string    `gorm:"type:varchar(256);column:goodsImages"`
 	CreatedTime time.Time `gorm:"type:datetime;not null;column:createdTime"`
+	User        User      `gorm:"foreignKey:UserID;references:UserID"`
+	Category    Category  `gorm:"foreignKey:CategoryID;references:CategoryID"`
 }
 
 func (Goods) TableName() string {

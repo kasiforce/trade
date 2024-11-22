@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"github.com/kasiforce/trade/repository/db/model"
+	"github.com/kasiforce/trade/types"
 	"gorm.io/gorm"
 )
 
@@ -18,15 +19,22 @@ func NewUser(ctx context.Context) *User {
 	return &User{NewDBClient(ctx)}
 }
 
-func (user *User) FindAll() (users []*model.User, err error) {
-	err = user.DB.Model(&model.User{}).Find(&users).Error
+func (user *User) FindAll(req types.ShowUserReq) (users []model.User, err error) {
+	db := user.DB
+	query := db.Table("users").Select("users.*").Preload("School")
+	if req.SearchQuery != "" {
+		query = query.Where("users.userName LIKE ?", "%"+req.SearchQuery+"%")
+	}
+	query = query.Limit(req.PageSize).Offset((req.PageNum - 1) * req.PageSize)
+	err = query.Find(&users).Error
 	return
 }
 
 func (user *User) FindByID(id int) (u *model.User, err error) {
-	err = user.DB.Model(&model.User{}).Where("userID = ?", id).First(&u).Error
+	err = user.DB.Model(&model.User{}).Preload("School").Where("userID = ?", id).First(&u).Error
 	return
 }
+
 func (user *User) FindByName(name string) (exist bool, err error) {
 	var cnt int64
 	err = user.DB.Model(&model.User{}).Where("userName = ?", name).Count(&cnt).Error
@@ -35,12 +43,24 @@ func (user *User) FindByName(name string) (exist bool, err error) {
 	}
 	return true, err
 }
-func (user *User) CreateUser(u *model.User) (err error) {
-	err = user.DB.Model(&model.User{}).Create(&u).Error
+
+func (user *User) CreateUser(u map[string]interface{}) (err error) {
+	err = user.DB.Model(&model.User{}).Create(u).Error
 	return
 }
 
-func (user *User) UpdateUser(id int, u *model.User) (err error) {
-	err = user.DB.Model(&model.User{}).Where("userID = ?", id).Updates(&u).Error
+func (user *User) UpdateUser(id int, u map[string]interface{}) (err error) {
+	err = user.DB.Model(&model.User{}).Where("userID = ?", id).Updates(u).Error
+	return
+}
+
+func (user *User) DeleteUser(id int) (err error) {
+	err = user.DB.Model(&model.User{}).Delete(&model.User{}, id).Error
+	return
+}
+
+// CheckMail 登录时检查邮箱是否存在，若存在查出用户名、id、密码
+func (user *User) CheckMail(mail string) (u *model.User, err error) {
+	err = user.DB.Model(&model.User{}).Where("mail = ?", mail).First(&u).Error
 	return
 }
