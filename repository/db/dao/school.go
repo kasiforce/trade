@@ -18,6 +18,12 @@ func NewSchool(ctx context.Context) *School {
 	return &School{NewDBClient(ctx)}
 }
 
+func (s *School) FindSchoolID(name string) (id int, err error) {
+	school := &model.School{}
+	err = s.DB.Model(&model.School{}).Where("schoolName = ?", name).First(&school).Error
+	id = school.SchoolID
+	return
+}
 func (s *School) FindAll() (schools []*model.School, err error) {
 	err = s.DB.Model(&model.School{}).Find(&schools).Error
 	return
