@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type TradeRecords struct {
+type TradeRecord struct {
 	TradeID         int       `gorm:"primaryKey;autoIncrement;column:tradeID"`
 	SellerID        int       `gorm:"not null;column:sellerID"`
 	BuyerID         int       `gorm:"not null;column:buyerID"`
@@ -21,6 +21,6 @@ type TradeRecords struct {
 	IsReturn        int       `gorm:"type:tinyint;not null;default:0;column:isReturn"`
 }
 
-func (TradeRecords) TableName() string {
+func (TradeRecord) TableName() string {
 	return "trade_records"
 }
