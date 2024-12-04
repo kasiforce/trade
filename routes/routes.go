@@ -36,6 +36,15 @@ func NewRouter() *gin.Engine {
 		v1.PUT("/profiles/info/:id", api.UpdateHandler())
 		v1.POST("/login", api.UserLoginHandler())
 
+		//管理员的增删改查
+		v1.GET("/admin/adminInfo", api.ShowAllAdminHandler())
+		v1.PUT("/admin/adminInfo/:id", api.UpdateAdminHandler())
+		v1.POST("/admin/adminInfo", api.AddAdminHandler())
+		v1.DELETE("/admin/adminInfo/:id", api.DeleteAdminHandler())
+
+		//管理员登录
+		v1.POST("/admin/login", api.AdminLoginHandler())
+
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())
 		{
