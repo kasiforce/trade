@@ -1,20 +1,33 @@
 package dao
 
 import (
+	"context"
 	"errors"
 	"github.com/kasiforce/trade/repository/db/model"
 	"github.com/kasiforce/trade/types"
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
+type Comment struct {
+	*gorm.DB
+}
+
+// NewCommentByDB 通过数据库连接创建 Comment 实例
+func NewCommentByDB(db *gorm.DB) *Comment {
+	return &Comment{db}
+}
+
+// NewComment 通过上下文创建 Comment 实例
+func NewComment(ctx context.Context) *Comment {
+	return &Comment{NewDBClient(ctx)}
+}
 
 // GetAllComments 获取所有评论
-func GetAllComments(req types.ShowCommentsReq) ([]model.Comment, int, error) {
+func (c *Comment) GetAllComments(req types.ShowCommentsReq) ([]model.Comment, int, error) {
 	var comments []model.Comment
 	var total int64
 
-	query := db.Model(&model.Comment{})
+	query := c.DB.Model(&model.Comment{})
 
 	if req.GoodsID != 0 {
 		query = query.Where("goodsID = ?", req.GoodsID)
@@ -36,13 +49,13 @@ func GetAllComments(req types.ShowCommentsReq) ([]model.Comment, int, error) {
 }
 
 // CreateComment 创建评论
-func CreateComment(comment model.Comment) error {
-	return db.Create(&comment).Error
+func (c *Comment) CreateComment(comment model.Comment) error {
+	return c.DB.Create(&comment).Error
 }
 
 // DeleteComment 删除评论
-func DeleteComment(commentID int) error {
-	result := db.Delete(&model.Comment{}, commentID)
+func (c *Comment) DeleteComment(commentID int) error {
+	result := c.DB.Delete(&model.Comment{}, commentID)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -53,11 +66,11 @@ func DeleteComment(commentID int) error {
 }
 
 // GetCommentsByUser 根据用户ID获取评论
-func GetCommentsByUser(req types.ShowCommentsReq) ([]model.Comment, int, error) {
+func (c *Comment) GetCommentsByUser(req types.ShowCommentsReq) ([]model.Comment, int, error) {
 	var comments []model.Comment
 	var total int64
 
-	query := db.Model(&model.Comment{}).Where("commentatorID = ?", req.CommentatorID)
+	query := c.DB.Model(&model.Comment{}).Where("commentatorID = ?", req.CommentatorID)
 
 	if req.GoodsID != 0 {
 		query = query.Where("goodsID = ?", req.GoodsID)

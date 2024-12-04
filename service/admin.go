@@ -90,9 +90,8 @@ func (s *AdminService) UpdateAdmin(ctx context.Context, req types.AdminInfo) (re
 	a := dao.NewAdmin(ctx)
 	modelAdmin := map[string]interface{}{
 		"adminName": req.AdminName,
-		"password":  req.Password,
-		"email":     req.Email,
-		"role":      req.Role,
+		"password":  req.Passwords,
+		"email":     req.Mail,
 		"passwords": req.Passwords,
 		"mail":      req.Mail,
 	}

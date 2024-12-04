@@ -1,13 +1,15 @@
 package types
 
+import "time"
+
 // CommentInfo 表示评论信息
 type CommentInfo struct {
-	CommentatorID   int64   `json:"commentatorID"`         // 评价者ID
-	CommentatorName string  `json:"commentatorName"`       // 评价者名
-	CommentContent  string  `json:"commentContent"`        // 评价内容
-	CommentID       int64   `json:"commentID"`             // 评价ID
-	CommentTime     *string `json:"commentTime,omitempty"` // 评价时间
-	GoodsID         int64   `json:"goodsID"`               // 商品ID
+	CommentatorID   int64     `json:"commentatorID"`         // 评价者ID
+	CommentatorName string    `json:"commentatorName"`       // 评价者名
+	CommentContent  string    `json:"commentContent"`        // 评价内容
+	CommentID       int64     `json:"commentID"`             // 评价ID
+	CommentTime     time.Time `json:"commentTime,omitempty"` // 评价时间
+	GoodsID         int64     `json:"goodsID"`               // 商品ID
 }
 
 // CommentListResp 表示评论列表的响应

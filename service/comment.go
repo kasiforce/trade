@@ -22,21 +22,23 @@ func GetCommentService() *CommentService {
 	return commentServ
 }
 
+// ShowAllComments 获取所有评论
 func (s *CommentService) ShowAllComments(ctx context.Context, req types.ShowCommentsReq) (resp interface{}, err error) {
-	comments, total, err := dao.GetAllComments(req)
+	comment := dao.NewComment(ctx)
+	comments, total, err := comment.GetAllComments(req)
 	if err != nil {
 		return nil, err
 	}
 
 	var commentInfos []types.CommentInfo
-	for _, comment := range comments {
+	for _, commentInfo := range comments {
 		commentInfos = append(commentInfos, types.CommentInfo{
-			CommentatorID:   int64(comment.CommentatorID),
-			CommentatorName: "TODO: 从用户表获取用户名", // 这里需要从用户表获取用户名
-			CommentContent:  comment.CommentContent,
-			CommentID:       int64(comment.CommentID),
-			CommentTime:     &comment.CommentTime.String(),
-			GoodsID:         int64(comment.GoodsID),
+			CommentatorID:   commentInfo.CommentatorID,
+			CommentatorName: commentInfo.CommentatorName, // 这里需要从用户表获取用户名
+			CommentContent:  commentInfo.CommentContent,
+			CommentID:       commentInfo.CommentID,
+			CommentTime:     commentInfo.CommentTime,
+			GoodsID:         commentInfo.GoodsID,
 		})
 	}
 
@@ -47,6 +49,7 @@ func (s *CommentService) ShowAllComments(ctx context.Context, req types.ShowComm
 	}, nil
 }
 
+// AddComment 添加评论
 func (s *CommentService) AddComment(ctx context.Context, req types.CreateCommentReq) (resp interface{}, err error) {
 	comment := model.Comment{
 		GoodsID:        int(req.GoodsID),
@@ -63,6 +66,7 @@ func (s *CommentService) AddComment(ctx context.Context, req types.CreateComment
 	return "Comment added successfully", nil
 }
 
+// DeleteCommentByID 删除评论
 func (s *CommentService) DeleteCommentByID(ctx context.Context, commentID int) (resp interface{}, err error) {
 	err = dao.DeleteComment(commentID)
 	if err != nil {
@@ -72,21 +76,23 @@ func (s *CommentService) DeleteCommentByID(ctx context.Context, commentID int) (
 	return "Comment deleted successfully", nil
 }
 
-func (s *CommentService) ShowCommentsByUser(ctx context.Context, req types.ShowCommentsReq) (resp interface{}, err error) {
-	comments, total, err := dao.GetCommentsByUser(req)
+// ShowCommentsByID 根据用户ID获取评论
+func (s *CommentService) ShowCommentsByID(ctx context.Context, req types.ShowCommentsReq) (resp interface{}, err error) {
+	comment := dao.NewComment(ctx)
+	comments, total, err := comment.GetCommentsByUser(req)
 	if err != nil {
 		return nil, err
 	}
 
 	var commentInfos []types.CommentInfo
-	for _, comment := range comments {
+	for _, commentInfo := range comments {
 		commentInfos = append(commentInfos, types.CommentInfo{
-			CommentatorID:   int64(comment.CommentatorID),
-			CommentatorName: "TODO: 从用户表获取用户名", // 这里需要从用户表获取用户名
-			CommentContent:  comment.CommentContent,
-			CommentID:       int64(comment.CommentID),
-			CommentTime:     comment.CommentTime.String(),
-			GoodsID:         int64(comment.GoodsID),
+			CommentatorID:   commentInfo.CommentatorID,
+			CommentatorName: commentInfo.CommentatorName, // 这里需要从用户表获取用户名
+			CommentContent:  commentInfo.CommentContent,
+			CommentID:       commentInfo.CommentID,
+			CommentTime:     commentInfo.CommentTime,
+			GoodsID:         commentInfo.GoodsID,
 		})
 	}
 
