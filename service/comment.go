@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"github.com/kasiforce/trade/dao"
-	"github.com/kasiforce/trade/model"
+	"github.com/kasiforce/trade/repository/db/dao"
+	"github.com/kasiforce/trade/repository/db/model"
 	"github.com/kasiforce/trade/types"
 	"sync"
 	"time"

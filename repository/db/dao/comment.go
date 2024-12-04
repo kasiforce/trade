@@ -2,9 +2,9 @@ package dao
 
 import (
 	"errors"
+	"github.com/kasiforce/trade/repository/db/model"
+	"github.com/kasiforce/trade/types"
 	"gorm.io/gorm"
-	"your_project/model"
-	"your_project/types"
 )
 
 var db *gorm.DB
