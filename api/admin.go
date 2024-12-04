@@ -58,7 +58,8 @@ func UpdateAdminHandler() gin.HandlerFunc {
 		}
 		idStr := c.Param("id")
 		id, err := strconv.Atoi(idStr)
-		ctx := ctl.NewContext(c.Request.Context(), &ctl.UserInfo{UserID: id})
+
+		ctx := ctl.NewAdminContext(c.Request.Context(), &ctl.AdminInfo{AdminID: id})
 		s := service.GetAdminService()
 		resp, err := s.UpdateAdmin(ctx, req)
 		if err != nil {
@@ -74,7 +75,7 @@ func DeleteAdminHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idStr := c.Param("id")
 		id, err := strconv.Atoi(idStr)
-		ctx := ctl.NewContext(c.Request.Context(), &ctl.UserInfo{UserID: id})
+		ctx := ctl.NewAdminContext(c.Request.Context(), &ctl.AdminInfo{AdminID: id})
 		s := service.GetAdminService()
 		resp, err := s.DeleteAdmin(ctx)
 		if err != nil {

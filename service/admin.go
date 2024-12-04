@@ -1,7 +1,14 @@
 package service
 
 import (
+	"context"
 	"errors"
+	"sync"
+
+	"github.com/cghdjvjg/trade/pkg/ctl"
+	"github.com/cghdjvjg/trade/pkg/util"
+	"github.com/cghdjvjg/trade/repository/db/dao"
+	"github.com/cghdjvjg/trade/types"
 	"github.com/gin-gonic/gin"
 	"github.com/kasiforce/trade/middleware"
 	"github.com/kasiforce/trade/pkg/util"
@@ -35,20 +42,25 @@ func (s *AdminService) ShowAllAdmin(ctx context.Context, req types.ShowAdminReq)
 		respList = append(respList, types.AdminInfo{
 			AdminID:   adminInfo.AdminID,
 			AdminName: adminInfo.AdminName,
-			Password:  adminInfo.Password,
-			Email:     adminInfo.Email,
-			Role:      adminInfo.Role,
+			Passwords: adminInfo.Password,
+			Tel:       adminInfo.Tel,
+			Mail:      adminInfo.Mail,
+			Gender:    adminInfo.Gender,
+			Age:       adminInfo.Age,
 		})
 	}
+	if respList == nil { // 确保返回空数组而不是 null
+		respList = []types.AdminInfo{}
+	}
 	var response types.AdminListResp
-	response.AdminsList = respList
+	response.AdminList = respList
 	response.PageNum = req.PageNum
 	response.Total = len(respList)
 	return response, nil
 }
 
 func (s *AdminService) AddAdmin(ctx context.Context, req types.AdminInfo) (resp interface{}, err error) {
-	if req.AdminName == "" || req.Password == "" || req.Email == "" {
+	if req.AdminName == "" || req.Passwords == "" || req.Mail == "" {
 		err = errors.New("参数不能为空")
 		return
 	}
@@ -64,9 +76,8 @@ func (s *AdminService) AddAdmin(ctx context.Context, req types.AdminInfo) (resp 
 	}
 	modelAdmin := map[string]interface{}{
 		"adminName": req.AdminName,
-		"password":  req.Password,
-		"email":     req.Email,
-		"role":      req.Role,
+		"passwords": req.Passwords,
+		"mail":      req.Mail,
 	}
 	err = a.CreateAdmin(modelAdmin)
 	if err != nil {
@@ -88,6 +99,8 @@ func (s *AdminService) UpdateAdmin(ctx context.Context, req types.AdminInfo) (re
 		"password":  req.Password,
 		"email":     req.Email,
 		"role":      req.Role,
+		"passwords": req.Passwords,
+		"mail":      req.Mail,
 	}
 	for key, value := range modelAdmin {
 		if value == "" {
@@ -118,25 +131,37 @@ func (s *AdminService) DeleteAdmin(ctx context.Context) (resp interface{}, err e
 }
 
 func (s *AdminService) AdminLogin(c *gin.Context, req types.AdminLoginReq) (resp interface{}, err error) {
-	if req.Email == "" || req.Password == "" {
+	if req.Mail == "" || req.Password == "" {
 		err = errors.New("参数不能为空")
 		return
 	}
+
 	a := dao.NewAdmin(c)
-	admin, err := a.CheckEmail(req.Email)
+	admin, err := a.CheckMail(req.Mail)
 	if err != nil {
 		util.LogrusObj.Error(err)
+		err = errors.New("邮箱不存在")
 		return
 	}
+
 	if admin.Password != req.Password {
 		err = errors.New("密码错误")
 		return
 	}
+
 	token, err := util.GenerateToken(admin.AdminID, admin.AdminName)
 	if err != nil {
 		util.LogrusObj.Error(err)
+		err = errors.New("生成Token失败")
 		return
 	}
-	middleware.SetToken(c, token)
+
+	// 返回响应对象
+	resp = map[string]interface{}{
+		"adminID":   admin.AdminID,
+		"adminName": admin.AdminName,
+		"password":  admin.Password,
+		"token":     token,
+	}
 	return
 }
