@@ -1,45 +1,75 @@
 package dao
 
 import (
-	"context"
-
-	"github.com/kasiforce/trade/repository/db/model"
+	"errors"
 	"gorm.io/gorm"
+	"your_project/model"
+	"your_project/types"
 )
 
-type Comment struct {
-	*gorm.DB
+var db *gorm.DB
+
+// GetAllComments 获取所有评论
+func GetAllComments(req types.ShowCommentsReq) ([]model.Comment, int, error) {
+	var comments []model.Comment
+	var total int64
+
+	query := db.Model(&model.Comment{})
+
+	if req.GoodsID != 0 {
+		query = query.Where("goodsID = ?", req.GoodsID)
+	}
+
+	if req.Commentator != "" {
+		query = query.Where("commentatorID IN (SELECT userID FROM users WHERE username LIKE ?)", "%"+req.Commentator+"%")
+	}
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	if err := query.Offset((req.PageNum - 1) * req.PageSize).Limit(req.PageSize).Find(&comments).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return comments, int(total), nil
 }
 
-func NewCommentByDB(db *gorm.DB) *Comment {
-	return &Comment{db}
+// CreateComment 创建评论
+func CreateComment(comment model.Comment) error {
+	return db.Create(&comment).Error
 }
 
-func NewComment(ctx context.Context) *Comment {
-	return &Comment{NewDBClient(ctx)}
+// DeleteComment 删除评论
+func DeleteComment(commentID int) error {
+	result := db.Delete(&model.Comment{}, commentID)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("评论不存在")
+	}
+	return nil
 }
 
-func (comment *Comment) FindAll() (comments []*model.Comment, err error) {
-	err = comment.DB.Model(&model.Comment{}).Find(&comments).Error
-	return
-}
+// GetCommentsByUser 根据用户ID获取评论
+func GetCommentsByUser(req types.ShowCommentsReq) ([]model.Comment, int, error) {
+	var comments []model.Comment
+	var total int64
 
-func (comment *Comment) FindByID(id int) (c *model.Comment, err error) {
-	err = comment.DB.Model(&model.Comment{}).Where("commentID = ?", id).First(&c).Error
-	return
-}
+	query := db.Model(&model.Comment{}).Where("commentatorID = ?", req.CommentatorID)
 
-func (comment *Comment) FindByGoodsID(goodsID int) (comments []*model.Comment, err error) {
-	err = comment.DB.Model(&model.Comment{}).Where("goodsID = ?", goodsID).Find(&comments).Error
-	return
-}
+	if req.GoodsID != 0 {
+		query = query.Where("goodsID = ?", req.GoodsID)
+	}
 
-func (comment *Comment) CreateComment(c *model.Comment) (err error) {
-	err = comment.DB.Model(&model.Comment{}).Create(&c).Error
-	return
-}
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
 
-func (comment *Comment) UpdateComment(id int, c *model.Comment) (err error) {
-	err = comment.DB.Model(&model.Comment{}).Where("commentID = ?", id).Updates(&c).Error
-	return
+	if err := query.Offset((req.PageNum - 1) * req.PageSize).Limit(req.PageSize).Find(&comments).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return comments, int(total), nil
 }

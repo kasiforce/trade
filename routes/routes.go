@@ -45,6 +45,11 @@ func NewRouter() *gin.Engine {
 		//管理员登录
 		v1.POST("/admin/login", api.AdminLoginHandler())
 
+		//查询所有评论
+		v1.GET("/admin/comment", api.ShowAllCommentsHandler())
+		//删除评论
+		v1.DELETE("/admin/comment/:id", api.DeleteCommentHandler())
+
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())
 		{
@@ -54,6 +59,10 @@ func NewRouter() *gin.Engine {
 			authed.PUT("/address/setDefault/:id", api.UpdateDefaultHandler())
 			authed.GET("/profiles/introduction", api.ShowIntroductionHandler())
 			authed.GET("/profiles/info", api.ShowUserByIDHandler())
+			//获取发布的评价
+			authed.GET("/profiles/comment/given", api.ShowCommentsByCustomerHandler())
+			//获取收到的评价
+			authed.GET("/profiles/comment/received")
 		}
 	}
 	return router
