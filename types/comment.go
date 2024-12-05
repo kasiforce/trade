@@ -43,5 +43,5 @@ type CreateCommentReq struct {
 type CommentListResp struct {
 	CommentList interface{} `json:"item"`
 	Total       int64       `json:"total"`
-	PageNum     int64       `json:"pageNum"`
+	PageNum     int         `json:"pageNum"`
 }
