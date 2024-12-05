@@ -12,11 +12,11 @@ type CommentInfo struct {
 }
 
 // CommentListResp 表示评论列表的响应
-type CommentListResp struct {
-	Comments []CommentInfo `json:"comments"` // 评论列表
-	Total    int           `json:"total"`    // 总记录数
-	PageNum  int           `json:"pageNum"`  // 当前页码
-}
+//type CommentListResp struct {
+//	Comments []CommentInfo `json:"comments"` // 评论列表
+//	Total    int           `json:"total"`    // 总记录数
+//	PageNum  int           `json:"pageNum"`  // 当前页码
+//}
 
 // ShowCommentsReq 表示查询评论列表的请求
 type ShowCommentsReq struct {
@@ -39,8 +39,8 @@ type CreateCommentReq struct {
 //	CommentContent string `json:"commentContent"` // 评价内容
 //}
 
-// commentListResp 服务返回结构
-type commentListResp struct {
+// CommentListResp 服务返回结构
+type CommentListResp struct {
 	CommentList interface{} `json:"item"`
 	Total       int64       `json:"total"`
 	PageNum     int64       `json:"pageNum"`

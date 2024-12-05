@@ -30,7 +30,7 @@ func (s *CommentService) ShowAllComments(ctx context.Context, req types.ShowComm
 		util.LogrusObj.Error(err)
 		return
 	}
-	resp = &types.commentListResp{
+	resp = &types.CommentListResp{
 		CommentList: comments,
 		Total:       total,
 		PageNum:     req.PageNum,
