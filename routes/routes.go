@@ -45,6 +45,16 @@ func NewRouter() *gin.Engine {
 		//管理员登录
 		v1.POST("/admin/login", api.AdminLoginHandler())
 
+		//管理员查询所有商品
+		v1.GET("/admin/product", api.AdminShowAllGoodsHandler())
+		//已售出商品查询
+		v1.GET("/profiles/finished", api.IsSoldGoodsHandler())
+		//删除商品
+		v1.DELETE("/admin/product/:id", api.DeleteGoodsHandler())
+
+		//退货信息
+		v1.GET("/admin/afterSale", api.ShowAllrefundHandler())
+
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())
 		{
