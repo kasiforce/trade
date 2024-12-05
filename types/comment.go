@@ -41,7 +41,7 @@ type CreateCommentReq struct {
 
 // CommentListResp 服务返回结构
 type CommentListResp struct {
-	CommentList interface{} `json:"item"`
+	CommentList interface{} `json:"commentList"`
 	Total       int64       `json:"total"`
 	PageNum     int         `json:"pageNum"`
 }
