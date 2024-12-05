@@ -10,8 +10,9 @@ type Comment struct {
 	CommentatorID  int       `gorm:"not null;column:commentatorID"`
 	CommentContent string    `gorm:"type:text;not null;column:commentContent"`
 	CommentTime    time.Time `gorm:"type:datetime;not null;column:commentTime"`
+	Commentator    User      `gorm:"foreignKey:CommentatorID"`
 }
 
-func (Comment) TableName() string {
+func (com Comment) TableName() string {
 	return "comment"
 }

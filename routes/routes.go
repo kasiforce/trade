@@ -61,8 +61,6 @@ func NewRouter() *gin.Engine {
 			authed.GET("/profiles/info", api.ShowUserByIDHandler())
 			//获取发布的评价
 			authed.GET("/profiles/comment/given", api.ShowCommentsByCustomerHandler())
-			//获取收到的评价
-			authed.GET("/profiles/comment/received")
 		}
 	}
 	return router

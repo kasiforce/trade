@@ -23,29 +23,23 @@ func NewComment(ctx context.Context) *Comment {
 }
 
 // GetAllComments 获取所有评论
-func (c *Comment) GetAllComments(req types.ShowCommentsReq) ([]model.Comment, int, error) {
-	var comments []model.Comment
-	var total int64
-
-	query := c.DB.Model(&model.Comment{})
-
-	if req.GoodsID != 0 {
-		query = query.Where("goodsID = ?", req.GoodsID)
+func (c *Comment) GetAllComments(req types.ShowCommentsReq) (r []*types.CommentInfo, total int64, err error) {
+	err = c.DB.Model(&model.Comment{}).Preload("User").Count(&total).Error
+	if err != nil {
+		return
 	}
+	err = c.DB.Model(&model.Comment{}).
+		Joins("As co left join users as u on u.userID = co.commentatorID ").
+		Joins("left join goods as g on g.goodsID = co.goodsID").
+		Offset((req.PageNum - 1) * req.PageSize).Limit(req.PageSize).
+		Select("co.commentID as commentID," +
+			"g.goodsName as goodsName," +
+			"u.userName as commentatorName," +
+			"co.commentContent as commentContent," +
+			"co.commentTime as commentTime").
+		Find(&r).Error
 
-	if req.Commentator != "" {
-		query = query.Where("commentatorID IN (SELECT userID FROM users WHERE username LIKE ?)", "%"+req.Commentator+"%")
-	}
-
-	if err := query.Count(&total).Error; err != nil {
-		return nil, 0, err
-	}
-
-	if err := query.Offset((req.PageNum - 1) * req.PageSize).Limit(req.PageSize).Find(&comments).Error; err != nil {
-		return nil, 0, err
-	}
-
-	return comments, int(total), nil
+	return
 }
 
 // CreateComment 创建评论
@@ -66,23 +60,21 @@ func (c *Comment) DeleteComment(commentID int) error {
 }
 
 // GetCommentsByUser 根据用户ID获取评论
-func (c *Comment) GetCommentsByUser(req types.ShowCommentsReq) ([]model.Comment, int, error) {
-	var comments []model.Comment
-	var total int64
-
-	query := c.DB.Model(&model.Comment{}).Where("commentatorID = ?", req.CommentatorID)
-
-	if req.GoodsID != 0 {
-		query = query.Where("goodsID = ?", req.GoodsID)
+func (c *Comment) GetCommentsByUser(id int) (r []*types.CommentInfo, err error) {
+	err = c.DB.Model(&model.Comment{}).Preload("User").Where("commentatorID = ?", id).Error
+	if err != nil {
+		return
 	}
+	err = c.DB.Model(&model.Comment{}).
+		Joins("As co left join users as u on u.userID = co.commentatorID ").
+		Joins("left join goods as g on g.goodsID = co.goodsID").
+		Where("co.commentatorID = ?", id).
+		Select("co.commentID as commentID," +
+			"g.goodsName as goodsName," +
+			"u.userName as commentatorName," +
+			"co.commentContent as commentContent," +
+			"co.commentTime as commentTime").
+		Find(&r).Error
 
-	if err := query.Count(&total).Error; err != nil {
-		return nil, 0, err
-	}
-
-	if err := query.Offset((req.PageNum - 1) * req.PageSize).Limit(req.PageSize).Find(&comments).Error; err != nil {
-		return nil, 0, err
-	}
-
-	return comments, int(total), nil
+	return
 }
