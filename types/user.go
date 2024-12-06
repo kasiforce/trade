@@ -51,3 +51,16 @@ type UserRegisterReq struct {
 	SchoolName string `form:"schoolName" json:"schoolName"`
 	Code       string `form:"code" json:"code"`
 }
+
+type UserWithToken struct {
+	UserID     int    `json:"userID"`
+	UserName   string `json:"userName"`
+	Password   string `json:"password"`
+	SchoolName string `json:"schoolName"`
+	Picture    string `json:"picture"`
+	Tel        string `json:"tel"`
+	Mail       string `json:"mail"`
+	Gender     int    `json:"gender"`
+	Status     int    `json:"status"`
+	Token      string `json:"token"`
+}

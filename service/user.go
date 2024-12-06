@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/kasiforce/trade/middleware"
 	"github.com/kasiforce/trade/pkg/ctl"
 	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/repository/db/dao"
@@ -252,6 +251,18 @@ func (s *UserService) UserLogin(c *gin.Context, req types.UserLoginReq) (resp in
 		util.LogrusObj.Error(err)
 		return
 	}
-	middleware.SetToken(c, token)
+	resp = types.UserWithToken{
+		UserID:     user.UserID,
+		UserName:   user.UserName,
+		Password:   user.Passwords,
+		SchoolName: user.School.SchoolName,
+		Picture:    user.Picture,
+		Tel:        user.Tel,
+		Mail:       user.Mail,
+		Gender:     user.Gender,
+		Status:     user.UserStatus,
+		Token:      token,
+	}
+	//middleware.SetToken(c, token)
 	return
 }
