@@ -11,6 +11,7 @@ type Comment struct {
 	CommentContent string    `gorm:"type:text;not null;column:commentContent"`
 	CommentTime    time.Time `gorm:"type:datetime;not null;column:commentTime"`
 	Commentator    User      `gorm:"foreignKey:CommentatorID"`
+	GoodsName		string   `gorm:"not null;column:goodsName"`
 }
 
 func (com Comment) TableName() string {
