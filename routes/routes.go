@@ -45,6 +45,7 @@ func NewRouter() *gin.Engine {
 			authed.PUT("/address/setDefault/:id", api.UpdateDefaultHandler())
 			authed.GET("/profiles/introduction", api.ShowIntroductionHandler())
 			authed.GET("/profiles/info", api.ShowUserByIDHandler())
+			authed.GET("/collection", api.ShowCollectionHandler())
 		}
 	}
 	return router
