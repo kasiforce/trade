@@ -7,6 +7,7 @@ import (
 	"github.com/kasiforce/trade/repository/db/model"
 	"github.com/kasiforce/trade/types"
 	"gorm.io/gorm"
+	"time"
 )
 
 type Comment struct {
@@ -49,11 +50,6 @@ func (c *Comment) GetAllComments(req types.ShowCommentsReq) (r []*types.CommentI
 	fmt.Printf("Debug: r = %+v\n", r)
 
 	return
-}
-
-// CreateComment 创建评论
-func (c *Comment) CreateComment(comment model.Comment) error {
-	return c.DB.Create(&comment).Error
 }
 
 // DeleteComment 删除评论
@@ -104,4 +100,24 @@ func (c *Comment) GetReceivedComments(userID int) (r []types.ReceivedCommentInfo
 		Find(&r).Error
 
 	return
+}
+
+// CreateComment 创建评论
+func (c *Comment) CreateComment(req types.PostCommentReq) (resp interface{}, err error) {
+	newComment := model.Comment{
+		GoodsID:        req.GoodsID,
+		CommentatorID:  req.CommentatorID,
+		CommentContent: req.CommentContent,
+		CommentTime:    time.Now(),
+	}
+
+	result := c.DB.Create(&newComment)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	resp = types.PostCommentResp{
+		Message: "Comment posted successfully",
+	}
+	return resp, nil
 }

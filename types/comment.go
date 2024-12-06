@@ -58,3 +58,15 @@ type CommentListResp struct {
 	Total       int64       `json:"total"`
 	PageNum     int         `json:"pageNum"`
 }
+
+// PostCommentReq 表示发布评论的请求
+type PostCommentReq struct {
+	GoodsID        int    `json:"goodsID" binding:"required"`        // 商品ID
+	CommentatorID  int    `json:"commentatorID" binding:"required"`  // 评价者ID
+	CommentContent string `json:"commentContent" binding:"required"` // 评价内容
+}
+
+// PostCommentResp 表示发布评论的返回信息
+type PostCommentResp struct {
+	Message string `json:"message"` // 返回消息
+}

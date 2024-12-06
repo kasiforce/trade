@@ -62,7 +62,7 @@ func NewRouter() *gin.Engine {
 			//获取发布的评价
 			authed.GET("/profiles/comment/given", api.ShowCommentsByUserHandler())
 			//根据用户ID获取收到的评价
-			authed.GET("/profiles/comment/received",api.GetReceivedCommentsHandler())
+			authed.GET("/profiles/comment/received", api.GetReceivedCommentsHandler())
 		}
 	}
 	return router

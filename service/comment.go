@@ -38,23 +38,6 @@ func (s *CommentService) ShowAllComments(ctx context.Context, req types.ShowComm
 	return
 }
 
-//// AddComment 添加评论
-//func (s *CommentService) AddComment(ctx context.Context, req types.CreateCommentReq) (resp interface{}, err error) {
-//	comment := model.Comment{
-//		GoodsID:        int(req.GoodsID),
-//		CommentatorID:  int(req.CommentatorID),
-//		CommentContent: req.CommentContent,
-//		CommentTime:    time.Now(),
-//	}
-//
-//	err = dao.CreateComment(comment)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	return "Comment added successfully", nil
-//}
-
 // DeleteCommentByID 删除评论
 func (s *CommentService) DeleteCommentByID(ctx context.Context, commentID int) (resp interface{}, err error) {
 	err = dao.NewComment(ctx).DeleteComment(commentID)
@@ -85,6 +68,17 @@ func (s *CommentService) ShowCommentsByID(c *gin.Context, id int) (resp interfac
 func (s *CommentService) GetReceivedCommentsByUserID(ctx context.Context, userID int) (resp interface{}, err error) {
 	u := dao.NewComment(ctx)
 	resp, err = u.GetReceivedComments(userID)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return
+	}
+	return
+}
+
+// PostComment 发布评论
+func (s *CommentService) PostComment(ctx context.Context, req types.PostCommentReq) (resp interface{}, err error) {
+	u := dao.NewComment(ctx)
+	resp, err = u.CreateComment(req)
 	if err != nil {
 		util.LogrusObj.Error(err)
 		return
