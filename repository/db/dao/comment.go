@@ -24,7 +24,7 @@ func NewComment(ctx context.Context) *Comment {
 
 // GetAllComments 获取所有评论
 func (c *Comment) GetAllComments(req types.ShowCommentsReq) (r []*types.CommentInfo, total int64, err error) {
-	err = c.DB.Model(&model.Comment{}).Preload("User").Count(&total).Error
+	err = c.DB.Model(&model.Comment{}).Preload("User").Preload("Goods").Count(&total).Error
 	if err != nil {
 		return
 	}
@@ -61,7 +61,7 @@ func (c *Comment) DeleteComment(commentID int) error {
 
 // GetCommentsByUser 根据用户ID获取评论
 func (c *Comment) GetCommentsByUser(id int) (r []types.CommentInfoByID, err error) {
-	err = c.DB.Model(&model.Comment{}).Preload("User").Where("commentatorID = ?", id).Error
+	err = c.DB.Model(&model.Comment{}).Preload("User").Preload("Goods").Where("commentatorID = ?", id).Error
 	if err != nil {
 		return
 	}
