@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/kasiforce/trade/repository/db/model"
 	"github.com/kasiforce/trade/types"
 	"gorm.io/gorm"
@@ -28,16 +29,24 @@ func (c *Comment) GetAllComments(req types.ShowCommentsReq) (r []*types.CommentI
 	if err != nil {
 		return
 	}
+
 	err = c.DB.Model(&model.Comment{}).
 		Joins("As co left join users as u on u.userID = co.commentatorID ").
 		Joins("left join goods as g on g.goodsID = co.goodsID").
 		Offset((req.PageNum - 1) * req.PageSize).Limit(req.PageSize).
-		Select("co.commentID as commentID," +
-			"g.goodsName as goodsName," +
-			"u.userName as commentatorName," +
-			"co.commentContent as commentContent," +
-			"co.commentTime as commentTime").
+		Select("co.commentID as CommentID," +
+			"g.goodsName as GoodsName," +
+			"u.userName as CommentatorName," +
+			"co.commentContent as CommentContent," +
+			"co.commentTime as CommentTime").
 		Find(&r).Error
+
+	if err != nil {
+		return
+	}
+
+	// 打印 r 的值以进行调试
+	fmt.Printf("Debug: r = %+v\n", r)
 
 	return
 }
