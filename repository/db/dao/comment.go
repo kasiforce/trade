@@ -78,12 +78,12 @@ func (c *Comment) GetCommentsByUser(id int) (r []types.CommentInfoByID, err erro
 		Joins("As co left join users as u on u.userID = co.commentatorID ").
 		Joins("left join goods as g on g.goodsID = co.goodsID").
 		Where("co.commentatorID = ?", id).
-		Select("co.commentID as commentID," +
-			"g.goodsID as goodsID," +
-			"co.commentatorID as commentatorID," +
-			"u.userName as commentatorName," +
-			"co.commentContent as commentContent," +
-			"co.commentTime as commentTime").
+		Select("co.commentID as CommentID," +
+			"g.goodsID as GoodsID," +
+			"co.commentatorID as CommentatorID," +
+			"u.userName as CommentatorName," +
+			"co.commentContent as CommentContent," +
+			"co.commentTime as CommentTime").
 		Find(&r).Error
 
 	return
