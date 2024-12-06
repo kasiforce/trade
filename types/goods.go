@@ -5,8 +5,9 @@ import "time"
 type GoodsInfo struct {
 	GoodsID   int    `json:"id"`    // 商品ID
 	GoodsName string `json:"title"` // 商品名称
-	//UserID       int       `json:"userID"`      // 用户ID Price        float64 `json:"price"` // 价格
-	CategoryName string `json:"category"`
+	//UserID       int       `json:"userID"`      // 用户ID
+	Price        float64 `json:"price"` // 价格
+	CategoryName string  `json:"category"`
 	//CategoryID   int       `json:"categoryID"`  // 分类ID
 	Details      string    `json:"description"` // 商品详情
 	GoodsImages  string    `json:"imageUrl"`    // 商品图片
@@ -36,12 +37,11 @@ type GoodsInfo2 struct {
 }
 
 type GoodsInfo3 struct {
-	GoodsID      int     `json:"id"`     // 商品ID
-	GoodsName    string  `json:"title"`  // 商品名称
-	UserID       int     `json:"userID"` // 用户ID
-	Price        float64 `json:"price"`  // 价格
-	CategoryName string  `json:"category"`
-	//CategoryID   int       `json:"categoryID"`  // 分类ID
+	GoodsID      int       `json:"id"`     // 商品ID
+	GoodsName    string    `json:"title"`  // 商品名称
+	UserID       int       `json:"userID"` // 用户ID
+	Price        float64   `json:"price"`  // 价格
+	CategoryName string    `json:"category"`
 	Details      string    `json:"description"` // 商品详情
 	GoodsImages  string    `json:"imageUrl"`    // 商品图片
 	ShippingCost float64   `json:"shippingCost"`
@@ -55,6 +55,28 @@ type GoodsInfo3 struct {
 	Star         int       `json:"stars"`
 	View         int       `json:"views"`
 	IsSold       int       `json:"isSold"` // 是否已售：0 未售，1 已售
+}
+
+type GoodsInfo4 struct {
+	GoodsID      int       `json:"id"`     // 商品ID
+	GoodsName    string    `json:"title"`  // 商品名称
+	UserID       int       `json:"userID"` // 用户ID
+	Price        float64   `json:"price"`  // 价格
+	CategoryName string    `json:"category"`
+	Details      string    `json:"description"` // 商品详情
+	GoodsImages  string    `json:"imageUrl"`    // 商品图片
+	ShippingCost float64   `json:"shippingCost"`
+	UserName     string    `json:"userName"`
+	Province     string    `json:"province"`
+	City         string    `json:"city"`
+	District     string    `json:"area"`
+	Address      string    `json:"detailArea"`
+	CreatedTime  time.Time `json:"postTime"` // 创建时间
+	PayMethod    string    `json:"deliveryMethod"`
+	Star         int       `json:"stars"`
+	View         int       `json:"views"`
+	IsSold       int       `json:"isSold"` // 是否已售：0 未售，1 已售
+	IsStarred    bool      `json:"isStarred"`
 }
 
 type GoodsListResp struct {
@@ -85,6 +107,28 @@ type ShowAllGoodsReq struct {
 	SearchQuery string `form:"searchQuery" json:"searchQuery"` // 模糊搜索条件
 	PageNum     int    `form:"pageNum" json:"pageNum"`         // 当前页码
 	PageSize    int    `form:"pageSize" json:"pageSize"`       // 每页记录数
+}
+
+type GoodsDetailResp struct {
+	GoodsID      int       `json:"id"`     // 商品ID
+	GoodsName    string    `json:"title"`  // 商品名称
+	UserID       int       `json:"userID"` // 用户ID
+	Price        float64   `json:"price"`  // 价格
+	CategoryName string    `json:"category"`
+	Details      string    `json:"description"` // 商品详情
+	GoodsImages  string    `json:"imageUrl"`    // 商品图片
+	ShippingCost float64   `json:"shippingCost"`
+	UserName     string    `json:"userName"`
+	Province     string    `json:"province"`
+	City         string    `json:"city"`
+	District     string    `json:"area"`
+	Address      string    `json:"detailArea"`
+	CreatedTime  time.Time `json:"postTime"` // 创建时间
+	PayMethod    string    `json:"deliveryMethod"`
+	Star         int       `json:"stars"`
+	View         int       `json:"views"`
+	IsSold       int       `json:"isSold"` // 是否已售：0 未售，1 已售
+	IsStarred    bool      `json:"isStarred"`
 }
 
 type UpdateGoodsReq struct {
