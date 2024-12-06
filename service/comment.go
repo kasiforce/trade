@@ -69,11 +69,10 @@ func (s *CommentService) DeleteCommentByID(ctx context.Context, commentID int) (
 func (s *CommentService) ShowCommentsByID(c *gin.Context) (resp interface{}, err error) {
 	id := c.GetInt("id")
 	u := dao.NewComment(c)
-	comments, err := u.GetCommentsByUser(id)
+	resp, err = u.GetCommentsByUser(id)
 	if err != nil {
 		util.LogrusObj.Error(err)
 		return
 	}
-	resp = &comments
 	return
 }
