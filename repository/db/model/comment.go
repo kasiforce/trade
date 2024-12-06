@@ -10,9 +10,9 @@ type Comment struct {
 	CommentatorID  int       `gorm:"not null;column:commentatorID"`
 	CommentContent string    `gorm:"type:text;not null;column:commentContent"`
 	CommentTime    time.Time `gorm:"type:datetime;not null;column:commentTime"`
-	Commentator    User      `gorm:"foreignKey:CommentatorID"`
+	Commentator    User      `gorm:"foreignKey:CommentatorID;references:UserID"`
 	GoodsName      string    `gorm:"not null;column:goodsName"`
-	Goods          Goods     `gorm:"foreignKey:GoodsID"`
+	Goods          Goods     `gorm:"foreignKey:GoodsID;references:GoodsID"`
 }
 
 func (com Comment) TableName() string {
