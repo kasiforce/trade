@@ -50,6 +50,9 @@ func NewRouter() *gin.Engine {
 		//删除评论
 		v1.DELETE("/admin/comment/:id", api.DeleteCommentHandler())
 
+		//查询订单
+		v1.GET("/admin/order", api.GetAllOrdersHandler())
+
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())
 		{
@@ -61,6 +64,8 @@ func NewRouter() *gin.Engine {
 			authed.GET("/profiles/info", api.ShowUserByIDHandler())
 			//获取发布的评价
 			authed.GET("/profiles/comment/given", api.ShowCommentsByUserHandler())
+			//根据用户ID获取收到的评价
+			authed.GET("/profiles/comment/received", api.GetReceivedCommentsHandler())
 		}
 	}
 	return router
