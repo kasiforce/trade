@@ -50,6 +50,7 @@ func (s *GoodsService) ShowAllGoods(ctx context.Context, req types.ShowAllGoodsR
 			Star:         goodsInfo.Star,
 			View:         goodsInfo.View,
 			PayMethod:    strconv.Itoa(goodsInfo.PayMethod),
+			ShippingCost: goodsInfo.ShippingCost,
 		})
 	}
 	// 返回分页后的结果
@@ -89,6 +90,42 @@ func (s *GoodsService) IsSoldGoods(ctx context.Context, req types.IsSoldGoodsRes
 	// 返回分页后的结果
 	var response types.GoodsListResp2
 	response.Data = respList
+	return respList, nil
+}
+
+// 当前用户获取发布的所有商品
+func (s *GoodsService) ShowPublishedGoods(ctx context.Context, req types.IsSoldGoodsResp) (resp interface{}, err error) {
+	goods := dao.NewGoods(ctx)
+	goodsList, err := goods.UserFindAll(req)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return nil, err
+	}
+
+	// 创建一个列表来存放最终的返回数据
+	var respList []types.GoodsInfo3
+	for _, goodsInfo := range goodsList {
+		respList = append(respList, types.GoodsInfo3{
+			GoodsID:      goodsInfo.GoodsID,
+			GoodsName:    goodsInfo.GoodsName,
+			Price:        goodsInfo.Price,
+			CategoryName: goodsInfo.CategoryName,
+			Details:      goodsInfo.Details,
+			IsSold:       goodsInfo.IsSold,
+			GoodsImages:  goodsInfo.GoodsImages,
+			CreatedTime:  goodsInfo.CreatedTime,
+			UserName:     goodsInfo.UserName,
+			Province:     goodsInfo.Province,
+			City:         goodsInfo.City,
+			District:     goodsInfo.District,
+			Star:         goodsInfo.Star,
+			View:         goodsInfo.View,
+			PayMethod:    strconv.Itoa(goodsInfo.PayMethod),
+			ShippingCost: goodsInfo.ShippingCost,
+			UserID:       goodsInfo.UserID,
+		})
+	}
+	// 返回分页后的结果
 	return respList, nil
 }
 

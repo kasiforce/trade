@@ -15,15 +15,16 @@ type Goods struct {
 	//User         User      `gorm:"foreignKey:UserID;references:UserID"`
 	//Category     Category  `gorm:"foreignKey:CategoryID;references:CategoryID"`
 	//Address      Address   `gorm:"foreignKey:AddressID;references:AddressID"`
-	Province     string `gorm:"size:30;not null;column:province"`
-	City         string `gorm:"size:30;not null;column:city"`
-	District     string `gorm:"size:30;not null;column:districts"`
-	Address      string `gorm:"size:30;not null;column:address"`
-	CategoryName string `gorm:"not null;column:categoryName"`
-	UserName     string `gorm:"type:varchar(30);unique;not null;column:userName"`
-	Star         int    `gorm:"foreignKey:GoodsID;references:GoodsID"`
-	View         int    `gorm:"-"`
-	PayMethod    int    `gorm:"type:tinyint;not null;default:0;column:payMethod"`
+	Province     string  `gorm:"size:30;not null;column:province"`
+	City         string  `gorm:"size:30;not null;column:city"`
+	District     string  `gorm:"size:30;not null;column:districts"`
+	Address      string  `gorm:"size:30;not null;column:address"`
+	CategoryName string  `gorm:"not null;column:categoryName"`
+	UserName     string  `gorm:"type:varchar(30);unique;not null;column:userName"`
+	Star         int     `gorm:"foreignKey:GoodsID;references:GoodsID"`
+	View         int     `gorm:"-"`
+	PayMethod    int     `gorm:"type:tinyint;not null;default:0;column:payMethod"`
+	ShippingCost float64 `gorm:"type:decimal(10,2);not null;default:0;column:shippingCost"`
 }
 
 func (Goods) TableName() string {

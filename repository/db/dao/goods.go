@@ -29,8 +29,9 @@ func (g *Goods) AdminFindAll(req types.ShowAllGoodsReq) (goods []model.Goods, er
 		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, 
             category.categoryName, goods.details, goods.isSold, goods.goodsImages, 
             goods.createdTime, users.userName, address.province, address.city, address.districts,
-            COALESCE(COUNT(collection.goodsID), 0) AS collection,
-            GROUP_CONCAT(DISTINCT trade_records.payMethod) AS payMethod`).
+            COALESCE(COUNT(collection.goodsID), 0) AS star,
+            GROUP_CONCAT(DISTINCT trade_records.payMethod) AS payMethod,
+            (trade_records.turnoverAmount - goods.price) AS shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
 		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
@@ -80,6 +81,31 @@ func (g *Goods) IsSoldGoods(req types.IsSoldGoodsResp) (goods []model.Goods, err
 
 	// 执行查询并返回结果
 	err = query.Find(&goods).Error
+	return
+}
+
+// 用户查询自己发布的所有商品
+func (g *Goods) UserFindAll(req types.IsSoldGoodsResp) (goods []model.Goods, err error) {
+	db := g.DB
+	// 关联查询 goods, users, address 表
+	query := db.Table("goods").
+		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, 
+            category.categoryName, goods.details, goods.isSold, goods.goodsImages, 
+            goods.createdTime, users.userName, address.province, address.city, address.districts,
+            COALESCE(COUNT(collection.goodsID), 0) AS star,
+            GROUP_CONCAT(DISTINCT trade_records.payMethod) AS payMethod,
+            (trade_records.turnoverAmount - goods.price) AS shippingCost`).
+		Joins("LEFT JOIN users ON goods.userID = users.userID").
+		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
+		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
+		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
+		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
+		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts")
+
+	if req.UserID != 0 {
+		query = query.Where("goods.userID = ?", req.UserID)
+	}
+	err = query.Scan(&goods).Error
 	return
 }
 
