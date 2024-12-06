@@ -164,6 +164,10 @@ func (s *AdminService) AdminLogin(c *gin.Context, req types.AdminLoginReq) (resp
 		"adminID":   admin.AdminID,
 		"adminName": admin.AdminName,
 		"password":  admin.Password,
+		"tel":       admin.Tel,
+		"mail":      admin.Mail,
+		"gender":    admin.Gender,
+		"age":       admin.Age,
 		"token":     token,
 	}
 	return
