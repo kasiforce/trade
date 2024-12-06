@@ -14,7 +14,7 @@ func AuthToken() gin.HandlerFunc {
 		code := e.Success
 		token := c.GetHeader("Authorization")
 		if token == "" {
-			code = e.Error
+			code = e.TokenExpired
 			c.JSON(200, gin.H{
 				"code": code,
 				"msg":  e.GetMsg(code),
@@ -25,7 +25,7 @@ func AuthToken() gin.HandlerFunc {
 		}
 		parts := strings.SplitN(token, " ", 2)
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			code = e.Error
+			code = e.TokenExpired
 			c.JSON(200, gin.H{
 				"code": code,
 				"msg":  e.GetMsg(code),
@@ -34,16 +34,18 @@ func AuthToken() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		newToken, err := util.ParseToken(c, parts[1])
+		err := util.ParseToken(c, parts[1])
 		if err != nil {
-			code = e.Error
+			code = e.TokenExpired
 			c.JSON(200, gin.H{
 				"code": code,
 				"msg":  e.GetMsg(code),
 				"data": err.Error(),
 			})
+			c.Abort()
+			return
 		}
-		SetToken(c, newToken)
+		//SetToken(c, newToken)
 		c.Next()
 	}
 }
