@@ -131,26 +131,41 @@ func (s *GoodsService) ShowPublishedGoods(ctx context.Context, req types.IsSoldG
 
 /*
 // ShowGoodsDetail 获取商品详情
-func (s *GoodsService) ShowGoodsDetail(ctx context.Context, id int) (resp interface{}, err error) {
+func (s *GoodsService) ShowGoodsDetail(ctx context.Context, req types.IsSoldGoodsResp) (resp interface{}, err error) {
 	goods := dao.NewGoods(ctx)
-	goodsInfo, err := goods.FindByID(id)
+	goodsList, err := goods.FindByID(req)
 	if err != nil {
 		util.LogrusObj.Error(err)
-		return
+		return nil, err
 	}
-	resp = types.GoodsDetailResp{
-		GoodsID:     goodsInfo.GoodsID,
-		Name:        goodsInfo.Name,
-		Category:    goodsInfo.Category,
-		Price:       goodsInfo.Price,
-		Stock:       goodsInfo.Stock,
-		IsSold:      goodsInfo.IsSold,
-		Picture:     goodsInfo.Picture,
-		CreatedAt:   goodsInfo.CreatedAt,
-		Description: goodsInfo.Description,
+
+	// 创建一个列表来存放最终的返回数据
+	var respList []types.GoodsInfo4
+	for _, goodsInfo := range goodsList {
+		respList = append(respList, types.GoodsInfo4{
+			GoodsID:      goodsInfo.GoodsID,
+			GoodsName:    goodsInfo.GoodsName,
+			Price:        goodsInfo.Price,
+			CategoryName: goodsInfo.CategoryName,
+			Details:      goodsInfo.Details,
+			IsSold:       goodsInfo.IsSold,
+			GoodsImages:  goodsInfo.GoodsImages,
+			CreatedTime:  goodsInfo.CreatedTime,
+			UserName:     goodsInfo.UserName,
+			Province:     goodsInfo.Province,
+			City:         goodsInfo.City,
+			District:     goodsInfo.District,
+			Star:         goodsInfo.Star,
+			View:         goodsInfo.View,
+			PayMethod:    strconv.Itoa(goodsInfo.PayMethod),
+			ShippingCost: goodsInfo.ShippingCost,
+			UserID:       goodsInfo.UserID,
+			IsStarred:    goodsInfo.IsStarred,
+		})
 	}
-	return
-}
+	// 返回分页后的结果
+	return respList, nil
+}*/
 
 /*
 // FilterGoods 按条件筛选商品

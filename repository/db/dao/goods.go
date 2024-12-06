@@ -59,9 +59,28 @@ func (g *Goods) FindAll(req types.ShowAllGoodsReq) (goods []model.Goods, err err
 	return
 }
 
-// FindByID 获取商品详情
-func (g *Goods) FindByID(id int) (good *model.Goods, err error) {
-	err = g.DB.Model(&model.Goods{}).Where("goodsID = ?", id).First(&good).Error
+/*
+// 获取商品详情
+func (g *Goods) FindByID(req types.IsSoldGoodsResp) (good []model.Goods, err error) {
+	db := g.DB
+	// 关联查询 goods, users, address 表
+	query := db.Table("goods").
+		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price,
+            category.categoryName, goods.details, goods.isSold, goods.goodsImages,
+            goods.createdTime, users.userName, address.province, address.city, address.districts,
+            COALESCE(COUNT(collection.goodsID), 0) AS star,
+            GROUP_CONCAT(DISTINCT trade_records.payMethod) AS payMethod,
+            (trade_records.turnoverAmount - goods.price) AS shippingCost`).
+		Joins("LEFT JOIN users ON goods.userID = users.userID").
+		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
+		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
+		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
+		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
+		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts")
+	if req.UserID != 0 {
+		query = query.Where("goods.userID = ?", req.UserID)
+	}
+	err = query.Scan(&goods).Error
 	return
 }
 
