@@ -88,3 +88,20 @@ func (c *Comment) GetCommentsByUser(id int) (r []types.CommentInfoByID, err erro
 
 	return
 }
+
+// GetReceivedComments 根据用户ID获取收到的评价
+func (c *Comment) GetReceivedComments(userID int) (r []types.ReceivedCommentInfo, err error) {
+	err = c.DB.Model(&model.Comment{}).
+		Joins("As co left join users as u on u.userID = co.commentatorID").
+		Joins("left join goods as g on g.goodsID = co.goodsID").
+		Where("co.goodsID IN (?)", c.DB.Model(&model.Goods{}).Select("goodsID").Where("userID = ?", userID)).
+		Select("co.commentID as CommentID," +
+			"g.goodsID as GoodsID," +
+			"co.commentatorID as CommentatorID," +
+			"u.userName as CommentatorName," +
+			"co.commentContent as CommentContent," +
+			"co.commentTime as CommentTime").
+		Find(&r).Error
+
+	return
+}

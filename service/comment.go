@@ -80,3 +80,14 @@ func (s *CommentService) ShowCommentsByID(c *gin.Context, id int) (resp interfac
 	}
 	return
 }
+
+// GetReceivedCommentsByUserID 根据用户ID获取收到的评价
+func (s *CommentService) GetReceivedCommentsByUserID(ctx context.Context, userID int) (resp interface{}, err error) {
+	u := dao.NewComment(ctx)
+	resp, err = u.GetReceivedComments(userID)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return
+	}
+	return
+}

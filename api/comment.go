@@ -96,3 +96,27 @@ func ShowCommentsByUserHandler() gin.HandlerFunc {
 		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
 	}
 }
+
+// GetReceivedCommentsHandler 获取别人给该用户的评价
+func GetReceivedCommentsHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idStr := c.Query("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+			return
+		}
+
+		ctx := c.Request.Context()
+		s := service.GetCommentService()
+		resp, err := s.GetReceivedCommentsByUserID(ctx, id)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			return
+		}
+
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}

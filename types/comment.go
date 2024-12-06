@@ -21,6 +21,16 @@ type CommentInfoByID struct {
 	CommentTime     time.Time `json:"commentTime,omitempty"` // 评价时间
 }
 
+// ReceivedCommentInfo 表示收到的评价信息
+type ReceivedCommentInfo struct {
+	CommentID       int       `json:"commentID"`             // 评价ID
+	GoodsID         int       `json:"goodsID"`               // 商品ID
+	CommentatorID   int       `json:"commentatorID"`         // 评价者ID
+	CommentatorName string    `json:"commentatorName"`       // 评价者名
+	CommentContent  string    `json:"commentContent"`        // 评价内容
+	CommentTime     time.Time `json:"commentTime,omitempty"` // 评价时间
+}
+
 // ShowCommentsReq 表示查询评论列表的请求
 type ShowCommentsReq struct {
 	SearchQuery string `form:"searchQuery" json:"searchQuery"`
