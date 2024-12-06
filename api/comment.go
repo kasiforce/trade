@@ -77,8 +77,17 @@ func DeleteCommentHandler() gin.HandlerFunc {
 // ShowCommentsByUserHandler 根据用户ID显示其发布的评论
 func ShowCommentsByUserHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// 从请求参数中获取 id
+		idStr := c.Query("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+			return
+		}
+
 		s := service.GetCommentService()
-		resp, err := s.ShowCommentsByID(c)
+		resp, err := s.ShowCommentsByID(c, id)
 		if err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))

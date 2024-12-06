@@ -66,8 +66,7 @@ func (s *CommentService) DeleteCommentByID(ctx context.Context, commentID int) (
 }
 
 // ShowCommentsByID 根据用户ID获取评论
-func (s *CommentService) ShowCommentsByID(c *gin.Context) (resp interface{}, err error) {
-	id := c.GetInt("id")
+func (s *CommentService) ShowCommentsByID(c *gin.Context, id int) (resp interface{}, err error) {
 	u := dao.NewComment(c)
 	resp, err = u.GetCommentsByUser(id)
 	if err != nil {
