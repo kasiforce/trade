@@ -32,6 +32,16 @@ type UpdateAdminReq struct {
 	Age       int    `json:"age"`       // 年龄
 }
 
+type AddAdminReq struct {
+	AdminID   int64  `json:"adminID"`
+	AdminName string `json:"adminName"`
+	Age       int64  `json:"age,omitempty"`
+	Gender    int64  `json:"gender,omitempty"`
+	Mail      string `json:"mail,omitempty"`
+	Password  string `json:"password"`
+	Tel       string `json:"tel,omitempty"`
+}
+
 type AdminLoginReq struct {
 	Mail     string `form:"mail" json:"mail"`         // 邮箱
 	Password string `form:"password" json:"password"` // 密码

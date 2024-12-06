@@ -11,5 +11,5 @@ type Admin struct {
 }
 
 func (Admin) TableName() string {
-	return "admin"
+	return "admins"
 }

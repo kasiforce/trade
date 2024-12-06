@@ -36,6 +36,20 @@ func NewRouter() *gin.Engine {
 		v1.PUT("/profiles/info/:id", api.UpdateHandler())
 		v1.POST("/login", api.UserLoginHandler())
 
+		//管理员的增删改查
+		v1.GET("/admin/adminInfo", api.ShowAllAdminHandler())
+		v1.PUT("/admin/adminInfo/:id", api.UpdateAdminHandler())
+		v1.POST("/admin/adminInfo", api.AddAdminHandler())
+		v1.DELETE("/admin/adminInfo/:id", api.DeleteAdminHandler())
+
+		//管理员登录
+		v1.POST("/admin/login", api.AdminLoginHandler())
+
+		//查询所有评论
+		v1.GET("/admin/comment", api.ShowAllCommentsHandler())
+		//删除评论
+		v1.DELETE("/admin/comment/:id", api.DeleteCommentHandler())
+
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())
 		{
@@ -46,6 +60,10 @@ func NewRouter() *gin.Engine {
 			authed.GET("/profiles/introduction", api.ShowIntroductionHandler())
 			authed.GET("/profiles/info", api.ShowUserByIDHandler())
 			authed.GET("/collection", api.ShowCollectionHandler())
+			//获取发布的评价
+			authed.GET("/profiles/comment/given", api.ShowCommentsByUserHandler())
+			//根据用户ID获取收到的评价
+			authed.GET("/profiles/comment/received", api.GetReceivedCommentsHandler())
 		}
 	}
 	return router

@@ -10,7 +10,7 @@ type RefundRecord struct {
 	RefundShippedTime time.Time   `gorm:"type:datetime;column:refundShippedTime"`
 	RefundArrivalTime time.Time   `gorm:"type:datetime;column:refundArrivalTime"`
 	TrackingNumber    string      `gorm:"type:varchar(100);column:trackingNumber"`
-	Trade             TradeRecord `gorm:"foreignKey:TradeID;references:TradeID"`
+	Trade             TradeRecords `gorm:"foreignKey:TradeID;references:TradeID"`
 }
 
 func (RefundRecord) TableName() string {
