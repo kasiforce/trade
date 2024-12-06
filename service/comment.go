@@ -62,7 +62,12 @@ func (s *CommentService) DeleteCommentByID(ctx context.Context, commentID int) (
 		util.LogrusObj.Error(err)
 		return
 	}
-	return "Comment deleted successfully", nil
+
+	// 返回一个对象类型的响应
+	resp = map[string]string{
+		"message": "Comment deleted successfully",
+	}
+	return resp, nil
 }
 
 // ShowCommentsByID 根据用户ID获取评论
