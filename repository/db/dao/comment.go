@@ -60,7 +60,7 @@ func (c *Comment) DeleteComment(commentID int) error {
 }
 
 // GetCommentsByUser 根据用户ID获取评论
-func (c *Comment) GetCommentsByUser(id int) (r []*types.CommentInfo, err error) {
+func (c *Comment) GetCommentsByUser(id int) (r []types.CommentInfoByID, err error) {
 	err = c.DB.Model(&model.Comment{}).Preload("User").Where("commentatorID = ?", id).Error
 	if err != nil {
 		return
@@ -70,7 +70,8 @@ func (c *Comment) GetCommentsByUser(id int) (r []*types.CommentInfo, err error) 
 		Joins("left join goods as g on g.goodsID = co.goodsID").
 		Where("co.commentatorID = ?", id).
 		Select("co.commentID as commentID," +
-			"g.goodsName as goodsName," +
+			"g.goodsID as goodsID," +
+			"co.commentatorID as commentatorID" +
 			"u.userName as commentatorName," +
 			"co.commentContent as commentContent," +
 			"co.commentTime as commentTime").

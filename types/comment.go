@@ -2,21 +2,24 @@ package types
 
 import "time"
 
-// CommentInfo 表示评论信息
+// CommentInfo 表示评论信息(查询所有评论的返回结构)
 type CommentInfo struct {
 	CommentID       int       `json:"commentID"`             // 评价ID
-	GoodsName       int       `json:"goodsName"`             // 商品ID
+	GoodsName       string    `json:"goodsName"`             // 商品ID
 	CommentatorName string    `json:"commentatorName"`       // 评价者名
 	CommentContent  string    `json:"commentContent"`        // 评价内容
 	CommentTime     time.Time `json:"commentTime,omitempty"` // 评价时间
 }
 
-// CommentListResp 表示评论列表的响应
-//type CommentListResp struct {
-//	Comments []CommentInfo `json:"comments"` // 评论列表
-//	Total    int           `json:"total"`    // 总记录数
-//	PageNum  int           `json:"pageNum"`  // 当前页码
-//}
+// CommentInfoByID 表示评论信息（获取发布的评价的d返回结构）
+type CommentInfoByID struct {
+	CommentID       int       `json:"commentID"` // 评价ID
+	GoodsID         int       `json:"goodsID"`   // 商品ID
+	CommentatorID   int       `json:"commentatorID"`
+	CommentatorName string    `json:"commentatorName"`       // 评价者名
+	CommentContent  string    `json:"commentContent"`        // 评价内容
+	CommentTime     time.Time `json:"commentTime,omitempty"` // 评价时间
+}
 
 // ShowCommentsReq 表示查询评论列表的请求
 type ShowCommentsReq struct {
