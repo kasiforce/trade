@@ -3,14 +3,8 @@ package service
 import (
 	"context"
 	"errors"
-	"sync"
-
-	"github.com/cghdjvjg/trade/pkg/ctl"
-	"github.com/cghdjvjg/trade/pkg/util"
-	"github.com/cghdjvjg/trade/repository/db/dao"
-	"github.com/cghdjvjg/trade/types"
 	"github.com/gin-gonic/gin"
-	"github.com/kasiforce/trade/middleware"
+	"github.com/kasiforce/trade/pkg/ctl"
 	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/repository/db/dao"
 	"github.com/kasiforce/trade/types"
@@ -96,9 +90,8 @@ func (s *AdminService) UpdateAdmin(ctx context.Context, req types.AdminInfo) (re
 	a := dao.NewAdmin(ctx)
 	modelAdmin := map[string]interface{}{
 		"adminName": req.AdminName,
-		"password":  req.Password,
-		"email":     req.Email,
-		"role":      req.Role,
+		"password":  req.Passwords,
+		"email":     req.Mail,
 		"passwords": req.Passwords,
 		"mail":      req.Mail,
 	}
