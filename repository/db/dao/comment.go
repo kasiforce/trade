@@ -71,7 +71,7 @@ func (c *Comment) GetCommentsByUser(id int) (r []types.CommentInfoByID, err erro
 		Where("co.commentatorID = ?", id).
 		Select("co.commentID as commentID," +
 			"g.goodsID as goodsID," +
-			"co.commentatorID as commentatorID" +
+			"co.commentatorID as commentatorID," +
 			"u.userName as commentatorName," +
 			"co.commentContent as commentContent," +
 			"co.commentTime as commentTime").
