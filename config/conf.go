@@ -11,8 +11,9 @@ var Config *Conf
 type Conf struct {
 	System *System           `yaml:"system"`
 	MySql  map[string]*MySql `yaml:"mysql"`
-	//Email     *Email            `yaml:"email"`
-	//Redis     *Redis            `yaml:"redis"`
+	Oss    *Oss              `yaml:"oss"`
+	Email  *Email            `yaml:"email"`
+	Redis  *Redis            `yaml:"redis"`
 	//Cache     *Cache            `yaml:"cache"`
 	//PhotoPath *LocalPhotoPath   `yaml:"photoPath"`
 }
@@ -50,6 +51,15 @@ type Redis struct {
 	RedisPassword string `yaml:"redisPwd"`
 	RedisDbName   int    `yaml:"redisDbName"`
 	RedisNetwork  string `yaml:"redisNetwork"`
+}
+
+type Oss struct {
+	BucketName  string `yaml:"bucketName"`
+	AccessKey   string `yaml:"accessKey"`
+	SecretKey   string `yaml:"SecretKey"`
+	Endpoint    string `yaml:"endPoint"`
+	EndpointOut string `yaml:"endpointOut"`
+	QiNiuServer string `yaml:"qiNiuServer"`
 }
 
 type LocalPhotoPath struct {
