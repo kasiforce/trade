@@ -72,7 +72,10 @@ func (s *AdminService) AddAdmin(ctx context.Context, req types.AdminInfo) (resp 
 	modelAdmin := map[string]interface{}{
 		"adminName": req.AdminName,
 		"passwords": req.Passwords,
+		"tel":       req.Tel,
 		"mail":      req.Mail,
+		"gender":    req.Gender,
+		"age":       req.Age,
 	}
 	err = a.CreateAdmin(modelAdmin)
 	if err != nil {
@@ -95,6 +98,9 @@ func (s *AdminService) UpdateAdmin(ctx context.Context, req types.AdminInfo) (re
 		"adminName": req.AdminName,
 		"passwords": req.Passwords,
 		"mail":      req.Mail,
+		"tel":       req.Tel,
+		"gender":    req.Gender,
+		"age":       req.Age,
 	}
 	for key, value := range modelAdmin {
 		if value == "" {
