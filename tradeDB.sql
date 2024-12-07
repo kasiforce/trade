@@ -98,7 +98,7 @@ CREATE TABLE refund_records (
 ); 
 
 -- 管理员
-CREATE TABLE admin (
+CREATE TABLE admins (
     adminID INT NOT NULL AUTO_INCREMENT,
     passwords VARCHAR(30) NOT NULL,
     adminName varchar(30) not null unique,
