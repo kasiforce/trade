@@ -1,12 +1,13 @@
 package routes
 
 import (
+	"net/http"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/kasiforce/trade/api"
 	"github.com/kasiforce/trade/middleware"
-	"net/http"
 )
 
 func NewRouter() *gin.Engine {

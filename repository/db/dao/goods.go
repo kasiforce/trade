@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+
 	"github.com/kasiforce/trade/repository/db/model"
 	"github.com/kasiforce/trade/types"
 	"gorm.io/gorm"
@@ -59,7 +60,6 @@ func (g *Goods) FindAll(req types.ShowAllGoodsReq) (goods []model.Goods, err err
 	return
 }
 
-/*
 // 获取商品详情
 func (g *Goods) FindByID(id int) (goods []model.Goods, err error) {
 	db := g.DB

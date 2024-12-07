@@ -1,13 +1,14 @@
 package api
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kasiforce/trade/pkg/ctl"
 	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/service"
 	"github.com/kasiforce/trade/types"
-	"net/http"
-	"strconv"
 )
 
 // AdminShowAllGoodsHandler 获取所有商品（管理员端）
@@ -90,25 +91,6 @@ func PublishedGoodsHandler() gin.HandlerFunc {
 }
 
 /*
-	func ShowGoodsDetailHandler() gin.HandlerFunc {
-		return func(c *gin.Context) {
-			idStr := c.Param("id")
-			id, err := strconv.Atoi(idStr)
-			if err != nil {
-				util.LogrusObj.Infoln("Invalid product ID:", err)
-				c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
-				return
-			}
-			s := service.GetGoodsService()
-			resp, err := s.ShowGoodsDetail(c, id)
-			if err != nil {
-				util.LogrusObj.Infoln("Error occurred:", err)
-				c.JSON(http.StatusOK, ErrorResponse(c, err))
-				return
-			}
-			c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
-		}
-	}
 func ShowGoodsDetailHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idStr := c.Param("id")
