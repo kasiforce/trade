@@ -14,7 +14,7 @@ type AdminInfo struct {
 func GetAdminID(ctx context.Context) (*AdminInfo, error) {
 	u, ok := FromAdminContext(ctx)
 	if !ok {
-		return nil, errors.New("获取用户信息错误")
+		return nil, errors.New("获取管理员信息错误")
 	}
 	return u, nil
 }

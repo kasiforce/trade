@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/kasiforce/trade/middleware"
 	"github.com/kasiforce/trade/pkg/ctl"
 	"github.com/kasiforce/trade/pkg/util"
+	"github.com/kasiforce/trade/repository/cache"
 	"github.com/kasiforce/trade/repository/db/dao"
 	"github.com/kasiforce/trade/types"
 	"sync"
+	"time"
 )
 
 var userServ *UserService
@@ -252,6 +253,91 @@ func (s *UserService) UserLogin(c *gin.Context, req types.UserLoginReq) (resp in
 		util.LogrusObj.Error(err)
 		return
 	}
-	middleware.SetToken(c, token)
+	resp = types.UserWithToken{
+		UserID:     user.UserID,
+		UserName:   user.UserName,
+		Password:   user.Passwords,
+		SchoolName: user.School.SchoolName,
+		Picture:    user.Picture,
+		Tel:        user.Tel,
+		Mail:       user.Mail,
+		Gender:     user.Gender,
+		Status:     user.UserStatus,
+		Token:      token,
+	}
+	//middleware.SetToken(c, token)
+	return
+}
+
+func (s *UserService) SendEmailCode(ctx context.Context, req *types.MailCodeReq) (resp interface{}, err error) {
+	code := util.GenerateEmailCode()
+	mailText := "Your registration code is: " + code + "\n" + "The code is valid for 10 minutes."
+	sender := util.NewEmailSender()
+	if err = sender.Send(mailText, req.Mail, "Your Registration Code"); err != nil {
+		util.LogrusObj.Error(err)
+		return
+	}
+	if err = cache.RedisClient.Set(ctx, req.Mail, code, 10*time.Minute).Err(); err != nil {
+		util.LogrusObj.Error(err)
+		return
+	}
+	return
+}
+
+func (s *UserService) UserRegister(ctx context.Context, req *types.UserRegisterReq) (resp interface{}, err error) {
+	if req.Mail == "" || req.Password == "" || req.Code == "" || req.SchoolName == "" {
+		err = errors.New("参数不能为空")
+		return
+	}
+	u := dao.NewUser(ctx)
+	_, err = u.CheckMail(req.Mail)
+	if err == nil {
+		err = errors.New("邮箱已存在")
+		return
+	}
+	code, err := cache.RedisClient.Get(ctx, req.Mail).Result()
+	if err != nil {
+		return
+	}
+	if code != req.Code {
+		err = errors.New("验证码错误")
+		return
+	}
+	school := dao.NewSchool(ctx)
+	id, err := school.FindSchoolID(req.SchoolName)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return
+	}
+	name := util.GenerateName()
+	modelUser := map[string]interface{}{
+		"userName":  name,
+		"mail":      req.Mail,
+		"passwords": req.Password,
+		"schoolID":  id,
+	}
+	err = u.CreateUser(modelUser)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return
+	}
+	return
+}
+
+func (s *UserService) PwdUpdate(ctx context.Context, req *types.PwdUpdateReq) (resp interface{}, err error) {
+	u := dao.NewUser(ctx)
+	code, err := cache.RedisClient.Get(ctx, req.Mail).Result()
+	if err != nil {
+		return
+	}
+	if code != req.Code {
+		err = errors.New("验证码错误")
+		return
+	}
+	err = u.UpdatePwd(req.Mail, req.Password)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return
+	}
 	return
 }

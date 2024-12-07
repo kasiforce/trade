@@ -1,12 +1,13 @@
 package routes
 
 import (
+	"net/http"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/kasiforce/trade/api"
 	"github.com/kasiforce/trade/middleware"
-	"net/http"
 )
 
 func NewRouter() *gin.Engine {
@@ -35,7 +36,8 @@ func NewRouter() *gin.Engine {
 
 		v1.PUT("/profiles/info/:id", api.UpdateHandler())
 		v1.POST("/login", api.UserLoginHandler())
-
+		v1.GET("/code", api.SendEmailCodeHandler())
+		v1.POST("/register", api.UserRegisterHandler())
 		//管理员的增删改查
 		v1.GET("/admin/adminInfo", api.ShowAllAdminHandler())
 		v1.PUT("/admin/adminInfo/:id", api.UpdateAdminHandler())
@@ -44,6 +46,15 @@ func NewRouter() *gin.Engine {
 
 		//管理员登录
 		v1.POST("/admin/login", api.AdminLoginHandler())
+		//管理员查询所有商品
+		v1.GET("/admin/product", api.AdminShowAllGoodsHandler())
+
+		//删除商品
+		v1.DELETE("/admin/product/:id", api.DeleteGoodsHandler())
+		//获取商品详情
+		//v1.GET("/detail", api.ShowGoodsDetailHandler())
+		//退货信息
+		v1.GET("/admin/afterSale", api.ShowAllrefundHandler())
 
 		//查询所有评论
 		v1.GET("/admin/comment", api.ShowAllCommentsHandler())
@@ -66,6 +77,11 @@ func NewRouter() *gin.Engine {
 			authed.GET("/profiles/comment/given", api.ShowCommentsByUserHandler())
 			//根据用户ID获取收到的评价
 			authed.GET("/profiles/comment/received", api.GetReceivedCommentsHandler())
+			//用户商品查询
+			authed.GET("/profiles/finished", api.IsSoldGoodsHandler())
+			authed.GET("/profiles/published", api.PublishedGoodsHandler())
+			authed.GET("/orders/selled", api.IsSoldGoodsHandler())
+			//authed.GET("/orders/purchased", api.IsPurchasedGoodsHandler())
 		}
 	}
 	return router

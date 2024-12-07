@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/CocaineCong/gin-mall/pkg/utils/log"
 	"github.com/gin-gonic/gin"
 	"github.com/kasiforce/trade/pkg/ctl"
 	"github.com/kasiforce/trade/pkg/util"
@@ -144,6 +145,64 @@ func UserLoginHandler() gin.HandlerFunc {
 		resp, err := s.UserLogin(c, req)
 		if err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+func UserRegisterHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.UserRegisterReq
+		if err := c.ShouldBind(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		s := service.GetUserService()
+		resp, err := s.UserRegister(c, &req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+func SendEmailCodeHandler() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		var req types.MailCodeReq
+		if err := ctx.ShouldBind(&req); err != nil {
+			log.LogrusObj.Infoln(err)
+			ctx.JSON(http.StatusOK, ErrorResponse(ctx, err))
+			return
+		}
+
+		l := service.GetUserService()
+		resp, err := l.SendEmailCode(ctx.Request.Context(), &req)
+		if err != nil {
+			log.LogrusObj.Infoln(err)
+			ctx.JSON(http.StatusOK, ErrorResponse(ctx, err))
+			return
+		}
+		ctx.JSON(http.StatusOK, ctl.RespSuccess(ctx, resp))
+	}
+}
+
+func PwdUpdateHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.PwdUpdateReq
+		if err := c.ShouldBind(&req); err != nil {
+			log.LogrusObj.Infoln(err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		l := service.GetUserService()
+		resp, err := l.PwdUpdate(c, &req)
+		if err != nil {
+			log.LogrusObj.Infoln(err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
 			return
 		}

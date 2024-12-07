@@ -16,12 +16,12 @@ mysql:
     password: "123456"
     charset: "utf8mb4"
 
-#redis:
-#  redisDbName: 4
-#  redisHost: 127.0.0.1
-#  redisPort: 6379
-#  redisPassword: 123456
-#  redisNetwork: "tcp"
+redis:
+  redisDbName: 4
+  redisHost: 127.0.0.1
+  redisPort: 6379
+  redisPassword: 123456
+  redisNetwork: "tcp"
 
 #cache:
 #  cacheType: redis
@@ -29,13 +29,19 @@ mysql:
 #  cacheWarmUp:
 #  cacheServer:
 
-#email:
-#  address: http://localhost:8080/#/vaild/email/
-#  smtpHost:
-#  smtpEmail:
-#  smtpPass:
+email:
+  validEmail: http://localhost:8080/#/vaild/email/
+  smtpHost: smtp.qq.com
+  smtpEmail: 2819407652@qq.com
+  smtpPass: kcrkoygymmhidfeh
 
 #photoPath:
 #  photoHost: http://127.0.0.1
 #  ProductPath: /static/imgs/product/
 #  AvatarPath: /static/imgs/avatar/
+
+oss:
+  AccessKey: "KuyqF7rIPDWfZyfaIn94MZqpKfZx1YCKZIVCzvAz"
+  SecretKey: "XAv_PdprxOYwX2LCaJx6QW95CxZB3PK5tlEl2jj_"
+  BucketName: "trade-picture"
+  QiNiuServer: "sn90hulr9.hn-bkt.clouddn.com"
