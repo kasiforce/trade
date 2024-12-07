@@ -33,11 +33,11 @@ func NewRouter() *gin.Engine {
 		v1.GET("/home/category", api.ShowUserCategoryHandler())
 
 		v1.DELETE("/address/:id", api.DeleteAddrHandler())
-
+		v1.POST("/resetPsw", api.PwdUpdateHandler()) // 重置密码
 		v1.PUT("/profiles/info/:id", api.UpdateHandler())
 		v1.POST("/login", api.UserLoginHandler())
-		v1.GET("/code", api.SendEmailCodeHandler())
-		v1.POST("/register", api.UserRegisterHandler())
+		v1.GET("/code", api.SendEmailCodeHandler())     //发送邮箱验证码
+		v1.POST("/register", api.UserRegisterHandler()) //用户注册
 		//管理员的增删改查
 		v1.GET("/admin/adminInfo", api.ShowAllAdminHandler())
 		v1.PUT("/admin/adminInfo/:id", api.UpdateAdminHandler())
