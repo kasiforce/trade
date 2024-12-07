@@ -89,8 +89,9 @@ type GoodsListResp2 struct {
 	Data []GoodsInfo2 `json:"data"` // 商品列表
 }
 
-type IsSoldGoodsResp struct {
-	UserID int `json:"userID"`
+type IsPurchasedGoodsResp struct {
+	PageNum  int `form:"pageNum" json:"pageNum"`   // 当前页码
+	PageSize int `form:"pageSize" json:"pageSize"` // 每页记录数
 }
 
 type ShowGoodsReq struct {

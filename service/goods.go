@@ -62,10 +62,11 @@ func (s *GoodsService) ShowAllGoods(ctx context.Context, req types.ShowAllGoodsR
 }
 
 // 获取已售出商品
-func (s *GoodsService) IsSoldGoods(ctx context.Context, req types.IsSoldGoodsResp) (resp interface{}, err error) {
+func (s *GoodsService) IsSoldGoods(ctx *gin.Context) (resp interface{}, err error) {
+	id := ctx.GetInt("id")
 	goods := dao.NewGoods(ctx)
 	// 直接调用 DAO 层的 IsSoldGoods 方法获取已售出的商品
-	filteredGoodsList, err := goods.IsSoldGoods(req)
+	filteredGoodsList, err := goods.IsSoldGoods(id)
 	if err != nil {
 		util.LogrusObj.Error(err)
 		return nil, err
@@ -94,9 +95,10 @@ func (s *GoodsService) IsSoldGoods(ctx context.Context, req types.IsSoldGoodsRes
 }
 
 // 当前用户获取发布的所有商品
-func (s *GoodsService) ShowPublishedGoods(ctx context.Context, req types.IsSoldGoodsResp) (resp interface{}, err error) {
+func (s *GoodsService) ShowPublishedGoods(ctx *gin.Context) (resp interface{}, err error) {
+	id := ctx.GetInt("id")
 	goods := dao.NewGoods(ctx)
-	goodsList, err := goods.UserFindAll(req)
+	goodsList, err := goods.UserFindAll(id)
 	if err != nil {
 		util.LogrusObj.Error(err)
 		return nil, err

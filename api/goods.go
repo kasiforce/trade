@@ -32,27 +32,8 @@ func AdminShowAllGoodsHandler() gin.HandlerFunc {
 
 func IsSoldGoodsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req types.IsSoldGoodsResp
-		userIDStr := c.DefaultQuery("id", "")
-		if userIDStr == "" {
-			req.UserID = 0
-		} else {
-			// 如果 'id' 存在，尝试将其转换为 int 类型并赋值给 req.UserID
-			userID, err := strconv.Atoi(userIDStr)
-			if err != nil {
-				util.LogrusObj.Infoln("Error occurred:", err)
-				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid userID"})
-				return
-			}
-			req.UserID = userID
-		}
-		if err := c.ShouldBindQuery(&req); err != nil {
-			util.LogrusObj.Infoln("Error occurred:", err)
-			c.JSON(http.StatusOK, ErrorResponse(c, err))
-			return
-		}
 		s := service.GetGoodsService()
-		resp, err := s.IsSoldGoods(c, req)
+		resp, err := s.IsSoldGoods(c)
 		if err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
@@ -62,29 +43,43 @@ func IsSoldGoodsHandler() gin.HandlerFunc {
 	}
 }
 
-func PublishedGoodsHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var req types.IsSoldGoodsResp
-		userIDStr := c.DefaultQuery("id", "")
-		if userIDStr == "" {
-			req.UserID = 0
-		} else {
-			// 如果 'id' 存在，尝试将其转换为 int 类型并赋值给 req.UserID
-			userID, err := strconv.Atoi(userIDStr)
-			if err != nil {
+/*
+	func IsPurchasedGoodsHandler() gin.HandlerFunc {
+		return func(c *gin.Context) {
+			var req types.IsSoldGoodsResp
+			userIDStr := c.DefaultQuery("id", "")
+			if userIDStr == "" {
+				req.UserID = 0
+			} else {
+				// 如果 'id' 存在，尝试将其转换为 int 类型并赋值给 req.UserID
+				userID, err := strconv.Atoi(userIDStr)
+				if err != nil {
+					util.LogrusObj.Infoln("Error occurred:", err)
+					c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid userID"})
+					return
+				}
+				req.UserID = userID
+			}
+			if err := c.ShouldBindQuery(&req); err != nil {
 				util.LogrusObj.Infoln("Error occurred:", err)
-				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid userID"})
+				c.JSON(http.StatusOK, ErrorResponse(c, err))
 				return
 			}
-			req.UserID = userID
+			s := service.GetGoodsService()
+			resp, err := s.IsSoldGoods(c, req)
+			if err != nil {
+				util.LogrusObj.Infoln("Error occurred:", err)
+				c.JSON(http.StatusOK, ErrorResponse(c, err))
+				return
+			}
+			c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
 		}
-		if err := c.ShouldBindQuery(&req); err != nil {
-			util.LogrusObj.Infoln("Error occurred:", err)
-			c.JSON(http.StatusOK, ErrorResponse(c, err))
-			return
-		}
+	}
+*/
+func PublishedGoodsHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
 		s := service.GetGoodsService()
-		resp, err := s.ShowPublishedGoods(c, req)
+		resp, err := s.ShowPublishedGoods(c)
 		if err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
@@ -114,9 +109,27 @@ func PublishedGoodsHandler() gin.HandlerFunc {
 			c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
 		}
 	}
+func ShowGoodsDetailHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idStr := c.Param("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			util.LogrusObj.Infoln("Invalid product ID:", err)
+			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+			return
+		}
+		s := service.GetGoodsService()
+		resp, err := s.ShowGoodsDetail(c, id)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}*/
 
 /*
-
 	func FilterGoodsHandler() gin.HandlerFunc {
 		return func(c *gin.Context) {
 			var req types.ShowGoodsReq
