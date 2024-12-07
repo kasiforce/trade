@@ -190,3 +190,22 @@ func SendEmailCodeHandler() gin.HandlerFunc {
 		ctx.JSON(http.StatusOK, ctl.RespSuccess(ctx, resp))
 	}
 }
+
+func PwdUpdateHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.PwdUpdateReq
+		if err := c.ShouldBind(&req); err != nil {
+			log.LogrusObj.Infoln(err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		l := service.GetUserService()
+		resp, err := l.PwdUpdate(c, &req)
+		if err != nil {
+			log.LogrusObj.Infoln(err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}

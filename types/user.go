@@ -68,3 +68,9 @@ type UserWithToken struct {
 type MailCodeReq struct {
 	Mail string `form:"mail" json:"mail"`
 }
+
+type PwdUpdateReq struct {
+	Mail     string `form:"mail" json:"mail"`
+	Password string `form:"password" json:"password"`
+	Code     string `form:"code" json:"code"`
+}

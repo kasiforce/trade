@@ -323,3 +323,21 @@ func (s *UserService) UserRegister(ctx context.Context, req *types.UserRegisterR
 	}
 	return
 }
+
+func (s *UserService) PwdUpdate(ctx context.Context, req *types.PwdUpdateReq) (resp interface{}, err error) {
+	u := dao.NewUser(ctx)
+	code, err := cache.RedisClient.Get(ctx, req.Mail).Result()
+	if err != nil {
+		return
+	}
+	if code != req.Code {
+		err = errors.New("验证码错误")
+		return
+	}
+	err = u.UpdatePwd(req.Mail, req.Password)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return
+	}
+	return
+}

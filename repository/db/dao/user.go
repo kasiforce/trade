@@ -64,3 +64,8 @@ func (user *User) CheckMail(mail string) (u *model.User, err error) {
 	err = user.DB.Model(&model.User{}).Preload("School").Where("mail = ?", mail).First(&u).Error
 	return
 }
+
+func (user *User) UpdatePwd(mail string, pwd string) (err error) {
+	err = user.DB.Model(&model.User{}).Where("mail = ?", mail).Update("passwords", pwd).Error
+	return
+}
