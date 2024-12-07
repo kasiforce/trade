@@ -64,3 +64,7 @@ type UserWithToken struct {
 	Status     int    `json:"status"`
 	Token      string `json:"token"`
 }
+
+type MailCodeReq struct {
+	Mail string `form:"mail" json:"mail"`
+}

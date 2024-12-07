@@ -35,7 +35,8 @@ func NewRouter() *gin.Engine {
 
 		v1.PUT("/profiles/info/:id", api.UpdateHandler())
 		v1.POST("/login", api.UserLoginHandler())
-
+		v1.GET("/code", api.SendEmailCodeHandler())
+		v1.POST("/register", api.UserRegisterHandler())
 		//管理员的增删改查
 		v1.GET("/admin/adminInfo", api.ShowAllAdminHandler())
 		v1.PUT("/admin/adminInfo/:id", api.UpdateAdminHandler())
