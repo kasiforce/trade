@@ -61,6 +61,6 @@ func (user *User) DeleteUser(id int) (err error) {
 
 // CheckMail 登录时检查邮箱是否存在，若存在查出用户名、id、密码
 func (user *User) CheckMail(mail string) (u *model.User, err error) {
-	err = user.DB.Model(&model.User{}).Where("mail = ?", mail).First(&u).Error
+	err = user.DB.Model(&model.User{}).Preload("School").Where("mail = ?", mail).First(&u).Error
 	return
 }

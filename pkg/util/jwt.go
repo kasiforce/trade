@@ -38,7 +38,7 @@ func GenerateToken(id int, name string) (token string, err error) {
 
 // ParseToken 验证token是否正确、过期，同时解析出用户id/管理员id，并设置到context中。
 // 当token验证通过，后续可通过id := c.GetInt("id")获取id
-func ParseToken(c *gin.Context, token string) (newToken string, err error) {
+func ParseToken(c *gin.Context, token string) (err error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtSecret, nil
 	})
@@ -46,10 +46,11 @@ func ParseToken(c *gin.Context, token string) (newToken string, err error) {
 		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
 			if claims.ExpiresAt > time.Now().Unix() {
 				c.Set("id", claims.ID)
-				return GenerateToken(claims.ID, claims.Name)
+				//return GenerateToken(claims.ID, claims.Name)
+				return nil
 			}
-			return "", errors.New("token expired")
+			return errors.New("token expired")
 		}
 	}
-	return "", err
+	return err
 }

@@ -54,6 +54,11 @@ func NewRouter() *gin.Engine {
 		//退货信息
 		v1.GET("/admin/afterSale", api.ShowAllrefundHandler())
 
+		//查询所有评论
+		v1.GET("/admin/comment", api.ShowAllCommentsHandler())
+		//删除评论
+		v1.DELETE("/admin/comment/:id", api.DeleteCommentHandler())
+
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())
 		{
