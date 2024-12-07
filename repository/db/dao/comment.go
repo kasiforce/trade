@@ -103,7 +103,7 @@ func (c *Comment) GetReceivedComments(userID int) (r []types.ReceivedCommentInfo
 }
 
 // CreateComment 创建评论
-func (c *Comment) CreateComment(req types.PostCommentReq) (resp interface{}, err error) {
+func (c *Comment) CreateComment(req types.PostCommentReq) (err error) {
 	newComment := model.Comment{
 		GoodsID:        req.GoodsID,
 		CommentatorID:  req.CommentatorID,
@@ -113,11 +113,8 @@ func (c *Comment) CreateComment(req types.PostCommentReq) (resp interface{}, err
 
 	result := c.DB.Create(&newComment)
 	if result.Error != nil {
-		return nil, result.Error
+		return result.Error
 	}
 
-	resp = types.PostCommentResp{
-		Message: "Comment posted successfully",
-	}
-	return resp, nil
+	return nil
 }
