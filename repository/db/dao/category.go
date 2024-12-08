@@ -35,8 +35,12 @@ func (c *Category) ShowCategory() (ca []*model.Category, err error) {
 	return
 }
 
-func (c *Category) AddCategory(category *model.Category) (err error) {
-	err = c.DB.Model(&model.Category{}).Create(&category).Error
+func (c *Category) AddCategory(category *model.Category) (id int, err error) {
+	result := c.DB.Model(&model.Category{}).Create(&category)
+	if err = result.Error; err != nil {
+		return 0, err
+	}
+	id = category.CategoryID
 	return
 }
 

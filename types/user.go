@@ -74,3 +74,7 @@ type PwdUpdateReq struct {
 	Password string `form:"password" json:"password"`
 	Code     string `form:"code" json:"code"`
 }
+
+type UserID struct {
+	UserID int `json:"userID"`
+}

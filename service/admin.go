@@ -3,13 +3,12 @@ package service
 import (
 	"context"
 	"errors"
-	"sync"
-
 	"github.com/gin-gonic/gin"
 	"github.com/kasiforce/trade/pkg/ctl"
 	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/repository/db/dao"
 	"github.com/kasiforce/trade/types"
+	"sync"
 )
 
 var adminServ *AdminService
@@ -63,24 +62,29 @@ func (s *AdminService) AddAdmin(ctx context.Context, req types.AdminInfo) (resp 
 	exist, err := a.FindByName(req.AdminName)
 	if err != nil {
 		util.LogrusObj.Error(err)
-		return resp, nil
+		return nil, err
 	}
 	if exist {
 		err = errors.New("管理员名已存在")
-		return resp, nil
+		return nil, err
 	}
 	modelAdmin := map[string]interface{}{
 		"adminName": req.AdminName,
 		"passwords": req.Passwords,
+		"tel":       req.Tel,
 		"mail":      req.Mail,
+		"gender":    req.Gender,
+		"age":       req.Age,
 	}
-	err = a.CreateAdmin(modelAdmin)
+	adminID, err := a.CreateAdmin(modelAdmin)
 	if err != nil {
 		util.LogrusObj.Error(err)
-		return resp, nil
+		return nil, err
 	}
-	// 创建一个空的返回结构
-	resp = map[string]interface{}{}
+	// 创建返回结构，包含 adminID
+	resp = map[string]interface{}{
+		"adminID": adminID,
+	}
 	return resp, nil
 }
 
@@ -88,13 +92,25 @@ func (s *AdminService) UpdateAdmin(ctx context.Context, req types.AdminInfo) (re
 	admin, err := ctl.GetAdminID(ctx)
 	if err != nil {
 		util.LogrusObj.Error(err)
-		return resp, nil
+		return nil, err
 	}
 	a := dao.NewAdmin(ctx)
+	exist, err := a.FindByID(admin.AdminID)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return nil, err
+	}
+	if exist == nil {
+		err = errors.New("管理员不存在")
+		return nil, err
+	}
 	modelAdmin := map[string]interface{}{
 		"adminName": req.AdminName,
 		"passwords": req.Passwords,
 		"mail":      req.Mail,
+		"tel":       req.Tel,
+		"gender":    req.Gender,
+		"age":       req.Age,
 	}
 	for key, value := range modelAdmin {
 		if value == "" {
@@ -104,7 +120,7 @@ func (s *AdminService) UpdateAdmin(ctx context.Context, req types.AdminInfo) (re
 	err = a.UpdateAdmin(admin.AdminID, modelAdmin)
 	if err != nil {
 		util.LogrusObj.Error(err)
-		return resp, nil
+		return nil, err
 	}
 	// 创建一个空的返回结构
 	resp = map[string]interface{}{}
@@ -115,13 +131,23 @@ func (s *AdminService) DeleteAdmin(ctx context.Context) (resp interface{}, err e
 	admin, err := ctl.GetAdminID(ctx)
 	if err != nil {
 		util.LogrusObj.Error(err)
-		return
+		return nil, err
 	}
 	a := dao.NewAdmin(ctx)
+	// 检查管理员是否存在
+	exist, err := a.FindByID(admin.AdminID)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return nil, err
+	}
+	if exist == nil {
+		err = errors.New("管理员不存在")
+		return nil, err
+	}
 	err = a.DeleteAdmin(admin.AdminID)
 	if err != nil {
 		util.LogrusObj.Error(err)
-		return resp, nil
+		return nil, err
 	}
 	// 创建一个空的返回结构
 	resp = map[string]interface{}{}
@@ -133,7 +159,6 @@ func (s *AdminService) AdminLogin(c *gin.Context, req types.AdminLoginReq) (resp
 		err = errors.New("参数不能为空")
 		return
 	}
-
 	a := dao.NewAdmin(c)
 	admin, err := a.CheckMail(req.Mail)
 	if err != nil {

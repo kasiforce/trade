@@ -16,3 +16,7 @@ type ShowCategoryReq struct {
 	PageNum     int    `form:"pageNum" json:"pageNum"`
 	PageSize    int    `form:"pageSize" json:"pageSize"`
 }
+
+type CategoryID struct {
+	CategoryID int `json:"categoryID"`
+}

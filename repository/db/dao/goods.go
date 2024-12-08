@@ -2,10 +2,12 @@ package dao
 
 import (
 	"context"
-
+	"errors"
 	"github.com/kasiforce/trade/repository/db/model"
 	"github.com/kasiforce/trade/types"
 	"gorm.io/gorm"
+	"strconv"
+	"strings"
 )
 
 type Goods struct {
@@ -30,9 +32,8 @@ func (g *Goods) AdminFindAll(req types.ShowAllGoodsReq) (goods []model.Goods, er
 		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, 
             category.categoryName, goods.details, goods.isSold, goods.goodsImages, 
             goods.createdTime, users.userName, address.province, address.city, address.districts,
-            COALESCE(COUNT(collection.goodsID), 0) AS star,
-            GROUP_CONCAT(DISTINCT trade_records.payMethod) AS payMethod,
-            trade_records.shippingCost AS shippingCost`).
+            COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, 
+			trade_records.shippingCost AS shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
 		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
@@ -49,13 +50,24 @@ func (g *Goods) AdminFindAll(req types.ShowAllGoodsReq) (goods []model.Goods, er
 }
 
 // FindAll 查询所有商品
-func (g *Goods) FindAll(req types.ShowAllGoodsReq) (goods []model.Goods, err error) {
+func (g *Goods) FindAll(req types.ShowGoodsListReq) (goods []model.Goods, err error) {
 	db := g.DB
 	query := db.Table("goods").Select("goods.*")
 	if req.SearchQuery != "" {
 		query = query.Where("goods.goodsName LIKE ?", "%"+req.SearchQuery+"%")
 	}
-	query = query.Limit(req.PageSize).Offset((req.PageNum - 1) * req.PageSize)
+	if req.Category != "0" {
+		// 将 req.Category 转换为 int 类型
+		categoryID, err := strconv.Atoi(req.Category)
+		if err != nil {
+			return nil, err
+		}
+		// 添加 categoryID 等于 req.Category 的条件
+		query = query.Where("goods.categoryID = ?", categoryID)
+	}
+	// 添加 issold 不等于 1 的条件
+	query = query.Where("goods.isSold != ?", 1)
+	query = query.Limit(req.Limit).Offset((req.Page - 1) * req.Limit)
 	err = query.Find(&goods).Error
 	return
 }
@@ -68,8 +80,7 @@ func (g *Goods) FindByID(id int) (goods []model.Goods, err error) {
 		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price,
             category.categoryName, goods.details, goods.isSold, goods.goodsImages,
             goods.createdTime, users.userName, address.province, address.city, address.districts,
-            COALESCE(COUNT(collection.goodsID), 0) AS star,
-            GROUP_CONCAT(DISTINCT trade_records.payMethod) AS payMethod,
+            COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod,
             trade_records.shippingCost AS shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
@@ -111,8 +122,7 @@ func (g *Goods) UserFindAll(id int) (goods []model.Goods, err error) {
 		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, 
             category.categoryName, goods.details, goods.isSold, goods.goodsImages, 
             goods.createdTime, users.userName, address.province, address.city, address.districts,
-            COALESCE(COUNT(collection.goodsID), 0) AS star,
-            GROUP_CONCAT(DISTINCT trade_records.payMethod) AS payMethod,
+            COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod,
             trade_records.shippingCost AS shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
@@ -129,12 +139,20 @@ func (g *Goods) UserFindAll(id int) (goods []model.Goods, err error) {
 }
 
 // FilterGoods 按条件筛选商品
-func (g *Goods) FilterGoods(filter map[string]interface{}, req types.ShowGoodsReq) (goods []model.Goods, err error) {
+func (g *Goods) FilterGoods(req types.ShowGoodsReq) (goods []model.Goods, err error) {
 	db := g.DB
-	query := db.Table("goods").Select("goods.*")
-	for key, value := range filter {
-		query = query.Where(key+" = ?", value)
-	}
+	query := db.Table("goods").
+		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, 
+            category.categoryName, goods.details, goods.isSold, goods.goodsImages, 
+            goods.createdTime, users.userName, address.province, address.city, address.districts,
+            COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, 
+			trade_records.shippingCost AS shippingCost`).
+		Joins("LEFT JOIN users ON goods.userID = users.userID").
+		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
+		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
+		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
+		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
+		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts")
 	if req.SearchQuery != "" {
 		query = query.Where("goods.goodsName LIKE ?", "%"+req.SearchQuery+"%")
 	}
@@ -144,7 +162,33 @@ func (g *Goods) FilterGoods(filter map[string]interface{}, req types.ShowGoodsRe
 	if req.PriceMax > 0 {
 		query = query.Where("goods.price <= ?", req.PriceMax)
 	}
-	query = query.Limit(req.PageSize).Offset((req.PageNum - 1) * req.PageSize)
+	if req.Province != "" {
+		query = query.Where("address.province = ?", req.Province)
+	}
+	if req.City != "" {
+		query = query.Where("address.city = ?", req.City)
+	}
+	if req.District != "" {
+		query = query.Where("address.district = ?", req.District)
+	}
+	if req.DeliveryMethod != "" {
+		query = query.Where("goods.deliveryMethod = ?", req.DeliveryMethod)
+	}
+	if req.CategoryID > 0 {
+		query = query.Where("goods.categoryID = ?", req.CategoryID)
+	}
+	if req.PublishDate != "" {
+		dateRange := strings.Split(req.PublishDate, ",")
+		if len(dateRange) == 2 {
+			startDate := dateRange[0]
+			endDate := dateRange[1]
+			query = query.Where("goods.createdTime BETWEEN ? AND ?", startDate, endDate)
+		}
+	}
+	if req.ShippingCost > 0 {
+		query = query.Where("trade_records.shippingCost = ?", req.ShippingCost)
+	}
+	query = query.Limit(req.Limit).Offset((req.Page - 1) * req.Limit)
 	err = query.Find(&goods).Error
 	return
 }
@@ -157,8 +201,14 @@ func (g *Goods) CreateGoods(good map[string]interface{}) (err error) {
 
 // DeleteGoods 删除商品
 func (g *Goods) DeleteGoods(id int) (err error) {
-	err = g.DB.Model(&model.Goods{}).Delete(&model.Goods{}, id).Error
-	return
+	result := g.DB.Delete(&model.Goods{}, id)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("商品不存在")
+	}
+	return nil
 }
 
 // FindByCategoryID 根据分类ID查询商品
@@ -173,41 +223,7 @@ func (g *Goods) FindByCategoryID(categoryID, pageNum, pageSize int) (goods []mod
 	return
 }
 
-// AdvancedFilterGoods 综合筛选商品
-func (g *Goods) AdvancedFilterGoods(req types.ShowGoodsReq) (goods []model.Goods, total int64, err error) {
-	db := g.DB
-	query := db.Table("goods")
-
-	// 商品名称模糊查询
-	if req.SearchQuery != "" {
-		query = query.Where("goodsName LIKE ?", "%"+req.SearchQuery+"%")
-	}
-
-	// 分类筛选
-	if req.CategoryID > 0 {
-		query = query.Where("categoryID = ?", req.CategoryID)
-	}
-
-	// 价格区间筛选
-	if req.PriceMin > 0 {
-		query = query.Where("price >= ?", req.PriceMin)
-	}
-	if req.PriceMax > 0 {
-		query = query.Where("price <= ?", req.PriceMax)
-	}
-
-	// 是否已售筛选
-	if req.IsSold == 0 || req.IsSold == 1 {
-		query = query.Where("isSold = ?", req.IsSold)
-	}
-
-	// 统计总记录数
-	err = query.Count(&total).Error
-	if err != nil {
-		return
-	}
-
-	// 分页查询
-	err = query.Limit(req.PageSize).Offset((req.PageNum - 1) * req.PageSize).Find(&goods).Error
-	return
+// 更新view
+func (g *Goods) IncreaseView(goodsID uint) error {
+	return g.DB.Model(&model.Goods{}).Where("goodsID = ?", goodsID).UpdateColumn("view", gorm.Expr("view + 1")).Error
 }

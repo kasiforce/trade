@@ -33,11 +33,11 @@ func NewRouter() *gin.Engine {
 		v1.GET("/home/category", api.ShowUserCategoryHandler())
 
 		v1.DELETE("/address/:id", api.DeleteAddrHandler())
-
+		v1.POST("/resetPsw", api.PwdUpdateHandler()) // 重置密码
 		v1.PUT("/profiles/info/:id", api.UpdateHandler())
 		v1.POST("/login", api.UserLoginHandler())
-		v1.GET("/code", api.SendEmailCodeHandler())
-		v1.POST("/register", api.UserRegisterHandler())
+		v1.GET("/code", api.SendEmailCodeHandler())     //发送邮箱验证码
+		v1.POST("/register", api.UserRegisterHandler()) //用户注册
 		//管理员的增删改查
 		v1.GET("/admin/adminInfo", api.ShowAllAdminHandler())
 		v1.PUT("/admin/adminInfo/:id", api.UpdateAdminHandler())
@@ -48,7 +48,6 @@ func NewRouter() *gin.Engine {
 		v1.POST("/admin/login", api.AdminLoginHandler())
 		//管理员查询所有商品
 		v1.GET("/admin/product", api.AdminShowAllGoodsHandler())
-
 		//删除商品
 		v1.DELETE("/admin/product/:id", api.DeleteGoodsHandler())
 		//获取商品详情
@@ -63,7 +62,10 @@ func NewRouter() *gin.Engine {
 
 		//查询订单
 		v1.GET("/admin/order", api.GetAllOrdersHandler())
-
+		//商品列表
+		v1.GET("/products", api.ShowAllGoodsHandler())
+		//筛选商品
+		v1.GET("/product/select", api.FilterGoodsHandler())
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())
 		{
@@ -90,6 +92,7 @@ func NewRouter() *gin.Engine {
 			authed.POST("/createOrder", api.CreateOrderHandler())
 			//获取-我买到的
 			authed.GET("/orders/purchased", api.GetMyOrdersHandler())
+
 		}
 	}
 	return router

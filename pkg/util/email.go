@@ -1,9 +1,11 @@
 package util
 
 import (
+	"fmt"
 	conf "github.com/kasiforce/trade/config"
 	"golang.org/x/exp/rand"
 	"gopkg.in/mail.v2"
+	"mime"
 	"strconv"
 	"time"
 )
@@ -26,7 +28,8 @@ func NewEmailSender() *EmailSender {
 // Send 发送邮件
 func (s *EmailSender) Send(data, emailTo, subject string) error {
 	m := mail.NewMessage()
-	m.SetHeader("From", s.SmtpEmailFrom)
+	encodedName := mime.QEncoding.Encode("UTF-8", "校园交易平台")
+	m.SetHeader("From", fmt.Sprintf("%s <%s>", encodedName, s.SmtpEmailFrom))
 	m.SetHeader("To", emailTo)
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", data)

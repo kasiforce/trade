@@ -3,11 +3,13 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/kasiforce/trade/pkg/ctl"
 	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/repository/cache"
 	"github.com/kasiforce/trade/repository/db/dao"
+	"github.com/kasiforce/trade/repository/db/model"
 	"github.com/kasiforce/trade/types"
 	"sync"
 	"time"
@@ -101,20 +103,33 @@ func (s *UserService) AddUser(c context.Context, req types.UserInfo) (resp inter
 		util.LogrusObj.Error(err)
 		return
 	}
-	modelUser := map[string]interface{}{
-		"userName":   req.UserName,
-		"passwords":  req.Password,
-		"schoolID":   id,
-		"picture":    req.Picture,
-		"mail":       req.Mail,
-		"gender":     req.Gender,
-		"tel":        req.Tel,
-		"userStatus": req.Status,
+	//modelUser := map[string]interface{}{
+	//	"userName":   req.UserName,
+	//	"passwords":  req.Password,
+	//	"schoolID":   id,
+	//	"picture":    req.Picture,
+	//	"mail":       req.Mail,
+	//	"gender":     req.Gender,
+	//	"tel":        req.Tel,
+	//	"userStatus": req.Status,
+	//}
+	modelUser := &model.User{
+		UserName:   req.UserName,
+		Passwords:  req.Password,
+		SchoolID:   id,
+		Picture:    req.Picture,
+		Mail:       req.Mail,
+		Tel:        req.Tel,
+		Gender:     req.Gender,
+		UserStatus: req.Status,
 	}
-	err = u.CreateUser(modelUser)
+	uid, err := u.CreateUser(modelUser)
 	if err != nil {
 		util.LogrusObj.Error(err)
 		return
+	}
+	resp = types.UserID{
+		UserID: uid,
 	}
 	return
 }
@@ -248,6 +263,10 @@ func (s *UserService) UserLogin(c *gin.Context, req types.UserLoginReq) (resp in
 		err = errors.New("密码错误")
 		return
 	}
+	if user.UserStatus == 1 {
+		err = errors.New("用户状态异常")
+		return
+	}
 	token, err := util.GenerateToken(user.UserID, user.UserName)
 	if err != nil {
 		util.LogrusObj.Error(err)
@@ -271,9 +290,13 @@ func (s *UserService) UserLogin(c *gin.Context, req types.UserLoginReq) (resp in
 
 func (s *UserService) SendEmailCode(ctx context.Context, req *types.MailCodeReq) (resp interface{}, err error) {
 	code := util.GenerateEmailCode()
-	mailText := "Your registration code is: " + code + "\n" + "The code is valid for 10 minutes."
+	mailText := fmt.Sprintf(`
+    <p>您正在进行邮箱验证，验证码为：<strong>%s</strong></p>
+    <p>如果这不是您本人的操作，请忽略此邮件</p>
+    <p>校园交易平台 团队</p>
+`, code)
 	sender := util.NewEmailSender()
-	if err = sender.Send(mailText, req.Mail, "Your Registration Code"); err != nil {
+	if err = sender.Send(mailText, req.Mail, "邮箱验证码"); err != nil {
 		util.LogrusObj.Error(err)
 		return
 	}
@@ -310,13 +333,19 @@ func (s *UserService) UserRegister(ctx context.Context, req *types.UserRegisterR
 		return
 	}
 	name := util.GenerateName()
-	modelUser := map[string]interface{}{
-		"userName":  name,
-		"mail":      req.Mail,
-		"passwords": req.Password,
-		"schoolID":  id,
+	//modelUser := map[string]interface{}{
+	//	"userName":  name,
+	//	"mail":      req.Mail,
+	//	"passwords": req.Password,
+	//	"schoolID":  id,
+	//}
+	modelUser := &model.User{
+		UserName:  name,
+		Mail:      req.Mail,
+		Passwords: req.Password,
+		SchoolID:  id,
 	}
-	err = u.CreateUser(modelUser)
+	_, err = u.CreateUser(modelUser)
 	if err != nil {
 		util.LogrusObj.Error(err)
 		return
