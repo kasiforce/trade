@@ -33,6 +33,18 @@ func (s *GoodsService) ShowAllGoods(ctx context.Context, req types.ShowAllGoodsR
 	// 创建一个列表来存放最终的返回数据
 	var respList []types.GoodsInfo
 	for _, goodsInfo := range goodsList {
+		// 将 DeliveryMethod 从 int 转换为 string
+		var deliveryMethod string
+		switch goodsInfo.DeliveryMethod {
+		case 0:
+			deliveryMethod = "无需快递"
+		case 1:
+			deliveryMethod = "自提"
+		case 2:
+			deliveryMethod = "邮寄"
+		default:
+			deliveryMethod = "未知"
+		}
 		respList = append(respList, types.GoodsInfo{
 			GoodsID:        goodsInfo.GoodsID,
 			GoodsName:      goodsInfo.GoodsName,
@@ -49,7 +61,7 @@ func (s *GoodsService) ShowAllGoods(ctx context.Context, req types.ShowAllGoodsR
 			Address:        goodsInfo.Address,
 			Star:           goodsInfo.Star,
 			View:           goodsInfo.View,
-			DeliveryMethod: goodsInfo.DeliveryMethod,
+			DeliveryMethod: deliveryMethod,
 			ShippingCost:   goodsInfo.ShippingCost,
 		})
 	}
@@ -103,6 +115,18 @@ func (s *GoodsService) ShowPublishedGoods(ctx *gin.Context) (resp interface{}, e
 	// 创建一个列表来存放最终的返回数据
 	var respList []types.GoodsInfo3
 	for _, goodsInfo := range goodsList {
+		// 将 DeliveryMethod 从 int 转换为 string
+		var deliveryMethod string
+		switch goodsInfo.DeliveryMethod {
+		case 0:
+			deliveryMethod = "无需快递"
+		case 1:
+			deliveryMethod = "自提"
+		case 2:
+			deliveryMethod = "邮寄"
+		default:
+			deliveryMethod = "未知"
+		}
 		respList = append(respList, types.GoodsInfo3{
 			GoodsID:        goodsInfo.GoodsID,
 			GoodsName:      goodsInfo.GoodsName,
@@ -118,7 +142,7 @@ func (s *GoodsService) ShowPublishedGoods(ctx *gin.Context) (resp interface{}, e
 			District:       goodsInfo.District,
 			Star:           goodsInfo.Star,
 			View:           goodsInfo.View,
-			DeliveryMethod: goodsInfo.DeliveryMethod,
+			DeliveryMethod: deliveryMethod,
 			ShippingCost:   goodsInfo.ShippingCost,
 			UserID:         goodsInfo.UserID,
 		})
@@ -178,6 +202,18 @@ func (s *GoodsService) FilterGoods(ctx *gin.Context, req types.ShowGoodsReq) (re
 	// 创建一个列表来存放最终的返回数据
 	var respList []types.GoodsInfo
 	for _, goodsInfo := range goodsList {
+		// 将 DeliveryMethod 从 int 转换为 string
+		var deliveryMethod string
+		switch goodsInfo.DeliveryMethod {
+		case 0:
+			deliveryMethod = "无需快递"
+		case 1:
+			deliveryMethod = "自提"
+		case 2:
+			deliveryMethod = "邮寄"
+		default:
+			deliveryMethod = "未知"
+		}
 		respList = append(respList, types.GoodsInfo{
 			GoodsID:        goodsInfo.GoodsID,
 			GoodsName:      goodsInfo.GoodsName,
@@ -194,7 +230,7 @@ func (s *GoodsService) FilterGoods(ctx *gin.Context, req types.ShowGoodsReq) (re
 			Address:        goodsInfo.Address,
 			Star:           goodsInfo.Star,
 			View:           goodsInfo.View,
-			DeliveryMethod: goodsInfo.DeliveryMethod,
+			DeliveryMethod: deliveryMethod,
 			ShippingCost:   goodsInfo.ShippingCost,
 		})
 	}
