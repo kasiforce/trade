@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"errors"
 
 	"github.com/kasiforce/trade/repository/db/model"
 	"github.com/kasiforce/trade/types"
@@ -157,8 +158,14 @@ func (g *Goods) CreateGoods(good map[string]interface{}) (err error) {
 
 // DeleteGoods 删除商品
 func (g *Goods) DeleteGoods(id int) (err error) {
-	err = g.DB.Model(&model.Goods{}).Delete(&model.Goods{}, id).Error
-	return
+	result := g.DB.Delete(&model.Goods{}, id)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("商品不存在")
+	}
+	return nil
 }
 
 // FindByCategoryID 根据分类ID查询商品

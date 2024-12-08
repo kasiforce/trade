@@ -225,14 +225,8 @@ func (s *GoodsService) CreateGoods(ctx context.Context, req types.GoodsInfo) (re
 }
 */
 // DeleteGoods 删除商品
-func (s *GoodsService) DeleteGoods(ctx context.Context) (resp interface{}, err error) {
-	goods, err := ctl.GetGoodsID(ctx)
-	if err != nil {
-		util.LogrusObj.Error(err)
-		return resp, nil
-	}
-	a := dao.NewGoods(ctx)
-	err = a.DeleteGoods(goods.GoodsID)
+func (s *GoodsService) DeleteGoods(ctx context.Context, id int) (resp interface{}, err error) {
+	err = dao.NewGoods(ctx).DeleteGoods(id)
 	if err != nil {
 		util.LogrusObj.Error(err)
 		return resp, nil
