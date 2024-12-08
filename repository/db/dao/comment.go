@@ -7,7 +7,6 @@ import (
 	"github.com/kasiforce/trade/repository/db/model"
 	"github.com/kasiforce/trade/types"
 	"gorm.io/gorm"
-	"time"
 )
 
 type Comment struct {
@@ -102,19 +101,19 @@ func (c *Comment) GetReceivedComments(userID int) (r []types.ReceivedCommentInfo
 	return
 }
 
-// CreateComment 创建评论
-func (c *Comment) CreateComment(req types.PostCommentReq) (err error) {
-	newComment := model.Comment{
-		GoodsID:        req.GoodsID,
-		CommentatorID:  req.CommentatorID,
-		CommentContent: req.CommentContent,
-		CommentTime:    time.Now(),
-	}
-
-	result := c.DB.Create(&newComment)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	return nil
-}
+//// CreateComment 创建评论
+//func (c *Comment) CreateComment(req types.PostCommentReq) (err error) {
+//	newComment := model.Comment{
+//		GoodsID:        req.GoodsID,
+//		CommentatorID:  req.CommentatorID,
+//		CommentContent: req.CommentContent,
+//		CommentTime:    time.Now(),
+//	}
+//
+//	result := c.DB.Create(&newComment)
+//	if result.Error != nil {
+//		return result.Error
+//	}
+//
+//	return nil
+//}

@@ -13,9 +13,9 @@ type TradeRecords struct {
 	ShippingAddrID int       `gorm:"not null;column:shippingAddrID"`
 	DeliveryAddrID int       `gorm:"not null;column:deliveryAddrID"`
 	OrderTime      time.Time `gorm:"type:datetime;not null;column:orderTime"`
-	PayTime        time.Time `gorm:"type:datetime;column:payTime"`
-	ShippingTime   time.Time `gorm:"type:datetime;column:shippingTime"`
-	TurnoverTime   time.Time `gorm:"type:datetime;column:turnoverTime"`
+	PayTime        time.Time `gorm:"type:datetime;column:payTime;default:NULL"`
+	ShippingTime   time.Time `gorm:"type:datetime;column:shippingTime;default:NULL"`
+	TurnoverTime   time.Time `gorm:"type:datetime;column:turnoverTime;default:NULL"`
 	PayMethod      int       `gorm:"type:tinyint;not null;default:0;column:payMethod"`
 	TrackingNumber string    `gorm:"type:varchar(100);column:trackingNumber"`
 	IsReturn       int       `gorm:"type:tinyint;not null;default:0;column:isReturn"`
