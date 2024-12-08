@@ -26,7 +26,7 @@ func (r *RefundRecord) FindAll(req types.ShowRefundReq) (refunds []*model.Refund
 		Joins("JOIN users buyer ON buyer.userID = t.buyerID").
 		Joins("JOIN goods ON goods.goodsID = t.goodsID").
 		Joins("JOIN refund_complaint rc ON rc.tradeID = refund_records.tradeID").
-		Select("refund_records.refundID, refund_records.tradeID, refund_records.payMethod, refund_records.refundAgreedTime, refund_records.refundShippedTime, refund_records.refundArrivalTime, refund_records.trackingNumber, t.orderTime, t.payTime, t.shippingTime, t.turnoverTime, seller.userName AS sellerName, buyer.userName AS buyerName, goods.goodsName AS goodsName, goods.price AS price, (t.turnoverAmount - goods.price) AS shippingCost, rc.cReason AS cReason, rc.cStatus AS status, seller.userID AS sellerID, buyer.userID AS buyerID")
+		Select("refund_records.refundID, refund_records.tradeID, refund_records.payMethod, refund_records.refundAgreedTime, refund_records.refundShippedTime, refund_records.refundArrivalTime, refund_records.trackingNumber, t.orderTime, t.payTime, t.shippingTime, t.turnoverTime, seller.userName AS sellerName, buyer.userName AS buyerName, goods.goodsName AS goodsName, goods.price AS price, (t.turnoverAmount - goods.price) AS shippingCost, rc.buyerReason AS buyerReason, rc.cStatus AS status, seller.userID AS sellerID, buyer.userID AS buyerID")
 	//Select("rc.cReason AS reason, rc.cStatus AS status")
 	if req.SearchQuery != "" {
 		query = query.Where("refund_records.refundID LIKE ?", "%"+req.SearchQuery+"%")
