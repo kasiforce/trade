@@ -172,7 +172,20 @@ func (g *Goods) FilterGoods(req types.ShowGoodsReq) (goods []model.Goods, err er
 		query = query.Where("address.district = ?", req.District)
 	}
 	if req.DeliveryMethod != "" {
-		query = query.Where("goods.deliveryMethod = ?", req.DeliveryMethod)
+		var deliveryMethod int
+		switch req.DeliveryMethod {
+		case "0", "无需快递":
+
+			deliveryMethod = 0
+		case "1", "自提":
+
+			deliveryMethod = 1
+		case "2", "邮寄":
+			deliveryMethod = 2
+		default:
+			return nil, fmt.Errorf("当前配送方式不存在: %s", req.DeliveryMethod)
+		}
+		query = query.Where("goods.deliveryMethod = ?", deliveryMethod)
 	}
 	if req.CategoryID > 0 {
 		query = query.Where("goods.categoryID = ?", req.CategoryID)
