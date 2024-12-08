@@ -48,7 +48,6 @@ func NewRouter() *gin.Engine {
 		v1.POST("/admin/login", api.AdminLoginHandler())
 		//管理员查询所有商品
 		v1.GET("/admin/product", api.AdminShowAllGoodsHandler())
-
 		//删除商品
 		v1.DELETE("/admin/product/:id", api.DeleteGoodsHandler())
 		//获取商品详情
