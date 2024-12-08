@@ -31,3 +31,117 @@ func GetAllOrdersHandler() gin.HandlerFunc {
 		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
 	}
 }
+
+// UpdateOrderStatusHandler 修改订单状态
+func UpdateOrderStatusHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.UpdateOrderStatusReq
+		if err := c.ShouldBindJSON(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+			return
+		}
+
+		ctx := c.Request.Context()
+		s := service.GetTrade_recordsService()
+		resp, err := s.UpdateOrderStatus(ctx, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			return
+		}
+
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+// UpdateOrderAddressHandler 修改订单地址
+func UpdateOrderAddressHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.UpdateOrderAddressReq
+		if err := c.ShouldBindJSON(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+			return
+		}
+
+		ctx := c.Request.Context()
+		s := service.GetTrade_recordsService()
+		resp, err := s.UpdateOrderAddress(ctx, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			return
+		}
+
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+// CreateOrderHandler 生成订单
+func CreateOrderHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.CreateOrderReq
+		if err := c.ShouldBindJSON(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+			return
+		}
+
+		//ctx := c.Request.Context()
+		s := service.GetTrade_recordsService()
+		resp, err := s.CreateOrder(c, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			return
+		}
+
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+// GetMyOrdersHandler 获取我买到的订单
+func GetMyOrdersHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.GetMyOrdersReq
+		if err := c.ShouldBindQuery(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+			return
+		}
+
+		//ctx := c.Request.Context()
+		s := service.GetTrade_recordsService()
+		resp, err := s.GetMyOrders(c, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			return
+		}
+
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+// GetMySoldOrdersHandler 获取我卖出的订单
+func GetMySoldOrdersHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.GetMyOrdersReq
+		if err := c.ShouldBindQuery(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+			return
+		}
+
+		s := service.GetTrade_recordsService()
+		resp, err := s.GetMySoldOrders(c, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			return
+		}
+
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}

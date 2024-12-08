@@ -82,6 +82,14 @@ func NewRouter() *gin.Engine {
 			authed.GET("/profiles/published", api.PublishedGoodsHandler())
 			authed.GET("/orders/selled", api.IsSoldGoodsHandler())
 			//authed.GET("/orders/purchased", api.IsPurchasedGoodsHandler())
+			//修改订单状态
+			authed.POST("/orders/operate/:id", api.UpdateOrderStatusHandler())
+			//修改订单地址
+			authed.POST("/orders/address/:id", api.UpdateOrderAddressHandler())
+			//生成订单
+			authed.POST("/createOrder", api.CreateOrderHandler())
+			//获取-我买到的
+			authed.GET("/orders/purchased", api.GetMyOrdersHandler())
 		}
 	}
 	return router

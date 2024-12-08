@@ -75,16 +75,16 @@ func (s *CommentService) GetReceivedCommentsByUserID(ctx context.Context, userID
 	return
 }
 
-// PostComment 发布评论
-func (s *CommentService) PostComment(ctx context.Context, req types.PostCommentReq) (resp interface{}, err error) {
-	u := dao.NewComment(ctx)
-	err = u.CreateComment(req)
-	if err != nil {
-		util.LogrusObj.Error(err)
-		return
-	}
-	resp = map[string]string{
-		"message": "Comment posted successfully",
-	}
-	return resp, nil
-}
+//// PostComment 发布评论
+//func (s *CommentService) PostComment(ctx context.Context, req types.PostCommentReq) (resp interface{}, err error) {
+//	u := dao.NewComment(ctx)
+//	err = u.CreateComment(req)
+//	if err != nil {
+//		util.LogrusObj.Error(err)
+//		return
+//	}
+//	resp = map[string]string{
+//		"message": "Comment posted successfully",
+//	}
+//	return resp, nil
+//}

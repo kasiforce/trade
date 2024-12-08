@@ -43,3 +43,84 @@ type ShowOrdersReq struct {
 	PageNum     int    `form:"pageNum" json:"pageNum"`   // 当前页码
 	PageSize    int    `form:"pageSize" json:"pageSize"` // 每页记录数
 }
+
+// UpdateOrderStatusReq 表示修改订单状态的请求
+type UpdateOrderStatusReq struct {
+	ID           int    `json:"id" binding:"required"`     // 订单编号
+	Status       string `json:"status" binding:"required"` // 目标状态
+	RefundReason string `json:"refundReason"`              // 退款理由
+	Comment      string `json:"comment"`                   // 评价内容
+}
+
+// UpdateOrderStatusResp 表示修改订单状态的返回信息
+type UpdateOrderStatusResp struct {
+	Status string `json:"status"` // 更改后的订单状态
+}
+
+// UpdateOrderAddressReq 表示修改订单地址的请求
+type UpdateOrderAddressReq struct {
+	ID int `json:"id" binding:"required"` // 订单号
+	//Province   string `json:"province" binding:"required"`   // 省
+	//City       string `json:"city" binding:"required"`       // 市
+	//Area       string `json:"area" binding:"required"`       // 区
+	//DetailArea string `json:"detailArea" binding:"required"` // 详细地址
+	AddrID int `json:"addrID"`
+}
+
+// CreateOrderReq 表示生成订单的请求
+type CreateOrderReq struct {
+	SellerID       int     `json:"sellerID" binding:"required"`       // 卖家ID
+	GoodsID        int     `json:"goodsID" binding:"required"`        // 商品ID
+	Price          float64 `json:"price" binding:"required"`          // 价格
+	DeliveryMethod string  `json:"deliveryMethod" binding:"required"` // 交易方式
+	ShippingCost   float64 `json:"shippingCost" binding:"required"`   // 运费
+	SenderAddrID   int     `json:"SenderAddrID" binding:"required"`   // 发货地址
+	ShippingAddrID int     `json:"shippingAddrID" binding:"required"` // 收货地址
+}
+
+// CreateOrderResp 表示生成订单的返回信息
+type CreateOrderResp struct {
+	TradeID int `json:"tradeID"` // 订单ID
+}
+
+// GetMyOrdersReq 表示获取我买到的订单的请求
+type GetMyOrdersReq struct {
+	Page     int `form:"page" json:"page"`         // 页码，默认为1
+	PageSize int `form:"pageSize" json:"pageSize"` // 每页条数，默认5
+}
+
+// GetMyOrdersResp 表示获取我买到的订单的返回信息
+type GetMyOrdersResp struct {
+	Total     int64            `json:"total"`     // 订单总数
+	OrderList []GetMyOrderInfo `json:"orderList"` // 订单列表
+}
+
+// GetMyOrderInfo GetMyOrderInfo 表示订单信息
+type GetMyOrderInfo struct {
+	TradeID         int         `json:"tradeID"`         // 订单ID
+	SellerID        int         `json:"sellerID"`        // 卖家ID
+	SellerName      string      `json:"sellerName"`      // 卖家昵称
+	GoodsID         int         `json:"goodsID"`         // 商品ID
+	GoodsName       string      `json:"goodsName"`       // 商品名称
+	Price           float64     `json:"price"`           // 价格
+	DeliveryMethod  string      `json:"deliveryMethod"`  // 交易方式
+	ShippingCost    float64     `json:"shippingCost"`    // 运费
+	SenderAddress   AddressInfo `json:"senderAddress"`   // 发货地址
+	ShippingAddress AddressInfo `json:"shippingAddress"` // 收货地址
+	OrderTime       string      `json:"orderTime"`       // 下单时间
+	PayTime         string      `json:"payTime"`         // 支付时间
+	ShippingTime    string      `json:"shippingTime"`    // 发货时间
+	TurnoverTime    string      `json:"turnoverTime"`    // 成交时间
+	Status          string      `json:"status"`          // 订单状态
+}
+
+// AddressInfo 表示地址信息
+type AddressInfo struct {
+	AddrID     int    `json:"addrID"`     // 地址ID
+	Province   string `json:"province"`   // 省
+	City       string `json:"city"`       // 市
+	Area       string `json:"area"`       // 区
+	DetailArea string `json:"detailArea"` // 详细地址
+	Tel        string `json:"tel"`        // 联系电话
+	Name       string `json:"name"`       // 联系人
+}
