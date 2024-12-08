@@ -45,9 +45,19 @@ func (admin *Admin) FindByName(name string) (exist bool, err error) {
 	return true, err
 }
 
-func (admin *Admin) CreateAdmin(data map[string]interface{}) (err error) {
-	err = admin.DB.Model(&model.Admin{}).Create(data).Error
-	return
+func (admin *Admin) CreateAdmin(data map[string]interface{}) (adminID int, err error) {
+	result := admin.DB.Model(&model.Admin{}).Create(data)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	// 获取插入记录的主键 ID
+	createdAdmin := model.Admin{}
+	if err := admin.DB.Last(&createdAdmin).Error; err != nil {
+		return 0, err
+	}
+
+	adminID = createdAdmin.AdminID // 直接获取插入记录的主键ID
+	return adminID, nil
 }
 
 func (admin *Admin) UpdateAdmin(id int, data map[string]interface{}) (err error) {
