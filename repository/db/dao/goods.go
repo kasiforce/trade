@@ -186,7 +186,7 @@ func (g *Goods) FilterGoods(req types.ShowGoodsReq) (goods []model.Goods, err er
 			query = query.Where("goods.createdTime BETWEEN ? AND ?", startDate, endDate)
 		}
 	}
-	if req.ShippingCost >= 0 {
+	if req.ShippingCost > 0 {
 		query = query.Where("trade_records.shippingCost = ?", req.ShippingCost)
 	}
 	query = query.Limit(req.Limit).Offset((req.Page - 1) * req.Limit)
