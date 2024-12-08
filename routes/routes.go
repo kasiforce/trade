@@ -63,7 +63,10 @@ func NewRouter() *gin.Engine {
 
 		//查询订单
 		v1.GET("/admin/order", api.GetAllOrdersHandler())
-
+		//商品列表和详情
+		v1.GET("/products", api.ShowAllGoodsHandler())
+		//筛选商品
+		v1.GET("/product/select", api.FilterGoodsHandler())
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())
 		{
@@ -80,8 +83,7 @@ func NewRouter() *gin.Engine {
 			//用户商品查询
 			authed.GET("/profiles/finished", api.IsSoldGoodsHandler())
 			authed.GET("/profiles/published", api.PublishedGoodsHandler())
-			authed.GET("/orders/selled", api.IsSoldGoodsHandler())
-			//authed.GET("/orders/purchased", api.IsPurchasedGoodsHandler())
+
 		}
 	}
 	return router
