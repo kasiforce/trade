@@ -11,7 +11,7 @@ create table users(
     tel varchar(20),
     mail varchar(40) not null unique,
     gender tinyint,
-    userStatus tinyint not null default 1
+    userStatus tinyint not null default 0
 );
 
 -- 商品类别表
@@ -69,19 +69,23 @@ CREATE TABLE trade_records (
     buyerID INT NOT NULL,
     goodsID INT NOT NULL,
     turnoverAmount DECIMAL(10,2) NOT NULL CHECK (turnoverAmount >= 0),
-    shippingAddress VARCHAR(256),
-    deliveryAddress VARCHAR(256),
+    shippingAddrID INT NOT NULL,
+    deliveryAddrID INT NOT NULL,
     orderTime DATETIME NOT NULL,
     payTime DATETIME,
     shippingTime DATETIME,
+    shippingCost DECIMAL(10,2) NOT NULL DEFAULT 0 CHECK (shippingCost >= 0),
     turnoverTime DATETIME,
     payMethod TINYINT NOT NULL DEFAULT 0,
     trackingNumber VARCHAR(100),
     isReturn TINYINT NOT NULL DEFAULT 0,
+    status VARCHAR(20) NOT NULL,
     PRIMARY KEY (tradeID),
     FOREIGN KEY (sellerID) REFERENCES users(userID),
     FOREIGN KEY (buyerID) REFERENCES users(userID),
-    FOREIGN KEY (goodsID) REFERENCES goods(goodsID)
+    FOREIGN KEY (goodsID) REFERENCES goods(goodsID),
+    FOREIGN KEY (shippingAddrID) REFERENCES address(addrID),
+    FOREIGN KEY (deliveryAddrID) REFERENCES address(addrID)
 );
 
 -- 退货记录 

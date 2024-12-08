@@ -44,8 +44,12 @@ func (user *User) FindByName(name string) (exist bool, err error) {
 	return true, err
 }
 
-func (user *User) CreateUser(u map[string]interface{}) (err error) {
-	err = user.DB.Model(&model.User{}).Create(u).Error
+func (user *User) CreateUser(u *model.User) (id int, err error) {
+	result := user.DB.Model(&model.User{}).Create(u)
+	if err = result.Error; err != nil {
+		return 0, err
+	}
+	id = u.UserID
 	return
 }
 
