@@ -4,23 +4,23 @@ import "time"
 
 // 查询所有商品（管理员） 17
 type GoodsInfo struct {
-	GoodsID      int     `json:"id"`    // 商品ID
-	GoodsName    string  `json:"title"` // 商品名称
-	Price        float64 `json:"price"` // 价格
-	CategoryName string  `json:"category"`
-	Details      string  `json:"description"` // 商品详情
-	GoodsImages  string  `json:"imageUrl"`    // 商品图片
-	//ShippingCost   float64   `json:"shippingCost"`
-	UserName    string    `json:"userName"`
-	Province    string    `json:"province"`
-	City        string    `json:"city"`
-	District    string    `json:"area"`
-	Address     string    `json:"detailArea"`
-	CreatedTime time.Time `json:"postTime"` // 创建时间
-	//DeliveryMethod string    `json:"deliveryMethod"`
-	Star   int `json:"stars"`
-	View   int `json:"views"`
-	IsSold int `json:"isSold"` // 是否已售：0 未售，1 已售
+	GoodsID        int       `json:"id"`    // 商品ID
+	GoodsName      string    `json:"title"` // 商品名称
+	Price          float64   `json:"price"` // 价格
+	CategoryName   string    `json:"category"`
+	Details        string    `json:"description"` // 商品详情
+	GoodsImages    string    `json:"imageUrl"`    // 商品图片
+	ShippingCost   float64   `json:"shippingCost"`
+	UserName       string    `json:"userName"`
+	Province       string    `json:"province"`
+	City           string    `json:"city"`
+	District       string    `json:"area"`
+	Address        string    `json:"detailArea"`
+	CreatedTime    time.Time `json:"postTime"` // 创建时间
+	DeliveryMethod string    `json:"deliveryMethod"`
+	Star           int       `json:"stars"`
+	View           int       `json:"views"`
+	IsSold         int       `json:"isSold"` // 是否已售：0 未售，1 已售
 }
 
 // 已售出商品（用户） 6
@@ -35,24 +35,24 @@ type GoodsInfo2 struct {
 
 // 获取发布中商品（用户） 18
 type GoodsInfo3 struct {
-	GoodsID      int     `json:"id"`     // 商品ID
-	GoodsName    string  `json:"title"`  // 商品名称
-	UserID       int     `json:"userID"` // 用户ID
-	Price        float64 `json:"price"`  // 价格
-	CategoryName string  `json:"category"`
-	Details      string  `json:"description"` // 商品详情
-	GoodsImages  string  `json:"imageUrl"`    // 商品图片
-	//ShippingCost   float64   `json:"shippingCost"`
-	UserName    string    `json:"userName"`
-	Province    string    `json:"province"`
-	City        string    `json:"city"`
-	District    string    `json:"area"`
-	Address     string    `json:"detailArea"`
-	CreatedTime time.Time `json:"postTime"` // 创建时间
-	//DeliveryMethod string    `json:"deliveryMethod"`
-	Star   int `json:"stars"`
-	View   int `json:"views"`
-	IsSold int `json:"isSold"` // 是否已售：0 未售，1 已售
+	GoodsID        int       `json:"id"`     // 商品ID
+	GoodsName      string    `json:"title"`  // 商品名称
+	UserID         int       `json:"userID"` // 用户ID
+	Price          float64   `json:"price"`  // 价格
+	CategoryName   string    `json:"category"`
+	Details        string    `json:"description"` // 商品详情
+	GoodsImages    string    `json:"imageUrl"`    // 商品图片
+	ShippingCost   float64   `json:"shippingCost"`
+	UserName       string    `json:"userName"`
+	Province       string    `json:"province"`
+	City           string    `json:"city"`
+	District       string    `json:"area"`
+	Address        string    `json:"detailArea"`
+	CreatedTime    time.Time `json:"postTime"` // 创建时间
+	DeliveryMethod string    `json:"deliveryMethod"`
+	Star           int       `json:"stars"`
+	View           int       `json:"views"`
+	IsSold         int       `json:"isSold"` // 是否已售：0 未售，1 已售
 }
 
 // 商品列表 5
