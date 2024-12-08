@@ -17,8 +17,8 @@ type AddrInfoResp struct {
 	Tel       string `json:"tel"`
 	Province  string `json:"province"`
 	City      string `json:"city"`
-	District  string `json:"district"`
-	Address   string `json:"address"`
+	District  string `json:"area"`
+	Address   string `json:"detailArea"`
 	IsDefault int    `json:"isDefault"`
 }
 
