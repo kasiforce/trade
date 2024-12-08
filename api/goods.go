@@ -113,7 +113,7 @@ func FilterGoodsHandler() gin.HandlerFunc {
 	}
 }
 
-// 更新view
+// 更新view(未做)
 func IncreaseGoodsViewHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 获取商品ID

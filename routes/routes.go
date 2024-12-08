@@ -62,7 +62,7 @@ func NewRouter() *gin.Engine {
 
 		//查询订单
 		v1.GET("/admin/order", api.GetAllOrdersHandler())
-		//商品列表和详情
+		//商品列表
 		v1.GET("/products", api.ShowAllGoodsHandler())
 		//筛选商品
 		v1.GET("/product/select", api.FilterGoodsHandler())
