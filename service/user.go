@@ -9,6 +9,7 @@ import (
 	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/repository/cache"
 	"github.com/kasiforce/trade/repository/db/dao"
+	"github.com/kasiforce/trade/repository/db/model"
 	"github.com/kasiforce/trade/types"
 	"sync"
 	"time"
@@ -102,20 +103,33 @@ func (s *UserService) AddUser(c context.Context, req types.UserInfo) (resp inter
 		util.LogrusObj.Error(err)
 		return
 	}
-	modelUser := map[string]interface{}{
-		"userName":   req.UserName,
-		"passwords":  req.Password,
-		"schoolID":   id,
-		"picture":    req.Picture,
-		"mail":       req.Mail,
-		"gender":     req.Gender,
-		"tel":        req.Tel,
-		"userStatus": req.Status,
+	//modelUser := map[string]interface{}{
+	//	"userName":   req.UserName,
+	//	"passwords":  req.Password,
+	//	"schoolID":   id,
+	//	"picture":    req.Picture,
+	//	"mail":       req.Mail,
+	//	"gender":     req.Gender,
+	//	"tel":        req.Tel,
+	//	"userStatus": req.Status,
+	//}
+	modelUser := &model.User{
+		UserName:   req.UserName,
+		Passwords:  req.Password,
+		SchoolID:   id,
+		Picture:    req.Picture,
+		Mail:       req.Mail,
+		Tel:        req.Tel,
+		Gender:     req.Gender,
+		UserStatus: req.Status,
 	}
-	err = u.CreateUser(modelUser)
+	uid, err := u.CreateUser(modelUser)
 	if err != nil {
 		util.LogrusObj.Error(err)
 		return
+	}
+	resp = types.UserID{
+		UserID: uid,
 	}
 	return
 }
@@ -319,13 +333,19 @@ func (s *UserService) UserRegister(ctx context.Context, req *types.UserRegisterR
 		return
 	}
 	name := util.GenerateName()
-	modelUser := map[string]interface{}{
-		"userName":  name,
-		"mail":      req.Mail,
-		"passwords": req.Password,
-		"schoolID":  id,
+	//modelUser := map[string]interface{}{
+	//	"userName":  name,
+	//	"mail":      req.Mail,
+	//	"passwords": req.Password,
+	//	"schoolID":  id,
+	//}
+	modelUser := &model.User{
+		UserName:  name,
+		Mail:      req.Mail,
+		Passwords: req.Password,
+		SchoolID:  id,
 	}
-	err = u.CreateUser(modelUser)
+	_, err = u.CreateUser(modelUser)
 	if err != nil {
 		util.LogrusObj.Error(err)
 		return

@@ -68,14 +68,16 @@ func (cs *CategoryService) AddCategory(ctx context.Context, req types.CategoryIn
 	}
 	c := dao.NewCategory(ctx)
 	modelCategory := &model.Category{
-		CategoryID:   req.CategoryID,
 		CategoryName: req.CategoryName,
 		Description:  req.Descriptions,
 	}
-	err = c.AddCategory(modelCategory)
+	uid, err := c.AddCategory(modelCategory)
 	if err != nil {
 		util.LogrusObj.Error(err)
 		return
+	}
+	resp = types.CategoryID{
+		CategoryID: uid,
 	}
 	return
 }
