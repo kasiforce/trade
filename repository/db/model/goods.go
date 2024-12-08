@@ -27,6 +27,8 @@ type Goods struct {
 	PayMethod    int     `gorm:"type:tinyint;not null;default:0;column:payMethod"`
 	ShippingCost float64 `gorm:"type:decimal(10,2);not null;default:0;column:shippingCost"`
 	IsStarred    bool    `gorm:"type:bool;not null;default:0;column:isStarred"`
+	AddrID       int     `gorm:"type:int;not null;default:0;column:addrID"`
+	Tel          string  `gorm:"type:string;not null;default:0;column:tel"`
 }
 
 func (Goods) TableName() string {

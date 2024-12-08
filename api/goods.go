@@ -113,6 +113,25 @@ func FilterGoodsHandler() gin.HandlerFunc {
 	}
 }
 
+func ShowGoodsDetailHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.ShowDetailReq
+		if err := c.ShouldBindQuery(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		s := service.GetGoodsService()
+		resp, err := s.ShowGoodsDetail(c, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
 // 更新view(未做)
 func IncreaseGoodsViewHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {

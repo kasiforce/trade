@@ -2,11 +2,12 @@ package service
 
 import (
 	"context"
+	"sync"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/repository/db/dao"
 	"github.com/kasiforce/trade/types"
-	"sync"
 )
 
 var goodsServ *GoodsService
@@ -191,7 +192,7 @@ func (s *GoodsService) IncreaseGoodsView(ctx context.Context, goodsID uint) erro
 	return g.IncreaseView(goodsID)
 }
 
-// 当前用户获取发布的所有商品
+// 筛选商品
 func (s *GoodsService) FilterGoods(ctx *gin.Context, req types.ShowGoodsReq) (resp interface{}, err error) {
 	goods := dao.NewGoods(ctx)
 	goodsList, err := goods.FilterGoods(req)
@@ -236,4 +237,53 @@ func (s *GoodsService) FilterGoods(ctx *gin.Context, req types.ShowGoodsReq) (re
 	}
 	// 返回分页后的结果
 	return respList, nil
+}
+
+// 获取商品详情
+func (s *GoodsService) ShowGoodsDetail(ctx *gin.Context, req types.ShowDetailReq) (resp interface{}, err error) {
+	userid := ctx.GetInt("id")
+	goods := dao.NewGoods(ctx)
+	goodsInfo, err := goods.ShowGoodsDetail(req, userid)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return nil, err
+	}
+	// 将 DeliveryMethod 从 int 转换为 string
+	var deliveryMethod string
+	switch goodsInfo.DeliveryMethod {
+	case 0:
+		deliveryMethod = "无需快递"
+	case 1:
+		deliveryMethod = "自提"
+	case 2:
+		deliveryMethod = "邮寄"
+	default:
+		deliveryMethod = "未知"
+	}
+	// 创建最终的返回数据
+	respData := types.ShowGoodsDetail{
+		GoodsID:        goodsInfo.GoodsID,
+		GoodsName:      goodsInfo.GoodsName,
+		Price:          goodsInfo.Price,
+		CategoryName:   goodsInfo.CategoryName,
+		Details:        goodsInfo.Details,
+		IsSold:         goodsInfo.IsSold,
+		GoodsImages:    goodsInfo.GoodsImages,
+		CreatedTime:    goodsInfo.CreatedTime,
+		UserName:       goodsInfo.UserName,
+		UserID:         goodsInfo.UserID,
+		Province:       goodsInfo.Province,
+		City:           goodsInfo.City,
+		District:       goodsInfo.District,
+		Address:        goodsInfo.Address,
+		Star:           goodsInfo.Star,
+		View:           goodsInfo.View,
+		DeliveryMethod: deliveryMethod,
+		ShippingCost:   goodsInfo.ShippingCost,
+		AddrID:         goodsInfo.AddrID,
+		Tel:            goodsInfo.Tel,
+		IsStarred:      goodsInfo.IsStarred,
+	}
+	// 返回结果
+	return respData, nil
 }
