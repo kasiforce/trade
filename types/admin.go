@@ -22,26 +22,6 @@ type ShowAdminReq struct {
 	PageSize    int    `form:"pageSize" json:"pageSize"`       // 每页记录数
 }
 
-type UpdateAdminReq struct {
-	AdminID   int    `json:"adminID"`   // 管理员ID
-	AdminName string `json:"adminName"` // 管理员名称
-	Passwords string `json:"password"`  // 密码
-	Tel       string `json:"tel"`       // 电话号码
-	Mail      string `json:"mail"`      // 邮箱
-	Gender    int    `json:"gender"`    // 性别
-	Age       int    `json:"age"`       // 年龄
-}
-
-type AddAdminReq struct {
-	AdminID   int64  `json:"adminID"`
-	AdminName string `json:"adminName"`
-	Age       int64  `json:"age,omitempty"`
-	Gender    int64  `json:"gender,omitempty"`
-	Mail      string `json:"mail,omitempty"`
-	Password  string `json:"password"`
-	Tel       string `json:"tel,omitempty"`
-}
-
 type AdminLoginReq struct {
 	Mail     string `form:"mail" json:"mail"`         // 邮箱
 	Password string `form:"password" json:"password"` // 密码
