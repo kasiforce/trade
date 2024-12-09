@@ -33,8 +33,12 @@ CREATE TABLE goods (
     isSold TINYINT NOT NULL DEFAULT 0,
     goodsImages VARCHAR(256),
     createdTime DATETIME NOT NULL,
+    deliveryMethod INT NOT NULL,  -- 新增字段 deliveryMethod
+    shippingCost DECIMAL(10, 2) NULL DEFAULT 0,    -- 新增字段 shippingCost
+    addrID INT,                            -- 新增字段 addrID 作为外键
     FOREIGN KEY (userID) REFERENCES users(userID), 
-    FOREIGN KEY (categoryID) REFERENCES category(categoryID)
+    FOREIGN KEY (categoryID) REFERENCES category(categoryID),
+    FOREIGN KEY (addrID) REFERENCES address(addrID)  -- 新增外键约束
 ) DEFAULT CHARSET=utf8mb4;
 
 -- 收藏 
