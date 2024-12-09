@@ -79,7 +79,7 @@ func (g *Goods) FindByID(id int) (goods []model.Goods, err error) {
 	db := g.DB
 	// 关联查询 goods, users, address 表
 	query := db.Table("goods").
-		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price,
+		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, goods.view,
             category.categoryName, goods.details, goods.isSold, goods.goodsImages,
             goods.createdTime, users.userName, address.province, address.city, address.districts, address.address,
             COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
@@ -120,7 +120,7 @@ func (g *Goods) UserFindAll(id int) (goods []model.Goods, err error) {
 	db := g.DB
 	// 关联查询 goods, users, address 表
 	query := db.Table("goods").
-		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, 
+		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, goods.view,
             category.categoryName, goods.details, goods.isSold, goods.goodsImages, 
             goods.createdTime, users.userName, address.province, address.city, address.districts, address.address,
             COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
@@ -142,7 +142,7 @@ func (g *Goods) UserFindAll(id int) (goods []model.Goods, err error) {
 func (g *Goods) FilterGoods(req types.ShowGoodsReq) (goods []model.Goods, err error) {
 	db := g.DB
 	query := db.Table("goods").
-		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, 
+		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, goods.view,
             category.categoryName, goods.details, goods.isSold, goods.goodsImages, 
             goods.createdTime, users.userName, address.province, address.city, address.districts, address.address,
             COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
@@ -228,8 +228,10 @@ func (g *Goods) FindByCategoryID(categoryID, pageNum, pageSize int) (goods []mod
 }
 
 // 更新view
-func (g *Goods) IncreaseView(goodsID uint) error {
-	return g.DB.Model(&model.Goods{}).Where("goodsID = ?", goodsID).UpdateColumn("view", gorm.Expr("view + 1")).Error
+func (g *Goods) IncreaseView(req types.ShowDetailReq) error {
+	// 使用gorm.Expr来增加view的值
+	return g.DB.Model(&model.Goods{}).Where("goodsID = ?", req.GoodsID).
+		UpdateColumn("view", gorm.Expr("view + 1")).Error
 }
 
 // 获取商品详情
@@ -237,7 +239,7 @@ func (g *Goods) ShowGoodsDetail(req types.ShowDetailReq, userid int) (goods mode
 	db := g.DB
 	// 关联查询 goods, users, address 表
 	query := db.Table("goods").
-		Select("goods.goodsID, goods.goodsName, goods.userID, goods.price, "+
+		Select("goods.goodsID, goods.goodsName, goods.userID, goods.price, goods.view,"+
 			"category.categoryName, goods.details, goods.isSold, goods.goodsImages, "+
 			"goods.createdTime, users.userName, address.province, address.city, address.districts, address.address,"+
 			"COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost,"+
@@ -261,51 +263,6 @@ func (g *Goods) ShowGoodsDetail(req types.ShowDetailReq, userid int) (goods mode
 // 发布闲置
 func (g *Goods) CreateGoods(req types.CreateGoodsReq, userid int) (int, error) {
 	db := g.DB
-	// 查询 address 表中是否已存在相同地址
-	var addrID int
-	err := db.Table("address").
-		Select("addrID").
-		Where("userID = ? AND province = ? AND city = ? AND districts = ? AND address = ?",
-			userid, req.Province, req.City, req.District, req.Address).
-		Scan(&addrID).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
-		util.LogrusObj.Error(err)
-		return 0, err
-	}
-	// 如果地址不存在，插入新地址
-	if addrID == 0 {
-		// 查询用户电话和姓名
-		var user struct {
-			Tel      string `gorm:"column:tel"`
-			UserName string `gorm:"column:userName"`
-		}
-		err = db.Table("users").
-			Select("tel, userName").
-			Where("userID = ?", userid).
-			Scan(&user).Error
-		if err != nil {
-			util.LogrusObj.Error("查询用户电话和姓名失败:", err)
-			return 0, err
-		}
-		if user.Tel == "" || user.UserName == "" {
-			return 0, errors.New("用户的 tel 或 userName 为空")
-		}
-		// 插入新地址
-		err = db.Exec("INSERT INTO address (userID, province, city, districts, address, tel, receiver, isDefault) VALUES (?, ?, ?, ?, ?, ?, ?, 0)",
-			userid, req.Province, req.City, req.District, req.Address, user.Tel, user.UserName).Error
-		if err != nil {
-			util.LogrusObj.Error("插入新地址失败:", err)
-			return 0, err
-		}
-		// 获取新插入的地址 ID
-		createdAddress := model.Address{}
-		if err := db.Last(&createdAddress).Error; err != nil {
-			util.LogrusObj.Error("获取新地址 ID 失败:", err)
-			return 0, err
-		}
-		addrID = createdAddress.ID // 获取插入的地址 ID
-		util.LogrusObj.Info("新地址 ID:", addrID)
-	}
 
 	// 转换 deliveryMethod 字段
 	var deliveryMethod int
@@ -318,10 +275,40 @@ func (g *Goods) CreateGoods(req types.CreateGoodsReq, userid int) (int, error) {
 		deliveryMethod = 2
 	}
 
+	var addrID interface{}
+	var shippingCost interface{}
+
+	if deliveryMethod == 0 {
+		// 无需快递，addrID 设为 null，shippingCost 保持不变
+		addrID = nil
+		shippingCost = req.ShippingCost
+	} else {
+		// 使用请求中的 addrID
+		addrID = req.AddrID
+		if deliveryMethod == 1 {
+			// 自提，shippingCost 设为 0
+			shippingCost = 0
+		} else {
+			// 邮寄，shippingCost 保持不变
+			shippingCost = req.ShippingCost
+		}
+	}
+
+	// 根据 CategoryName 获取 CategoryID
+	var categoryID int
+	err := db.Table("category").
+		Select("categoryID").
+		Where("categoryName = ?", req.CategoryName).
+		Scan(&categoryID).Error
+	if err != nil {
+		util.LogrusObj.Error("获取分类 ID 失败:", err)
+		return 0, err
+	}
+
 	// 插入商品记录，并返回插入的商品 ID
 	err = db.Exec(
 		"INSERT INTO goods (userID, goodsName, details, price, categoryID, goodsImages, createdTime, deliveryMethod, shippingCost, addrID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-		userid, req.GoodsName, req.Details, req.Price, req.CategoryID, req.GoodsImages, time.Now(), deliveryMethod, req.ShippingCost, addrID).Error
+		userid, req.GoodsName, req.Details, req.Price, categoryID, req.GoodsImages, time.Now(), deliveryMethod, shippingCost, addrID).Error
 	if err != nil {
 		util.LogrusObj.Error(err)
 		return 0, err

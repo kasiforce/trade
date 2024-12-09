@@ -134,12 +134,9 @@ type CreateGoodsReq struct {
 	GoodsName      string  `json:"title"`
 	Details        string  `json:"description"`
 	Price          float64 `json:"price"`
-	CategoryID     int     `json:"category"`
+	CategoryName   string  `json:"category"`
 	GoodsImages    string  `json:"imageUrl"`
-	Province       string  `json:"province"`
-	City           string  `json:"city"`
-	District       string  `json:"area"`
-	Address        string  `json:"detailArea"`
+	AddrID         int     `json:"addrID"`
 	DeliveryMethod string  `json:"deliveryMethod"`
 	ShippingCost   float64 `json:"shippingCost"`
 }

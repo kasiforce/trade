@@ -187,9 +187,9 @@ func (s *GoodsService) ShowGoodsList(ctx context.Context, req types.ShowGoodsLis
 }
 
 // 更新view
-func (s *GoodsService) IncreaseGoodsView(ctx context.Context, goodsID uint) error {
+func (s *GoodsService) IncreaseGoodsView(ctx context.Context, req types.ShowDetailReq) error {
 	g := dao.NewGoods(ctx)
-	return g.IncreaseView(goodsID)
+	return g.IncreaseView(req)
 }
 
 // 筛选商品
@@ -293,7 +293,7 @@ func (s *GoodsService) AddGoods(ctx *gin.Context, req types.CreateGoodsReq) (res
 	userid := ctx.GetInt("id")
 	goods := dao.NewGoods(ctx)
 	goodsID, err := goods.CreateGoods(req, userid)
-	if req.GoodsName == "" || req.Details == "" || req.Province == "" || req.City == "" || req.District == "" || req.Address == "" || req.DeliveryMethod == "" {
+	if req.GoodsName == "" || req.Details == "" || req.DeliveryMethod == "" || req.CategoryName == "" || req.Price == 0 {
 		err = errors.New("参数不能为空")
 		return nil, err
 	}

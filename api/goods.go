@@ -152,31 +152,30 @@ func CreateGoodsHandler() gin.HandlerFunc {
 	}
 }
 
-// 更新view(未做)
+// 更新view
 func IncreaseGoodsViewHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 获取商品ID
-		goodsID := c.Param("id")
-		if goodsID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "商品ID不能为空"})
+		// 获取请求中的商品ID
+		var req types.ShowDetailReq
+		if err := c.ShouldBindQuery(&req); err != nil {
+			c.Status(http.StatusBadRequest)
 			return
 		}
 
-		// 将商品ID转换为uint类型
-		id, err := strconv.ParseUint(goodsID, 10, 64)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "无效的商品ID"})
+		// 检查商品ID是否为空
+		if req.GoodsID == 0 {
+			c.Status(http.StatusBadRequest)
 			return
 		}
 
 		// 调用服务层方法更新商品的view字段
 		s := service.GetGoodsService()
-		err = s.IncreaseGoodsView(c.Request.Context(), uint(id))
+		err := s.IncreaseGoodsView(c.Request.Context(), req)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "更新商品view失败"})
+			c.Status(http.StatusInternalServerError)
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "商品view更新成功"})
+		c.Status(http.StatusOK)
 	}
 }
