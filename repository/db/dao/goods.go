@@ -38,12 +38,12 @@ func (g *Goods) AdminFindAll(req types.ShowAllGoodsReq) (goods []model.Goods, er
             COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID").
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
 		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
 	if req.SearchQuery != "" {
-		query = query.Where("goods.goodsName LIKE ?", "%"+req.SearchQuery+"%")
+		query = query.Where("goods.goodsID = ?", req.SearchQuery)
 	}
 
 	query = query.Limit(req.PageSize).Offset((req.PageNum - 1) * req.PageSize)
@@ -85,7 +85,7 @@ func (g *Goods) FindByID(id int) (goods []model.Goods, err error) {
             COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID").
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
 		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
@@ -120,13 +120,13 @@ func (g *Goods) UserFindAll(id int) (goods []model.Goods, err error) {
 	db := g.DB
 	// 关联查询 goods, users, address 表
 	query := db.Table("goods").
-		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, goods.view,
+		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, goods.view, goods.addrID,
             category.categoryName, goods.details, goods.isSold, goods.goodsImages, 
             goods.createdTime, users.userName, address.province, address.city, address.districts, address.address,
             COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID").
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
 		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
@@ -148,7 +148,7 @@ func (g *Goods) FilterGoods(req types.ShowGoodsReq) (goods []model.Goods, err er
             COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID").
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
 		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
@@ -248,7 +248,7 @@ func (g *Goods) ShowGoodsDetail(req types.ShowDetailReq, userid int) (goods mode
 			"CASE WHEN EXISTS (SELECT 1 FROM collection WHERE collection.goodsID = goods.goodsID AND collection.userID = ?) THEN TRUE ELSE FALSE END AS isStarred", userid).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID").
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
 		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address, users.tel, address.addrID")

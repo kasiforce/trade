@@ -141,11 +141,13 @@ func (s *GoodsService) ShowPublishedGoods(ctx *gin.Context, id int) (resp interf
 			Province:       goodsInfo.Province,
 			City:           goodsInfo.City,
 			District:       goodsInfo.District,
+			Address:        goodsInfo.Address,
 			Star:           goodsInfo.Star,
 			View:           goodsInfo.View,
 			DeliveryMethod: deliveryMethod,
 			ShippingCost:   goodsInfo.ShippingCost,
 			UserID:         goodsInfo.UserID,
+			AddrID:         goodsInfo.AddrID,
 		})
 	}
 	// 返回分页后的结果
