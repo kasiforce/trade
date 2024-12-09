@@ -23,10 +23,11 @@ type Goods struct {
 	CategoryName string  `gorm:"not null;column:categoryName"`
 	UserName     string  `gorm:"type:varchar(30);unique;not null;column:userName"`
 	Star         int     `gorm:"foreignKey:GoodsID;references:GoodsID"`
-	View         int     `gorm:"-"`
-	PayMethod    int     `gorm:"type:tinyint;not null;default:0;column:payMethod"`
+	View         int     `gorm:"type:int;column:view"`
 	ShippingCost float64 `gorm:"type:decimal(10,2);not null;default:0;column:shippingCost"`
 	IsStarred    bool    `gorm:"type:bool;not null;default:0;column:isStarred"`
+	AddrID       int     `gorm:"type:int;not null;default:0;column:addrID"`
+	Tel          string  `gorm:"type:string;not null;default:0;column:tel"`
 }
 
 func (Goods) TableName() string {

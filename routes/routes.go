@@ -92,7 +92,10 @@ func NewRouter() *gin.Engine {
 			authed.POST("/createOrder", api.CreateOrderHandler())
 			//获取-我买到的
 			authed.GET("/orders/purchased", api.GetMyOrdersHandler())
-
+			//获取商品详情
+			authed.GET("/detail", api.ShowGoodsDetailHandler())
+			//发布闲置
+			authed.POST("/postProduct", api.CreateGoodsHandler())
 		}
 	}
 	return router

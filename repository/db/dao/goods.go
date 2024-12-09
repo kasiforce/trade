@@ -3,11 +3,14 @@ package dao
 import (
 	"context"
 	"errors"
+	"fmt"
+	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/repository/db/model"
 	"github.com/kasiforce/trade/types"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Goods struct {
@@ -31,15 +34,14 @@ func (g *Goods) AdminFindAll(req types.ShowAllGoodsReq) (goods []model.Goods, er
 	query := db.Table("goods").
 		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, 
             category.categoryName, goods.details, goods.isSold, goods.goodsImages, 
-            goods.createdTime, users.userName, address.province, address.city, address.districts,
-            COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, 
-			trade_records.shippingCost AS shippingCost`).
+            goods.createdTime, users.userName, address.province, address.city, address.districts, address.address,
+            COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
-		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts")
+		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
 	if req.SearchQuery != "" {
 		query = query.Where("trade_records.tradeID LIKE ?", "%"+req.SearchQuery+"%")
 	}
@@ -77,17 +79,16 @@ func (g *Goods) FindByID(id int) (goods []model.Goods, err error) {
 	db := g.DB
 	// 关联查询 goods, users, address 表
 	query := db.Table("goods").
-		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price,
+		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, goods.view,
             category.categoryName, goods.details, goods.isSold, goods.goodsImages,
-            goods.createdTime, users.userName, address.province, address.city, address.districts,
-            COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod,
-            trade_records.shippingCost AS shippingCost`).
+            goods.createdTime, users.userName, address.province, address.city, address.districts, address.address,
+            COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
-		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts")
+		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
 	if id != 0 {
 		query = query.Where("goods.userID = ?", id)
 	}
@@ -119,17 +120,16 @@ func (g *Goods) UserFindAll(id int) (goods []model.Goods, err error) {
 	db := g.DB
 	// 关联查询 goods, users, address 表
 	query := db.Table("goods").
-		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, 
+		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, goods.view,
             category.categoryName, goods.details, goods.isSold, goods.goodsImages, 
-            goods.createdTime, users.userName, address.province, address.city, address.districts,
-            COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod,
-            trade_records.shippingCost AS shippingCost`).
+            goods.createdTime, users.userName, address.province, address.city, address.districts, address.address,
+            COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
-		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts")
+		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
 
 	if id != 0 {
 		query = query.Where("goods.userID = ?", id)
@@ -142,17 +142,16 @@ func (g *Goods) UserFindAll(id int) (goods []model.Goods, err error) {
 func (g *Goods) FilterGoods(req types.ShowGoodsReq) (goods []model.Goods, err error) {
 	db := g.DB
 	query := db.Table("goods").
-		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, 
+		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, goods.view,
             category.categoryName, goods.details, goods.isSold, goods.goodsImages, 
-            goods.createdTime, users.userName, address.province, address.city, address.districts,
-            COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, 
-			trade_records.shippingCost AS shippingCost`).
+            goods.createdTime, users.userName, address.province, address.city, address.districts, address.address,
+            COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
-		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts")
+		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
 	if req.SearchQuery != "" {
 		query = query.Where("goods.goodsName LIKE ?", "%"+req.SearchQuery+"%")
 	}
@@ -172,7 +171,18 @@ func (g *Goods) FilterGoods(req types.ShowGoodsReq) (goods []model.Goods, err er
 		query = query.Where("address.district = ?", req.District)
 	}
 	if req.DeliveryMethod != "" {
-		query = query.Where("goods.deliveryMethod = ?", req.DeliveryMethod)
+		var deliveryMethod int
+		switch req.DeliveryMethod {
+		case "0", "无需快递":
+			deliveryMethod = 0
+		case "1", "自提":
+			deliveryMethod = 1
+		case "2", "邮寄":
+			deliveryMethod = 2
+		default:
+			return nil, fmt.Errorf("当前配送方式不存在: %s", req.DeliveryMethod)
+		}
+		query = query.Where("goods.deliveryMethod = ?", deliveryMethod)
 	}
 	if req.CategoryID > 0 {
 		query = query.Where("goods.categoryID = ?", req.CategoryID)
@@ -186,16 +196,10 @@ func (g *Goods) FilterGoods(req types.ShowGoodsReq) (goods []model.Goods, err er
 		}
 	}
 	if req.ShippingCost > 0 {
-		query = query.Where("trade_records.shippingCost = ?", req.ShippingCost)
+		query = query.Where("goods.shippingCost = ?", req.ShippingCost)
 	}
 	query = query.Limit(req.Limit).Offset((req.Page - 1) * req.Limit)
 	err = query.Find(&goods).Error
-	return
-}
-
-// CreateGoods 创建商品
-func (g *Goods) CreateGoods(good map[string]interface{}) (err error) {
-	err = g.DB.Model(&model.Goods{}).Create(good).Error
 	return
 }
 
@@ -224,6 +228,100 @@ func (g *Goods) FindByCategoryID(categoryID, pageNum, pageSize int) (goods []mod
 }
 
 // 更新view
-func (g *Goods) IncreaseView(goodsID uint) error {
-	return g.DB.Model(&model.Goods{}).Where("goodsID = ?", goodsID).UpdateColumn("view", gorm.Expr("view + 1")).Error
+func (g *Goods) IncreaseView(req types.ShowDetailReq) error {
+	// 使用gorm.Expr来增加view的值
+	return g.DB.Model(&model.Goods{}).Where("goodsID = ?", req.GoodsID).
+		UpdateColumn("view", gorm.Expr("view + 1")).Error
+}
+
+// 获取商品详情
+func (g *Goods) ShowGoodsDetail(req types.ShowDetailReq, userid int) (goods model.Goods, err error) {
+	db := g.DB
+	// 关联查询 goods, users, address 表
+	query := db.Table("goods").
+		Select("goods.goodsID, goods.goodsName, goods.userID, goods.price, goods.view,"+
+			"category.categoryName, goods.details, goods.isSold, goods.goodsImages, "+
+			"goods.createdTime, users.userName, address.province, address.city, address.districts, address.address,"+
+			"COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost,"+
+			"users.tel AS tel, "+
+			"address.addrID AS addrID, "+
+			"CASE WHEN EXISTS (SELECT 1 FROM collection WHERE collection.goodsID = goods.goodsID AND collection.userID = ?) THEN TRUE ELSE FALSE END AS isStarred", userid).
+		Joins("LEFT JOIN users ON goods.userID = users.userID").
+		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
+		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
+		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
+		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address, users.tel, address.addrID")
+	if req.GoodsID > 0 {
+		query = query.Where("goods.goodsID = ?", req.GoodsID)
+	}
+
+	err = query.Scan(&goods).Error
+	return
+}
+
+// 发布闲置
+func (g *Goods) CreateGoods(req types.CreateGoodsReq, userid int) (int, error) {
+	db := g.DB
+
+	// 转换 deliveryMethod 字段
+	var deliveryMethod int
+	switch req.DeliveryMethod {
+	case "无需快递":
+		deliveryMethod = 0
+	case "自提":
+		deliveryMethod = 1
+	case "邮寄":
+		deliveryMethod = 2
+	}
+
+	var addrID interface{}
+	var shippingCost interface{}
+
+	if deliveryMethod == 0 {
+		// 无需快递，addrID 设为 null，shippingCost 保持不变
+		addrID = nil
+		shippingCost = req.ShippingCost
+	} else {
+		// 使用请求中的 addrID
+		addrID = req.AddrID
+		if deliveryMethod == 1 {
+			// 自提，shippingCost 设为 0
+			shippingCost = 0
+		} else {
+			// 邮寄，shippingCost 保持不变
+			shippingCost = req.ShippingCost
+		}
+	}
+
+	// 根据 CategoryName 获取 CategoryID
+	var categoryID int
+	err := db.Table("category").
+		Select("categoryID").
+		Where("categoryName = ?", req.CategoryName).
+		Scan(&categoryID).Error
+	if err != nil {
+		util.LogrusObj.Error("获取分类 ID 失败:", err)
+		return 0, err
+	}
+
+	// 插入商品记录，并返回插入的商品 ID
+	err = db.Exec(
+		"INSERT INTO goods (userID, goodsName, details, price, categoryID, goodsImages, createdTime, deliveryMethod, shippingCost, addrID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		userid, req.GoodsName, req.Details, req.Price, categoryID, req.GoodsImages, time.Now(), deliveryMethod, shippingCost, addrID).Error
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return 0, err
+	}
+
+	// 获取新插入的商品 ID
+	createdGoods := model.Goods{}
+	if err := db.Last(&createdGoods).Error; err != nil {
+		util.LogrusObj.Error("获取新商品 ID 失败:", err)
+		return 0, err
+	}
+	goodsID := createdGoods.GoodsID // 获取插入的商品 ID
+
+	util.LogrusObj.Info("新商品 ID:", goodsID)
+	return goodsID, nil
 }
