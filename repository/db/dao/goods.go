@@ -32,7 +32,7 @@ func (g *Goods) AdminFindAll(req types.ShowAllGoodsReq) (goods []model.Goods, er
 	db := g.DB
 	// 关联查询 goods, users, address 表
 	query := db.Table("goods").
-		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, 
+		Select(`goods.goodsID, goods.goodsName, goods.userID, goods.price, goods.view,
             category.categoryName, goods.details, goods.isSold, goods.goodsImages, 
             goods.createdTime, users.userName, address.province, address.city, address.districts, address.address,
             COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
@@ -43,7 +43,7 @@ func (g *Goods) AdminFindAll(req types.ShowAllGoodsReq) (goods []model.Goods, er
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
 		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
 	if req.SearchQuery != "" {
-		query = query.Where("trade_records.tradeID LIKE ?", "%"+req.SearchQuery+"%")
+		query = query.Where("goods.goodsName LIKE ?", "%"+req.SearchQuery+"%")
 	}
 
 	query = query.Limit(req.PageSize).Offset((req.PageNum - 1) * req.PageSize)

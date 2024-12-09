@@ -75,8 +75,8 @@ func (s *GoodsService) ShowAllGoods(ctx context.Context, req types.ShowAllGoodsR
 }
 
 // 获取已售出商品
-func (s *GoodsService) IsSoldGoods(ctx *gin.Context) (resp interface{}, err error) {
-	id := ctx.GetInt("id")
+func (s *GoodsService) IsSoldGoods(ctx *gin.Context, id int) (resp interface{}, err error) {
+	//id := ctx.GetInt("id")
 	goods := dao.NewGoods(ctx)
 	// 直接调用 DAO 层的 IsSoldGoods 方法获取已售出的商品
 	filteredGoodsList, err := goods.IsSoldGoods(id)
@@ -104,8 +104,8 @@ func (s *GoodsService) IsSoldGoods(ctx *gin.Context) (resp interface{}, err erro
 }
 
 // 当前用户获取发布的所有商品
-func (s *GoodsService) ShowPublishedGoods(ctx *gin.Context) (resp interface{}, err error) {
-	id := ctx.GetInt("id")
+func (s *GoodsService) ShowPublishedGoods(ctx *gin.Context, id int) (resp interface{}, err error) {
+	//id := ctx.GetInt("id")
 	goods := dao.NewGoods(ctx)
 	goodsList, err := goods.UserFindAll(id)
 	if err != nil {
