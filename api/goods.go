@@ -33,8 +33,16 @@ func AdminShowAllGoodsHandler() gin.HandlerFunc {
 
 func IsSoldGoodsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// 从请求参数中获取 id
+		idStr := c.Query("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+			return
+		}
 		s := service.GetGoodsService()
-		resp, err := s.IsSoldGoods(c)
+		resp, err := s.IsSoldGoods(c, id)
 		if err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
@@ -46,8 +54,16 @@ func IsSoldGoodsHandler() gin.HandlerFunc {
 
 func PublishedGoodsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// 从请求参数中获取 id
+		idStr := c.Query("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+			return
+		}
 		s := service.GetGoodsService()
-		resp, err := s.ShowPublishedGoods(c)
+		resp, err := s.ShowPublishedGoods(c, id)
 		if err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
