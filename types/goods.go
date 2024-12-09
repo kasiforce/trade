@@ -141,3 +141,7 @@ type CreateGoodsReq struct {
 	DeliveryMethod string  `json:"deliveryMethod"`
 	ShippingCost   float64 `json:"shippingCost"`
 }
+
+type IsStarred struct {
+	IsStarred bool `json:"isStarred"`
+}

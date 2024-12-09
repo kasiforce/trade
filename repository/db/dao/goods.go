@@ -325,3 +325,47 @@ func (g *Goods) CreateGoods(req types.CreateGoodsReq, userid int) (int, error) {
 	util.LogrusObj.Info("新商品 ID:", goodsID)
 	return goodsID, nil
 }
+
+// 检查商品是否已被收藏
+func (g *Goods) CheckGoodsIsStarred(goodsID int, userID int) (bool, error) {
+	db := g.DB
+	var isStarred bool
+	err := db.Table("collection").
+		Select("EXISTS (SELECT 1 FROM collection WHERE goodsID = ? AND userID = ?)").
+		Where("goodsID = ? AND userID = ?", goodsID, userID, goodsID, userID).
+		Scan(&isStarred).Error
+	if err != nil {
+		return false, err
+	}
+	return isStarred, nil
+}
+
+// 添加商品到收藏表
+func (g *Goods) AddToCollection(goodsID int, userID int, createTime time.Time) error {
+	db := g.DB
+	// 创建新的 Collection 对象
+	collection := model.Collection{
+		GoodsID:     goodsID,
+		UserID:      userID,
+		CreatedTime: createTime,
+	}
+	// 使用 GORM 插入数据
+	err := db.Table("collection").Create(&collection).Error
+	if err != nil {
+		return fmt.Errorf("failed to add to collection: %w", err)
+	}
+	return nil
+}
+
+// 从收藏表中删除商品
+func (g *Goods) RemoveFromCollection(goodsID int, userID int) error {
+	db := g.DB
+	// 使用 GORM 删除数据
+	err := db.Table("collection").
+		Where("goodsID = ? AND userID = ?", goodsID, userID).
+		Delete(&model.Collection{}).Error
+	if err != nil {
+		return fmt.Errorf("failed to remove from collection: %w", err)
+	}
+	return nil
+}
