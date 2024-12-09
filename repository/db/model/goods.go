@@ -24,7 +24,6 @@ type Goods struct {
 	UserName     string  `gorm:"type:varchar(30);unique;not null;column:userName"`
 	Star         int     `gorm:"foreignKey:GoodsID;references:GoodsID"`
 	View         int     `gorm:"-"`
-	PayMethod    int     `gorm:"type:tinyint;not null;default:0;column:payMethod"`
 	ShippingCost float64 `gorm:"type:decimal(10,2);not null;default:0;column:shippingCost"`
 	IsStarred    bool    `gorm:"type:bool;not null;default:0;column:isStarred"`
 	AddrID       int     `gorm:"type:int;not null;default:0;column:addrID"`

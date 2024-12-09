@@ -132,6 +132,26 @@ func ShowGoodsDetailHandler() gin.HandlerFunc {
 	}
 }
 
+// 发布闲置
+func CreateGoodsHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.CreateGoodsReq
+		if err := c.ShouldBind(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		s := service.GetGoodsService()
+		resp, err := s.AddGoods(c, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
 // 更新view(未做)
 func IncreaseGoodsViewHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {

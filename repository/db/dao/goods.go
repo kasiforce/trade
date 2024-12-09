@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strconv"
-	"strings"
-
+	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/repository/db/model"
 	"github.com/kasiforce/trade/types"
 	"gorm.io/gorm"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type Goods struct {
@@ -37,7 +38,7 @@ func (g *Goods) AdminFindAll(req types.ShowAllGoodsReq) (goods []model.Goods, er
             COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
 		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
@@ -84,7 +85,7 @@ func (g *Goods) FindByID(id int) (goods []model.Goods, err error) {
             COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
 		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
@@ -125,7 +126,7 @@ func (g *Goods) UserFindAll(id int) (goods []model.Goods, err error) {
             COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
 		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
@@ -147,7 +148,7 @@ func (g *Goods) FilterGoods(req types.ShowGoodsReq) (goods []model.Goods, err er
             COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost`).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
 		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
@@ -202,12 +203,6 @@ func (g *Goods) FilterGoods(req types.ShowGoodsReq) (goods []model.Goods, err er
 	return
 }
 
-// CreateGoods 创建商品
-func (g *Goods) CreateGoods(good map[string]interface{}) (err error) {
-	err = g.DB.Model(&model.Goods{}).Create(good).Error
-	return
-}
-
 // DeleteGoods 删除商品
 func (g *Goods) DeleteGoods(id int) (err error) {
 	result := g.DB.Delete(&model.Goods{}, id)
@@ -248,18 +243,98 @@ func (g *Goods) ShowGoodsDetail(req types.ShowDetailReq, userid int) (goods mode
 			"COALESCE(COUNT(collection.goodsID), 0) AS star, goods.deliveryMethod, goods.shippingCost,"+
 			"users.tel AS tel, "+
 			"address.addrID AS addrID, "+
-			"CASE WHEN collection.goodsID IS NOT NULL THEN TRUE ELSE FALSE END AS isStarred").
+			"CASE WHEN EXISTS (SELECT 1 FROM collection WHERE collection.goodsID = goods.goodsID AND collection.userID = ?) THEN TRUE ELSE FALSE END AS isStarred", userid).
 		Joins("LEFT JOIN users ON goods.userID = users.userID").
 		Joins("LEFT JOIN category ON goods.categoryID = category.categoryID").
-		Joins("LEFT JOIN address ON goods.userID = address.userID AND address.isDefault = 1").
-		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID AND collection.userID = ?", userid).
+		Joins("LEFT JOIN address ON goods.addrID = address.addrID AND address.isDefault = 1").
+		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
 		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address, users.tel, address.addrID")
-
 	if req.GoodsID > 0 {
 		query = query.Where("goods.goodsID = ?", req.GoodsID)
 	}
 
 	err = query.Scan(&goods).Error
 	return
+}
+
+// 发布闲置
+func (g *Goods) CreateGoods(req types.CreateGoodsReq, userid int) (int, error) {
+	db := g.DB
+	// 查询 address 表中是否已存在相同地址
+	var addrID int
+	err := db.Table("address").
+		Select("addrID").
+		Where("userID = ? AND province = ? AND city = ? AND districts = ? AND address = ?",
+			userid, req.Province, req.City, req.District, req.Address).
+		Scan(&addrID).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		util.LogrusObj.Error(err)
+		return 0, err
+	}
+	// 如果地址不存在，插入新地址
+	if addrID == 0 {
+		// 查询用户电话和姓名
+		var user struct {
+			Tel      string `gorm:"column:tel"`
+			UserName string `gorm:"column:userName"`
+		}
+		err = db.Table("users").
+			Select("tel, userName").
+			Where("userID = ?", userid).
+			Scan(&user).Error
+		if err != nil {
+			util.LogrusObj.Error("查询用户电话和姓名失败:", err)
+			return 0, err
+		}
+		if user.Tel == "" || user.UserName == "" {
+			return 0, errors.New("用户的 tel 或 userName 为空")
+		}
+		// 插入新地址
+		err = db.Exec("INSERT INTO address (userID, province, city, districts, address, tel, receiver, isDefault) VALUES (?, ?, ?, ?, ?, ?, ?, 0)",
+			userid, req.Province, req.City, req.District, req.Address, user.Tel, user.UserName).Error
+		if err != nil {
+			util.LogrusObj.Error("插入新地址失败:", err)
+			return 0, err
+		}
+		// 获取新插入的地址 ID
+		createdAddress := model.Address{}
+		if err := db.Last(&createdAddress).Error; err != nil {
+			util.LogrusObj.Error("获取新地址 ID 失败:", err)
+			return 0, err
+		}
+		addrID = createdAddress.ID // 获取插入的地址 ID
+		util.LogrusObj.Info("新地址 ID:", addrID)
+	}
+
+	// 转换 deliveryMethod 字段
+	var deliveryMethod int
+	switch req.DeliveryMethod {
+	case "无需快递":
+		deliveryMethod = 0
+	case "自提":
+		deliveryMethod = 1
+	case "邮寄":
+		deliveryMethod = 2
+	}
+
+	// 插入商品记录，并返回插入的商品 ID
+	err = db.Exec(
+		"INSERT INTO goods (userID, goodsName, details, price, categoryID, goodsImages, createdTime, deliveryMethod, shippingCost, addrID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		userid, req.GoodsName, req.Details, req.Price, req.CategoryID, req.GoodsImages, time.Now(), deliveryMethod, req.ShippingCost, addrID).Error
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return 0, err
+	}
+
+	// 获取新插入的商品 ID
+	createdGoods := model.Goods{}
+	if err := db.Last(&createdGoods).Error; err != nil {
+		util.LogrusObj.Error("获取新商品 ID 失败:", err)
+		return 0, err
+	}
+	goodsID := createdGoods.GoodsID // 获取插入的商品 ID
+
+	util.LogrusObj.Info("新商品 ID:", goodsID)
+	return goodsID, nil
 }

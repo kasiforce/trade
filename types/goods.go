@@ -102,47 +102,6 @@ type ShowGoodsListReq struct {
 	Category    string `form:"category" json:"category"`
 }
 
-type GoodsDetailResp struct {
-	GoodsID      int       `json:"id"`     // 商品ID
-	GoodsName    string    `json:"title"`  // 商品名称
-	UserID       int       `json:"userID"` // 用户ID
-	Price        float64   `json:"price"`  // 价格
-	CategoryName string    `json:"category"`
-	Details      string    `json:"description"` // 商品详情
-	GoodsImages  string    `json:"imageUrl"`    // 商品图片
-	ShippingCost float64   `json:"shippingCost"`
-	UserName     string    `json:"userName"`
-	Province     string    `json:"province"`
-	City         string    `json:"city"`
-	District     string    `json:"area"`
-	Address      string    `json:"detailArea"`
-	CreatedTime  time.Time `json:"postTime"` // 创建时间
-	PayMethod    string    `json:"deliveryMethod"`
-	Star         int       `json:"stars"`
-	View         int       `json:"views"`
-	IsSold       int       `json:"isSold"` // 是否已售：0 未售，1 已售
-	IsStarred    bool      `json:"isStarred"`
-}
-
-type UpdateGoodsReq struct {
-	GoodsID     int     `json:"goodsID"`     // 商品ID
-	GoodsName   string  `json:"goodsName"`   // 商品名称
-	Price       float64 `json:"price"`       // 价格
-	CategoryID  int     `json:"categoryID"`  // 分类ID
-	Details     string  `json:"details"`     // 商品详情
-	IsSold      int     `json:"isSold"`      // 是否售出
-	GoodsImages string  `json:"goodsImages"` // 商品图片
-}
-
-type CreateGoodsReq struct {
-	UserID      int     `json:"userID"`      // 用户ID
-	GoodsName   string  `json:"goodsName"`   // 商品名称
-	Price       float64 `json:"price"`       // 价格
-	CategoryID  int     `json:"categoryID"`  // 商品分类
-	Details     string  `json:"details"`     // 商品详情
-	GoodsImages string  `json:"goodsImages"` // 商品图片
-}
-
 type ShowGoodsDetail struct {
 	GoodsID        int       `json:"id"`    // 商品ID
 	GoodsName      string    `json:"title"` // 商品名称
@@ -168,5 +127,19 @@ type ShowGoodsDetail struct {
 }
 
 type ShowDetailReq struct {
-	GoodsID int `json:"id"` // 商品ID
+	GoodsID int `form:"id" json:"id"` // 商品ID
+}
+
+type CreateGoodsReq struct {
+	GoodsName      string  `json:"title"`
+	Details        string  `json:"description"`
+	Price          float64 `json:"price"`
+	CategoryID     int     `json:"category"`
+	GoodsImages    string  `json:"imageUrl"`
+	Province       string  `json:"province"`
+	City           string  `json:"city"`
+	District       string  `json:"area"`
+	Address        string  `json:"detailArea"`
+	DeliveryMethod string  `json:"deliveryMethod"`
+	ShippingCost   float64 `json:"shippingCost"`
 }

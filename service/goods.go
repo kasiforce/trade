@@ -2,12 +2,12 @@ package service
 
 import (
 	"context"
-	"sync"
-
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/repository/db/dao"
 	"github.com/kasiforce/trade/types"
+	"sync"
 )
 
 var goodsServ *GoodsService
@@ -286,4 +286,19 @@ func (s *GoodsService) ShowGoodsDetail(ctx *gin.Context, req types.ShowDetailReq
 	}
 	// 返回结果
 	return respData, nil
+}
+
+// 发布闲置
+func (s *GoodsService) AddGoods(ctx *gin.Context, req types.CreateGoodsReq) (resp interface{}, err error) {
+	userid := ctx.GetInt("id")
+	goods := dao.NewGoods(ctx)
+	goodsID, err := goods.CreateGoods(req, userid)
+	if req.GoodsName == "" || req.Details == "" || req.Province == "" || req.City == "" || req.District == "" || req.Address == "" || req.DeliveryMethod == "" {
+		err = errors.New("参数不能为空")
+		return nil, err
+	}
+	resp = map[string]interface{}{
+		"id": goodsID,
+	}
+	return resp, nil
 }
