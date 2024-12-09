@@ -36,6 +36,7 @@ CREATE TABLE goods (
     deliveryMethod INT NOT NULL,  -- 新增字段 deliveryMethod
     shippingCost DECIMAL(10, 2) NULL DEFAULT 0,    -- 新增字段 shippingCost
     addrID INT,                            -- 新增字段 addrID 作为外键
+    view INT NOT NULL DEFAULT 0,  -- 新增字段 view
     FOREIGN KEY (userID) REFERENCES users(userID), 
     FOREIGN KEY (categoryID) REFERENCES category(categoryID),
     FOREIGN KEY (addrID) REFERENCES address(addrID)  -- 新增外键约束
