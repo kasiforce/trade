@@ -89,12 +89,23 @@ func (s *UserService) AddUser(c context.Context, req types.UserInfo) (resp inter
 	}
 	u := dao.NewUser(c)
 	exist, err := u.FindByName(req.UserName)
+	if exist {
+		err = errors.New("用户名已存在")
+		resp = "用户名已存在"
+		return
+	}
 	if err != nil {
 		util.LogrusObj.Error(err)
 		return
 	}
+	exist, err = u.FindByMail(req.Mail)
 	if exist {
-		err = errors.New("用户名已存在")
+		err = errors.New("用户邮箱已存在")
+		resp = "用户邮箱已存在"
+		return
+	}
+	if err != nil {
+		util.LogrusObj.Error(err)
 		return
 	}
 	school := dao.NewSchool(c)
