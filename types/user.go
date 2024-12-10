@@ -78,3 +78,7 @@ type PwdUpdateReq struct {
 type UserID struct {
 	UserID int `json:"userID"`
 }
+
+type ID struct {
+	ID int `json:"id"`
+}

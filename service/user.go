@@ -201,8 +201,7 @@ func (s *UserService) DeleteUser(c context.Context) (resp interface{}, err error
 	return
 }
 
-func (s *UserService) ShowIntroduction(c *gin.Context) (resp interface{}, err error) {
-	id := c.GetInt("id")
+func (s *UserService) ShowIntroduction(c *gin.Context, id int) (resp interface{}, err error) {
 	u := dao.NewUser(c)
 	user, err := u.FindByID(id)
 	if err != nil {
