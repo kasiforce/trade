@@ -21,7 +21,7 @@ type RefundInfo struct {
 	RefundTime   time.Time `json:"refundTime"`
 	ShippingTime time.Time `json:"shippingTime"`
 	TurnoverTime time.Time `json:"turnoverTime"`
-	CReason      string    `json:"reason"`
+	BuyerReason  string    `json:"BuyerReason"`
 	CStatus      string    `json:"status"`
 }
 

@@ -211,10 +211,10 @@ func (c *TradeRecords) UpdateOrderStatus(req types.UpdateOrderStatusReq) (resp i
 	// 如果存在退款理由，插入退款申诉
 	if req.RefundReason != "" {
 		refundComplaint := model.RefundComplaint{
-			TradeID: req.ID,
-			CReason: req.RefundReason,
-			CTime:   time.Now(),
-			CStatus: 0,
+			TradeID:     req.ID,
+			BuyerReason: req.RefundReason,
+			CTime:       time.Now(),
+			CStatus:     0,
 		}
 		err = c.DB.Create(&refundComplaint).Error
 		if err != nil {

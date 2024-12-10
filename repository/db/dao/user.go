@@ -44,6 +44,15 @@ func (user *User) FindByName(name string) (exist bool, err error) {
 	return true, err
 }
 
+func (user *User) FindByMail(mail string) (exist bool, err error) {
+	var cnt int64
+	err = user.DB.Model(&model.User{}).Where("mail = ?", mail).Count(&cnt).Error
+	if cnt == 0 {
+		return false, err
+	}
+	return true, err
+}
+
 func (user *User) CreateUser(u *model.User) (id int, err error) {
 	result := user.DB.Model(&model.User{}).Create(u)
 	if err = result.Error; err != nil {

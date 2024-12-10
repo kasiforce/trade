@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/kasiforce/trade/pkg/ctl"
+	"github.com/kasiforce/trade/pkg/e"
 	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/service"
 	"github.com/kasiforce/trade/types"
@@ -39,6 +40,12 @@ func AddUserHandler() gin.HandlerFunc {
 		}
 		s := service.GetUserService()
 		resp, err := s.AddUser(c.Request.Context(), req)
+		str, ok := resp.(string) // 使用类型断言来获取字符串
+		if ok {
+			r := &ctl.Response{Code: e.Error, Data: err, Msg: str}
+			c.JSON(http.StatusOK, r)
+			return
+		}
 		if err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
