@@ -340,7 +340,8 @@ func (s *GoodsService) UpdateGoodsIsStarred(ctx *gin.Context, goodsID int, r typ
 	}
 	// 返回成功响应
 	resp = map[string]interface{}{
-		"data": "商品收藏状态已更新",
+		"userid": userid,
+		"data":   "商品收藏状态已更新",
 	}
 	return resp, nil
 }
