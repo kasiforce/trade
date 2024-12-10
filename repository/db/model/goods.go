@@ -12,7 +12,7 @@ type Goods struct {
 	IsSold         int       `gorm:"type:tinyint;not null;default:0;column:isSold"`
 	GoodsImages    string    `gorm:"type:varchar(256);column:goodsImages"`
 	CreatedTime    time.Time `gorm:"type:datetime;not null;column:createdTime"`
-	DeliveryMethod string    `gorm:"type:varchar(20);not null;column:deliveryMethod"`
+	DeliveryMethod int       `gorm:"type:int;not null;column:deliveryMethod"`
 	//User         User      `gorm:"foreignKey:UserID;references:UserID"`
 	//Category     Category  `gorm:"foreignKey:CategoryID;references:CategoryID"`
 	//Address      Address   `gorm:"foreignKey:AddressID;references:AddressID"`

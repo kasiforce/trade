@@ -25,22 +25,40 @@ func NewComment(ctx context.Context) *Comment {
 
 // GetAllComments 获取所有评论
 func (c *Comment) GetAllComments(req types.ShowCommentsReq) (r []*types.CommentInfo, total int64, err error) {
-	err = c.DB.Model(&model.Comment{}).Preload("User").Preload("Goods").Count(&total).Error
+	// 构建查询条件
+	query := c.DB.Model(&model.Comment{})
+
+	// 如果提供了搜索查询，则添加模糊查询条件
+	if req.SearchQuery != "" {
+		query = query.Joins("As co left join users as u on u.userID = co.commentatorID").
+			Joins("left join goods as g on g.goodsID = co.goodsID").
+			Where("u.userName LIKE ?", "%"+req.SearchQuery+"%").
+			Offset((req.PageNum - 1) * req.PageSize).Limit(req.PageSize).
+			Select("co.commentID as CommentID," +
+				"g.goodsName as GoodsName," +
+				"u.userName as CommentatorName," +
+				"co.commentContent as CommentContent," +
+				"co.commentTime as CommentTime")
+	} else {
+		// 构建查询
+		query = query.Joins("As co left join users as u on u.userID = co.commentatorID").
+			Joins("left join goods as g on g.goodsID = co.goodsID").
+			Offset((req.PageNum - 1) * req.PageSize).Limit(req.PageSize).
+			Select("co.commentID as CommentID," +
+				"g.goodsName as GoodsName," +
+				"u.userName as CommentatorName," +
+				"co.commentContent as CommentContent," +
+				"co.commentTime as CommentTime")
+	}
+
+	// 获取总记录数
+	err = query.Count(&total).Error
 	if err != nil {
 		return
 	}
 
-	err = c.DB.Model(&model.Comment{}).
-		Joins("As co left join users as u on u.userID = co.commentatorID ").
-		Joins("left join goods as g on g.goodsID = co.goodsID").
-		Offset((req.PageNum - 1) * req.PageSize).Limit(req.PageSize).
-		Select("co.commentID as CommentID," +
-			"g.goodsName as GoodsName," +
-			"u.userName as CommentatorName," +
-			"co.commentContent as CommentContent," +
-			"co.commentTime as CommentTime").
-		Find(&r).Error
-
+	// 执行查询
+	err = query.Find(&r).Error
 	if err != nil {
 		return
 	}
