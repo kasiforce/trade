@@ -33,75 +33,16 @@ func AdminShowAllGoodsHandler() gin.HandlerFunc {
 
 func IsSoldGoodsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		s := service.GetGoodsService()
-		resp, err := s.IsSoldGoods(c)
-		if err != nil {
-			util.LogrusObj.Infoln("Error occurred:", err)
-			c.JSON(http.StatusOK, ErrorResponse(c, err))
-			return
-		}
-		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
-	}
-}
-
-/*
-	func IsPurchasedGoodsHandler() gin.HandlerFunc {
-		return func(c *gin.Context) {
-			var req types.IsSoldGoodsResp
-			userIDStr := c.DefaultQuery("id", "")
-			if userIDStr == "" {
-				req.UserID = 0
-			} else {
-				// 如果 'id' 存在，尝试将其转换为 int 类型并赋值给 req.UserID
-				userID, err := strconv.Atoi(userIDStr)
-				if err != nil {
-					util.LogrusObj.Infoln("Error occurred:", err)
-					c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid userID"})
-					return
-				}
-				req.UserID = userID
-			}
-			if err := c.ShouldBindQuery(&req); err != nil {
-				util.LogrusObj.Infoln("Error occurred:", err)
-				c.JSON(http.StatusOK, ErrorResponse(c, err))
-				return
-			}
-			s := service.GetGoodsService()
-			resp, err := s.IsSoldGoods(c, req)
-			if err != nil {
-				util.LogrusObj.Infoln("Error occurred:", err)
-				c.JSON(http.StatusOK, ErrorResponse(c, err))
-				return
-			}
-			c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
-		}
-	}
-*/
-func PublishedGoodsHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		s := service.GetGoodsService()
-		resp, err := s.ShowPublishedGoods(c)
-		if err != nil {
-			util.LogrusObj.Infoln("Error occurred:", err)
-			c.JSON(http.StatusOK, ErrorResponse(c, err))
-			return
-		}
-		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
-	}
-}
-
-/*
-func ShowGoodsDetailHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		idStr := c.Param("id")
+		// 从请求参数中获取 id
+		idStr := c.Query("id")
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
-			util.LogrusObj.Infoln("Invalid product ID:", err)
+			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
 			return
 		}
 		s := service.GetGoodsService()
-		resp, err := s.ShowGoodsDetail(c, id)
+		resp, err := s.IsSoldGoods(c, id)
 		if err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
@@ -109,73 +50,148 @@ func ShowGoodsDetailHandler() gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
 	}
-}*/
+}
 
-/*
-	func FilterGoodsHandler() gin.HandlerFunc {
-		return func(c *gin.Context) {
-			var req types.ShowGoodsReq
-			if err := c.ShouldBindQuery(&req); err != nil {
-				util.LogrusObj.Infoln("Error occurred:", err)
-				c.JSON(http.StatusOK, ErrorResponse(c, err))
-				return
-			}
-			filter := make(map[string]interface{})
-			if req.CategoryID > 0 {
-				filter["categoryID"] = req.CategoryID
-			}
-			if req.IsSold == 0 || req.IsSold == 1 {
-				filter["isSold"] = req.IsSold
-			}
-			if req.PriceMin > 0 {
-				filter["price >= ?"] = req.PriceMin
-			}
-			if req.PriceMax > 0 {
-				filter["price <= ?"] = req.PriceMax
-			}
-
-			s := service.GetGoodsService()
-			resp, err := s.FilterGoods(c, filter, req)
-			if err != nil {
-				util.LogrusObj.Infoln("Error occurred:", err)
-				c.JSON(http.StatusOK, ErrorResponse(c, err))
-				return
-			}
-			c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+func PublishedGoodsHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 从请求参数中获取 id
+		idStr := c.Query("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+			return
 		}
-	}
-
-	func CreateGoodsHandler() gin.HandlerFunc {
-		return func(c *gin.Context) {
-			var req types.GoodsInfo
-			if err := c.ShouldBind(&req); err != nil {
-				util.LogrusObj.Infoln("Error occurred:", err)
-				c.JSON(http.StatusOK, ErrorResponse(c, err))
-				return
-			}
-			s := service.GetGoodsService()
-			resp, err := s.CreateGoods(c.Request.Context(), req)
-			if err != nil {
-				util.LogrusObj.Infoln("Error occurred:", err)
-				c.JSON(http.StatusOK, ErrorResponse(c, err))
-				return
-			}
-			c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+		s := service.GetGoodsService()
+		resp, err := s.ShowPublishedGoods(c, id)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
 		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
 	}
-*/
+}
+
 func DeleteGoodsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idStr := c.Param("id")
 		id, err := strconv.Atoi(idStr)
 		ctx := ctl.NewGoodsContext(c.Request.Context(), &ctl.GoodsInfo{GoodsID: id})
 		s := service.GetGoodsService()
-		resp, err := s.DeleteGoods(ctx)
+		resp, err := s.DeleteGoods(ctx, id)
 		if err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
 			return
 		}
 		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+// ShowAllGoodsHandler 获取商品列表
+func ShowAllGoodsHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.ShowGoodsListReq
+		if err := c.ShouldBindQuery(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		s := service.GetGoodsService()
+		resp, err := s.ShowGoodsList(c, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+// 筛选商品
+func FilterGoodsHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.ShowGoodsReq
+		if err := c.ShouldBindQuery(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		s := service.GetGoodsService()
+		resp, err := s.FilterGoods(c, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+func ShowGoodsDetailHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.ShowDetailReq
+		if err := c.ShouldBindQuery(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		s := service.GetGoodsService()
+		resp, err := s.ShowGoodsDetail(c, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+// 发布闲置
+func CreateGoodsHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.CreateGoodsReq
+		if err := c.ShouldBind(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		s := service.GetGoodsService()
+		resp, err := s.AddGoods(c, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			return
+		}
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
+
+// 更新view
+func IncreaseGoodsViewHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 获取请求中的商品ID
+		var req types.ShowDetailReq
+		if err := c.ShouldBindQuery(&req); err != nil {
+			c.Status(http.StatusBadRequest)
+			return
+		}
+
+		// 检查商品ID是否为空
+		if req.GoodsID == 0 {
+			c.Status(http.StatusBadRequest)
+			return
+		}
+
+		// 调用服务层方法更新商品的view字段
+		s := service.GetGoodsService()
+		err := s.IncreaseGoodsView(c.Request.Context(), req)
+		if err != nil {
+			c.Status(http.StatusInternalServerError)
+			return
+		}
+
+		c.Status(http.StatusOK)
 	}
 }

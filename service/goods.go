@@ -2,14 +2,12 @@ package service
 
 import (
 	"context"
-	"strconv"
-	"sync"
-
+	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/kasiforce/trade/pkg/ctl"
 	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/repository/db/dao"
 	"github.com/kasiforce/trade/types"
+	"sync"
 )
 
 var goodsServ *GoodsService
@@ -36,23 +34,36 @@ func (s *GoodsService) ShowAllGoods(ctx context.Context, req types.ShowAllGoodsR
 	// 创建一个列表来存放最终的返回数据
 	var respList []types.GoodsInfo
 	for _, goodsInfo := range goodsList {
+		// 将 DeliveryMethod 从 int 转换为 string
+		var deliveryMethod string
+		switch goodsInfo.DeliveryMethod {
+		case 0:
+			deliveryMethod = "无需快递"
+		case 1:
+			deliveryMethod = "自提"
+		case 2:
+			deliveryMethod = "邮寄"
+		default:
+			deliveryMethod = "未知"
+		}
 		respList = append(respList, types.GoodsInfo{
-			GoodsID:      goodsInfo.GoodsID,
-			GoodsName:    goodsInfo.GoodsName,
-			Price:        goodsInfo.Price,
-			CategoryName: goodsInfo.CategoryName,
-			Details:      goodsInfo.Details,
-			IsSold:       goodsInfo.IsSold,
-			GoodsImages:  goodsInfo.GoodsImages,
-			CreatedTime:  goodsInfo.CreatedTime,
-			UserName:     goodsInfo.UserName,
-			Province:     goodsInfo.Province,
-			City:         goodsInfo.City,
-			District:     goodsInfo.District,
-			Star:         goodsInfo.Star,
-			View:         goodsInfo.View,
-			PayMethod:    strconv.Itoa(goodsInfo.PayMethod),
-			ShippingCost: goodsInfo.ShippingCost,
+			GoodsID:        goodsInfo.GoodsID,
+			GoodsName:      goodsInfo.GoodsName,
+			Price:          goodsInfo.Price,
+			CategoryName:   goodsInfo.CategoryName,
+			Details:        goodsInfo.Details,
+			IsSold:         goodsInfo.IsSold,
+			GoodsImages:    goodsInfo.GoodsImages,
+			CreatedTime:    goodsInfo.CreatedTime,
+			UserName:       goodsInfo.UserName,
+			Province:       goodsInfo.Province,
+			City:           goodsInfo.City,
+			District:       goodsInfo.District,
+			Address:        goodsInfo.Address,
+			Star:           goodsInfo.Star,
+			View:           goodsInfo.View,
+			DeliveryMethod: deliveryMethod,
+			ShippingCost:   goodsInfo.ShippingCost,
 		})
 	}
 	// 返回分页后的结果
@@ -64,8 +75,8 @@ func (s *GoodsService) ShowAllGoods(ctx context.Context, req types.ShowAllGoodsR
 }
 
 // 获取已售出商品
-func (s *GoodsService) IsSoldGoods(ctx *gin.Context) (resp interface{}, err error) {
-	id := ctx.GetInt("id")
+func (s *GoodsService) IsSoldGoods(ctx *gin.Context, id int) (resp interface{}, err error) {
+	//id := ctx.GetInt("id")
 	goods := dao.NewGoods(ctx)
 	// 直接调用 DAO 层的 IsSoldGoods 方法获取已售出的商品
 	filteredGoodsList, err := goods.IsSoldGoods(id)
@@ -73,18 +84,14 @@ func (s *GoodsService) IsSoldGoods(ctx *gin.Context) (resp interface{}, err erro
 		util.LogrusObj.Error(err)
 		return nil, err
 	}
-
 	// 将查询结果转换为接口返回的格式
 	var respList []types.GoodsInfo2
 	for _, goodsInfo := range filteredGoodsList {
 		respList = append(respList, types.GoodsInfo2{
-			GoodsID:   goodsInfo.GoodsID,
-			GoodsName: goodsInfo.GoodsName,
-			UserID:    goodsInfo.UserID,
-			Price:     goodsInfo.Price,
-			//CategoryID:  goodsInfo.CategoryID,
-			Details: goodsInfo.Details,
-			//IsSold:      goodsInfo.IsSold,
+			GoodsID:     goodsInfo.GoodsID,
+			GoodsName:   goodsInfo.GoodsName,
+			Price:       goodsInfo.Price,
+			Details:     goodsInfo.Details,
 			GoodsImages: goodsInfo.GoodsImages,
 			CreatedTime: goodsInfo.CreatedTime,
 		})
@@ -97,8 +104,8 @@ func (s *GoodsService) IsSoldGoods(ctx *gin.Context) (resp interface{}, err erro
 }
 
 // 当前用户获取发布的所有商品
-func (s *GoodsService) ShowPublishedGoods(ctx *gin.Context) (resp interface{}, err error) {
-	id := ctx.GetInt("id")
+func (s *GoodsService) ShowPublishedGoods(ctx *gin.Context, id int) (resp interface{}, err error) {
+	//id := ctx.GetInt("id")
 	goods := dao.NewGoods(ctx)
 	goodsList, err := goods.UserFindAll(id)
 	if err != nil {
@@ -109,135 +116,189 @@ func (s *GoodsService) ShowPublishedGoods(ctx *gin.Context) (resp interface{}, e
 	// 创建一个列表来存放最终的返回数据
 	var respList []types.GoodsInfo3
 	for _, goodsInfo := range goodsList {
+		// 将 DeliveryMethod 从 int 转换为 string
+		var deliveryMethod string
+		switch goodsInfo.DeliveryMethod {
+		case 0:
+			deliveryMethod = "无需快递"
+		case 1:
+			deliveryMethod = "自提"
+		case 2:
+			deliveryMethod = "邮寄"
+		default:
+			deliveryMethod = "未知"
+		}
 		respList = append(respList, types.GoodsInfo3{
-			GoodsID:      goodsInfo.GoodsID,
-			GoodsName:    goodsInfo.GoodsName,
-			Price:        goodsInfo.Price,
-			CategoryName: goodsInfo.CategoryName,
-			Details:      goodsInfo.Details,
-			IsSold:       goodsInfo.IsSold,
-			GoodsImages:  goodsInfo.GoodsImages,
-			CreatedTime:  goodsInfo.CreatedTime,
-			UserName:     goodsInfo.UserName,
-			Province:     goodsInfo.Province,
-			City:         goodsInfo.City,
-			District:     goodsInfo.District,
-			Star:         goodsInfo.Star,
-			View:         goodsInfo.View,
-			PayMethod:    strconv.Itoa(goodsInfo.PayMethod),
-			ShippingCost: goodsInfo.ShippingCost,
-			UserID:       goodsInfo.UserID,
+			GoodsID:        goodsInfo.GoodsID,
+			GoodsName:      goodsInfo.GoodsName,
+			Price:          goodsInfo.Price,
+			CategoryName:   goodsInfo.CategoryName,
+			Details:        goodsInfo.Details,
+			IsSold:         goodsInfo.IsSold,
+			GoodsImages:    goodsInfo.GoodsImages,
+			CreatedTime:    goodsInfo.CreatedTime,
+			UserName:       goodsInfo.UserName,
+			Province:       goodsInfo.Province,
+			City:           goodsInfo.City,
+			District:       goodsInfo.District,
+			Star:           goodsInfo.Star,
+			View:           goodsInfo.View,
+			DeliveryMethod: deliveryMethod,
+			ShippingCost:   goodsInfo.ShippingCost,
+			UserID:         goodsInfo.UserID,
 		})
 	}
 	// 返回分页后的结果
 	return respList, nil
 }
 
-/*
-// ShowGoodsDetail 获取商品详情
-func (s *GoodsService) ShowGoodsDetail(ctx context.Context, req types.IsSoldGoodsResp) (resp interface{}, err error) {
-	goods := dao.NewGoods(ctx)
-	goodsList, err := goods.FindByID(req)
-	if err != nil {
-		util.LogrusObj.Error(err)
-		return nil, err
-	}
-
-	// 创建一个列表来存放最终的返回数据
-	var respList []types.GoodsInfo4
-	for _, goodsInfo := range goodsList {
-		respList = append(respList, types.GoodsInfo4{
-			GoodsID:      goodsInfo.GoodsID,
-			GoodsName:    goodsInfo.GoodsName,
-			Price:        goodsInfo.Price,
-			CategoryName: goodsInfo.CategoryName,
-			Details:      goodsInfo.Details,
-			IsSold:       goodsInfo.IsSold,
-			GoodsImages:  goodsInfo.GoodsImages,
-			CreatedTime:  goodsInfo.CreatedTime,
-			UserName:     goodsInfo.UserName,
-			Province:     goodsInfo.Province,
-			City:         goodsInfo.City,
-			District:     goodsInfo.District,
-			Star:         goodsInfo.Star,
-			View:         goodsInfo.View,
-			PayMethod:    strconv.Itoa(goodsInfo.PayMethod),
-			ShippingCost: goodsInfo.ShippingCost,
-			UserID:       goodsInfo.UserID,
-			IsStarred:    goodsInfo.IsStarred,
-		})
-	}
-	// 返回分页后的结果
-	return respList, nil
-}*/
-
-/*
-// FilterGoods 按条件筛选商品
-func (s *GoodsService) FilterGoods(ctx context.Context, filter map[string]interface{}, req types.ShowGoodsReq) (resp interface{}, err error) {
-	goods := dao.NewGoods(ctx)
-	filteredGoodsList, err := goods.Filter(filter, req)
-	if err != nil {
-		util.LogrusObj.Error(err)
-		return
-	}
-	var respList []types.GoodsInfo
-	for _, goodsInfo := range filteredGoodsList {
-		respList = append(respList, types.GoodsInfo{
-			GoodsID:   goodsInfo.GoodsID,
-			Name:      goodsInfo.Name,
-			Category:  goodsInfo.Category,
-			Price:     goodsInfo.Price,
-			Stock:     goodsInfo.Stock,
-			IsSold:    goodsInfo.IsSold,
-			Picture:   goodsInfo.Picture,
-			CreatedAt: goodsInfo.CreatedAt,
-		})
-	}
-	var response types.GoodsListResp
-	response.GoodsList = respList
-	response.PageNum = req.PageNum
-	response.Total = len(respList)
-	return response, nil
-}
-
-// CreateGoods 创建商品
-func (s *GoodsService) CreateGoods(ctx context.Context, req types.GoodsInfo) (resp interface{}, err error) {
-	if req.Name == "" || req.Price <= 0 || req.Stock < 0 || req.Category == "" {
-		err = errors.New("参数不能为空")
-		return
-	}
-	goods := dao.NewGoods(ctx)
-	modelGoods := map[string]interface{}{
-		"name":        req.Name,
-		"category":    req.Category,
-		"price":       req.Price,
-		"stock":       req.Stock,
-		"picture":     req.Picture,
-		"description": req.Description,
-		"isSold":      req.IsSold,
-	}
-	err = goods.CreateGoods(modelGoods)
-	if err != nil {
-		util.LogrusObj.Error(err)
-		return
-	}
-	return
-}
-*/
 // DeleteGoods 删除商品
-func (s *GoodsService) DeleteGoods(ctx context.Context) (resp interface{}, err error) {
-	goods, err := ctl.GetGoodsID(ctx)
-	if err != nil {
-		util.LogrusObj.Error(err)
-		return resp, nil
-	}
-	a := dao.NewGoods(ctx)
-	err = a.DeleteGoods(goods.GoodsID)
+func (s *GoodsService) DeleteGoods(ctx context.Context, id int) (resp interface{}, err error) {
+	err = dao.NewGoods(ctx).DeleteGoods(id)
 	if err != nil {
 		util.LogrusObj.Error(err)
 		return resp, nil
 	}
 	// 创建一个空的返回结构
 	resp = map[string]interface{}{}
+	return resp, nil
+}
+
+// 获取商品列表
+func (s *GoodsService) ShowGoodsList(ctx context.Context, req types.ShowGoodsListReq) (resp interface{}, err error) {
+	goods := dao.NewGoods(ctx)
+	goodsList, err := goods.FindAll(req)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return nil, err
+	}
+	// 创建一个列表来存放最终的返回数据
+	var respList []types.GoodsInfo4
+	for _, goodsInfo := range goodsList {
+		respList = append(respList, types.GoodsInfo4{
+			GoodsID:     goodsInfo.GoodsID,
+			GoodsName:   goodsInfo.GoodsName,
+			Price:       goodsInfo.Price,
+			CategoryID:  goodsInfo.CategoryID,
+			GoodsImages: goodsInfo.GoodsImages,
+		})
+	}
+	return respList, nil
+}
+
+// 更新view
+func (s *GoodsService) IncreaseGoodsView(ctx context.Context, req types.ShowDetailReq) error {
+	g := dao.NewGoods(ctx)
+	return g.IncreaseView(req)
+}
+
+// 筛选商品
+func (s *GoodsService) FilterGoods(ctx *gin.Context, req types.ShowGoodsReq) (resp interface{}, err error) {
+	goods := dao.NewGoods(ctx)
+	goodsList, err := goods.FilterGoods(req)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return nil, err
+	}
+	// 创建一个列表来存放最终的返回数据
+	var respList []types.GoodsInfo
+	for _, goodsInfo := range goodsList {
+		// 将 DeliveryMethod 从 int 转换为 string
+		var deliveryMethod string
+		switch goodsInfo.DeliveryMethod {
+		case 0:
+			deliveryMethod = "无需快递"
+		case 1:
+			deliveryMethod = "自提"
+		case 2:
+			deliveryMethod = "邮寄"
+		default:
+			deliveryMethod = "未知"
+		}
+		respList = append(respList, types.GoodsInfo{
+			GoodsID:        goodsInfo.GoodsID,
+			GoodsName:      goodsInfo.GoodsName,
+			Price:          goodsInfo.Price,
+			CategoryName:   goodsInfo.CategoryName,
+			Details:        goodsInfo.Details,
+			IsSold:         goodsInfo.IsSold,
+			GoodsImages:    goodsInfo.GoodsImages,
+			CreatedTime:    goodsInfo.CreatedTime,
+			UserName:       goodsInfo.UserName,
+			Province:       goodsInfo.Province,
+			City:           goodsInfo.City,
+			District:       goodsInfo.District,
+			Address:        goodsInfo.Address,
+			Star:           goodsInfo.Star,
+			View:           goodsInfo.View,
+			DeliveryMethod: deliveryMethod,
+			ShippingCost:   goodsInfo.ShippingCost,
+		})
+	}
+	// 返回分页后的结果
+	return respList, nil
+}
+
+// 获取商品详情
+func (s *GoodsService) ShowGoodsDetail(ctx *gin.Context, req types.ShowDetailReq) (resp interface{}, err error) {
+	userid := ctx.GetInt("id")
+	goods := dao.NewGoods(ctx)
+	goodsInfo, err := goods.ShowGoodsDetail(req, userid)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return nil, err
+	}
+	// 将 DeliveryMethod 从 int 转换为 string
+	var deliveryMethod string
+	switch goodsInfo.DeliveryMethod {
+	case 0:
+		deliveryMethod = "无需快递"
+	case 1:
+		deliveryMethod = "自提"
+	case 2:
+		deliveryMethod = "邮寄"
+	default:
+		deliveryMethod = "未知"
+	}
+	// 创建最终的返回数据
+	respData := types.ShowGoodsDetail{
+		GoodsID:        goodsInfo.GoodsID,
+		GoodsName:      goodsInfo.GoodsName,
+		Price:          goodsInfo.Price,
+		CategoryName:   goodsInfo.CategoryName,
+		Details:        goodsInfo.Details,
+		IsSold:         goodsInfo.IsSold,
+		GoodsImages:    goodsInfo.GoodsImages,
+		CreatedTime:    goodsInfo.CreatedTime,
+		UserName:       goodsInfo.UserName,
+		UserID:         goodsInfo.UserID,
+		Province:       goodsInfo.Province,
+		City:           goodsInfo.City,
+		District:       goodsInfo.District,
+		Address:        goodsInfo.Address,
+		Star:           goodsInfo.Star,
+		View:           goodsInfo.View,
+		DeliveryMethod: deliveryMethod,
+		ShippingCost:   goodsInfo.ShippingCost,
+		AddrID:         goodsInfo.AddrID,
+		Tel:            goodsInfo.Tel,
+		IsStarred:      goodsInfo.IsStarred,
+	}
+	// 返回结果
+	return respData, nil
+}
+
+// 发布闲置
+func (s *GoodsService) AddGoods(ctx *gin.Context, req types.CreateGoodsReq) (resp interface{}, err error) {
+	userid := ctx.GetInt("id")
+	goods := dao.NewGoods(ctx)
+	goodsID, err := goods.CreateGoods(req, userid)
+	if req.GoodsName == "" || req.Details == "" || req.DeliveryMethod == "" || req.CategoryName == "" || req.Price == 0 {
+		err = errors.New("参数不能为空")
+		return nil, err
+	}
+	resp = map[string]interface{}{
+		"id": goodsID,
+	}
 	return resp, nil
 }

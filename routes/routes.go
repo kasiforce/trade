@@ -48,7 +48,6 @@ func NewRouter() *gin.Engine {
 		v1.POST("/admin/login", api.AdminLoginHandler())
 		//管理员查询所有商品
 		v1.GET("/admin/product", api.AdminShowAllGoodsHandler())
-
 		//删除商品
 		v1.DELETE("/admin/product/:id", api.DeleteGoodsHandler())
 		//获取商品详情
@@ -63,7 +62,10 @@ func NewRouter() *gin.Engine {
 
 		//查询订单
 		v1.GET("/admin/order", api.GetAllOrdersHandler())
-
+		//商品列表
+		v1.GET("/products", api.ShowAllGoodsHandler())
+		//筛选商品
+		v1.GET("/product/select", api.FilterGoodsHandler())
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())
 		{
@@ -82,6 +84,18 @@ func NewRouter() *gin.Engine {
 			authed.GET("/profiles/published", api.PublishedGoodsHandler())
 			authed.GET("/orders/selled", api.IsSoldGoodsHandler())
 			//authed.GET("/orders/purchased", api.IsPurchasedGoodsHandler())
+			//修改订单状态
+			authed.POST("/orders/operate/:id", api.UpdateOrderStatusHandler())
+			//修改订单地址
+			authed.POST("/orders/address/:id", api.UpdateOrderAddressHandler())
+			//生成订单
+			authed.POST("/createOrder", api.CreateOrderHandler())
+			//获取-我买到的
+			authed.GET("/orders/purchased", api.GetMyOrdersHandler())
+			//获取商品详情
+			authed.GET("/detail", api.ShowGoodsDetailHandler())
+			//发布闲置
+			authed.POST("/postProduct", api.CreateGoodsHandler())
 		}
 	}
 	return router

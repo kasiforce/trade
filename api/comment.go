@@ -101,25 +101,25 @@ func GetReceivedCommentsHandler() gin.HandlerFunc {
 	}
 }
 
-// PostCommentHandler 发布评论
-func PostCommentHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var req types.PostCommentReq
-		if err := c.ShouldBindJSON(&req); err != nil {
-			util.LogrusObj.Infoln("Error occurred:", err)
-			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
-			return
-		}
-
-		ctx := c.Request.Context()
-		s := service.GetCommentService()
-		resp, err := s.PostComment(ctx, req)
-		if err != nil {
-			util.LogrusObj.Infoln("Error occurred:", err)
-			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
-			return
-		}
-
-		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
-	}
-}
+//// PostCommentHandler 发布评论
+//func PostCommentHandler() gin.HandlerFunc {
+//	return func(c *gin.Context) {
+//		var req types.PostCommentReq
+//		if err := c.ShouldBindJSON(&req); err != nil {
+//			util.LogrusObj.Infoln("Error occurred:", err)
+//			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+//			return
+//		}
+//
+//		ctx := c.Request.Context()
+//		s := service.GetCommentService()
+//		resp, err := s.PostComment(ctx, req)
+//		if err != nil {
+//			util.LogrusObj.Infoln("Error occurred:", err)
+//			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+//			return
+//		}
+//
+//		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+//	}
+//}
