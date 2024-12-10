@@ -26,6 +26,12 @@ func GetGoodsService() *GoodsService {
 // ShowAllGoods 获取所有商品（管理员端）
 func (s *GoodsService) ShowAllGoods(ctx context.Context, req types.ShowAllGoodsReq) (resp interface{}, err error) {
 	goods := dao.NewGoods(ctx)
+	// 获取数据库中所有商品的总数
+	total, err := goods.CountAll()
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return nil, err
+	}
 	goodsList, err := goods.AdminFindAll(req)
 	if err != nil {
 		util.LogrusObj.Error(err)
@@ -71,7 +77,7 @@ func (s *GoodsService) ShowAllGoods(ctx context.Context, req types.ShowAllGoodsR
 	var response types.GoodsListResp
 	response.ProductList = respList
 	response.PageNum = req.PageNum
-	response.Total = len(respList)
+	response.Total = int(total)
 	return response, nil
 }
 

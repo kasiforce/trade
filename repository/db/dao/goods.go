@@ -27,6 +27,11 @@ func NewGoods(ctx context.Context) *Goods {
 	return &Goods{NewDBClient(ctx)}
 }
 
+func (g *Goods) CountAll() (total int64, err error) {
+	err = g.DB.Model(&model.Goods{}).Count(&total).Error
+	return
+}
+
 // 管理员端查询所有商品
 func (g *Goods) AdminFindAll(req types.ShowAllGoodsReq) (goods []model.Goods, err error) {
 	db := g.DB

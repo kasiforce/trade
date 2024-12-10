@@ -27,6 +27,12 @@ func GetAdminService() *AdminService {
 
 func (s *AdminService) ShowAllAdmin(ctx context.Context, req types.ShowAdminReq) (resp interface{}, err error) {
 	admin := dao.NewAdmin(ctx)
+	// 获取数据库中所有管理员的总数
+	total, err := admin.CountAll()
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return nil, err
+	}
 	adminList, err := admin.FindAll(req)
 	if err != nil {
 		util.LogrusObj.Error(err)
@@ -50,7 +56,7 @@ func (s *AdminService) ShowAllAdmin(ctx context.Context, req types.ShowAdminReq)
 	var response types.AdminListResp
 	response.AdminList = respList
 	response.PageNum = req.PageNum
-	response.Total = len(respList)
+	response.Total = int(total)
 	return response, nil
 }
 
