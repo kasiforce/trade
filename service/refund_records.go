@@ -49,7 +49,7 @@ func (s *RefundService) ShowAllRefund(ctx context.Context, req types.ShowRefundR
 			ShippingTime: refundInfo.ShippingTime,
 			TurnoverTime: refundInfo.TurnoverTime,
 			CStatus:      strconv.Itoa(refundInfo.CStatus),
-			CReason:      refundInfo.CReason,
+			BuyerReason:  refundInfo.BuyerReason,
 		})
 	}
 	if respList == nil { // 确保返回空数组而不是 null

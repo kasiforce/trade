@@ -146,9 +146,10 @@ CREATE TABLE chat_records (
 CREATE TABLE refund_complaint (
     complaintID INT NOT NULL AUTO_INCREMENT,
     tradeID INT NOT NULL,
-    cReason TEXT NOT NULL,
+    buyerReason TEXT NOT NULL,
     cTime DATETIME NOT NULL,
     cStatus TINYINT NOT NULL DEFAULT 0,
+    sellerReason Text,
     PRIMARY KEY (complaintID),
     FOREIGN KEY (tradeID) REFERENCES trade_records(tradeID)
 )DEFAULT CHARSET=utf8mb4;
