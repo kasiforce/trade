@@ -195,3 +195,37 @@ func IncreaseGoodsViewHandler() gin.HandlerFunc {
 		c.Status(http.StatusOK)
 	}
 }
+
+// 更新商品收藏情况
+func UpdateGoodsIsStarredHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 获取路径参数中的商品ID
+		goodsIDStr := c.Param("id")
+		// 将 goodsID 从字符串转换为整数
+		goodsID, err := strconv.Atoi(goodsIDStr)
+		if err != nil {
+			util.LogrusObj.Infoln("Invalid GoodsID format:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+		// 获取请求体中的 isStarred，绑定 JSON 数据
+		var r types.IsStarred
+		if err := c.ShouldBindJSON(&r); err != nil {
+			util.LogrusObj.Infoln("Invalid JSON body:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+
+		// 调用服务层方法更新商品的收藏情况
+		s := service.GetGoodsService()
+		resp, err := s.UpdateGoodsIsStarred(c, goodsID, r)
+		if err != nil {
+			util.LogrusObj.Infoln("Failed to update goods starred status:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+
+		// 返回成功响应
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}

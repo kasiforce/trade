@@ -3,12 +3,13 @@ package service
 import (
 	"context"
 	"errors"
+	"sync"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kasiforce/trade/pkg/ctl"
 	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/repository/db/dao"
 	"github.com/kasiforce/trade/types"
-	"sync"
 )
 
 var adminServ *AdminService
@@ -66,6 +67,15 @@ func (s *AdminService) AddAdmin(ctx context.Context, req types.AdminInfo) (resp 
 	}
 	if exist {
 		err = errors.New("管理员名已存在")
+		return nil, err
+	}
+	exist1, err1 := a.FindByMail(req.Mail)
+	if err1 != nil {
+		util.LogrusObj.Error(err)
+		return nil, err
+	}
+	if exist1 {
+		err = errors.New("管理员邮箱已存在")
 		return nil, err
 	}
 	modelAdmin := map[string]interface{}{

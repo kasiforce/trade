@@ -33,7 +33,7 @@ type GoodsInfo2 struct {
 	CreatedTime time.Time `json:"postTime"`    // 创建时间
 }
 
-// 获取发布中商品（用户） 18
+// 获取发布中商品（用户） 19
 type GoodsInfo3 struct {
 	GoodsID        int       `json:"id"`     // 商品ID
 	GoodsName      string    `json:"title"`  // 商品名称
@@ -53,6 +53,7 @@ type GoodsInfo3 struct {
 	Star           int       `json:"stars"`
 	View           int       `json:"views"`
 	IsSold         int       `json:"isSold"` // 是否已售：0 未售，1 已售
+	AddrID         int       `json:"addrID"`
 }
 
 // 商品列表 5
@@ -139,4 +140,8 @@ type CreateGoodsReq struct {
 	AddrID         int     `json:"addrID"`
 	DeliveryMethod string  `json:"deliveryMethod"`
 	ShippingCost   float64 `json:"shippingCost"`
+}
+
+type IsStarred struct {
+	IsStarred bool `json:"isStarred"`
 }

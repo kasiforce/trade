@@ -8,6 +8,7 @@ import (
 	"github.com/kasiforce/trade/repository/db/dao"
 	"github.com/kasiforce/trade/types"
 	"sync"
+	"time"
 )
 
 var goodsServ *GoodsService
@@ -141,11 +142,13 @@ func (s *GoodsService) ShowPublishedGoods(ctx *gin.Context, id int) (resp interf
 			Province:       goodsInfo.Province,
 			City:           goodsInfo.City,
 			District:       goodsInfo.District,
+			Address:        goodsInfo.Address,
 			Star:           goodsInfo.Star,
 			View:           goodsInfo.View,
 			DeliveryMethod: deliveryMethod,
 			ShippingCost:   goodsInfo.ShippingCost,
 			UserID:         goodsInfo.UserID,
+			AddrID:         goodsInfo.AddrID,
 		})
 	}
 	// 返回分页后的结果
@@ -299,6 +302,46 @@ func (s *GoodsService) AddGoods(ctx *gin.Context, req types.CreateGoodsReq) (res
 	}
 	resp = map[string]interface{}{
 		"id": goodsID,
+	}
+	return resp, nil
+}
+
+// 更新商品收藏情况
+func (s *GoodsService) UpdateGoodsIsStarred(ctx *gin.Context, goodsID int, r types.IsStarred) (resp interface{}, err error) {
+	userid := ctx.GetInt("id") // 获取当前用户的 ID
+	isStarred := r.IsStarred   // 获取传递过来的收藏状态
+	// 打印 goodsID 和 userid
+	// 使用 dao.NewGoods(ctx) 初始化 goods 实例
+	goods := dao.NewGoods(ctx)
+	// 查询当前商品是否已被用户收藏
+	isStarredInDB, err := goods.CheckGoodsIsStarred(goodsID, userid)
+	if err != nil {
+		return nil, err
+	}
+	// 如果收藏状态没有变化，则返回“未修改商品收藏详情”
+	if isStarred == isStarredInDB {
+		resp = map[string]interface{}{
+			"data": "未修改商品收藏详情",
+		}
+		return resp, nil
+	}
+	// 如果 isStarred 是 true，表示用户希望收藏该商品
+	if isStarred {
+		err = goods.AddToCollection(goodsID, userid, time.Now()) // 添加到收藏
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		// 如果 isStarred 是 false，表示用户希望取消收藏
+		err = goods.RemoveFromCollection(goodsID, userid) // 从收藏中移除
+		if err != nil {
+			return nil, err
+		}
+	}
+	// 返回成功响应
+	resp = map[string]interface{}{
+		"userid": userid,
+		"data":   "商品收藏状态已更新",
 	}
 	return resp, nil
 }

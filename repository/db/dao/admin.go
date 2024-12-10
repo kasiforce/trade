@@ -45,6 +45,15 @@ func (admin *Admin) FindByName(name string) (exist bool, err error) {
 	return true, err
 }
 
+func (admin *Admin) FindByMail(mail string) (exist bool, err error) {
+	var cnt int64
+	err = admin.DB.Model(&model.Admin{}).Where("mail = ?", mail).Count(&cnt).Error
+	if cnt == 0 {
+		return false, err
+	}
+	return true, err
+}
+
 func (admin *Admin) CreateAdmin(data map[string]interface{}) (adminID int, err error) {
 	result := admin.DB.Model(&model.Admin{}).Create(data)
 	if result.Error != nil {
