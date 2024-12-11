@@ -35,12 +35,26 @@ func IsSoldGoodsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 从请求参数中获取 id
 		idStr := c.Query("id")
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			util.LogrusObj.Infoln("Error occurred:", err)
-			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
-			return
+		var id int
+		var err error
+		// 如果请求参数为空，则从上下文中获取 id
+		if idStr == "" {
+			id = c.GetInt("id")
+			if err != nil {
+				util.LogrusObj.Infoln("Error occurred: id not found in context")
+				c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+				return
+			}
+		} else {
+			// 如果请求参数不为空，则将其转换为整数
+			id, err = strconv.Atoi(idStr)
+			if err != nil {
+				util.LogrusObj.Infoln("Error occurred:", err)
+				c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+				return
+			}
 		}
+		// 调用服务层方法
 		s := service.GetGoodsService()
 		resp, err := s.IsSoldGoods(c, id)
 		if err != nil {
@@ -48,6 +62,7 @@ func IsSoldGoodsHandler() gin.HandlerFunc {
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
 			return
 		}
+		// 返回成功响应
 		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
 	}
 }
@@ -56,11 +71,24 @@ func PublishedGoodsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 从请求参数中获取 id
 		idStr := c.Query("id")
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			util.LogrusObj.Infoln("Error occurred:", err)
-			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
-			return
+		var id int
+		var err error
+		// 如果请求参数为空，则从上下文中获取 id
+		if idStr == "" {
+			id = c.GetInt("id")
+			if err != nil {
+				util.LogrusObj.Infoln("Error occurred: id not found in context")
+				c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+				return
+			}
+		} else {
+			// 如果请求参数不为空，则将其转换为整数
+			id, err = strconv.Atoi(idStr)
+			if err != nil {
+				util.LogrusObj.Infoln("Error occurred:", err)
+				c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+				return
+			}
 		}
 		s := service.GetGoodsService()
 		resp, err := s.ShowPublishedGoods(c, id)
@@ -177,13 +205,11 @@ func IncreaseGoodsViewHandler() gin.HandlerFunc {
 			c.Status(http.StatusBadRequest)
 			return
 		}
-
 		// 检查商品ID是否为空
 		if req.GoodsID == 0 {
 			c.Status(http.StatusBadRequest)
 			return
 		}
-
 		// 调用服务层方法更新商品的view字段
 		s := service.GetGoodsService()
 		err := s.IncreaseGoodsView(c.Request.Context(), req)
@@ -191,7 +217,6 @@ func IncreaseGoodsViewHandler() gin.HandlerFunc {
 			c.Status(http.StatusInternalServerError)
 			return
 		}
-
 		c.Status(http.StatusOK)
 	}
 }
