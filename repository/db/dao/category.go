@@ -19,6 +19,11 @@ func NewCategory(c context.Context) *Category {
 	return &Category{NewDBClient(c)}
 }
 
+func (c *Category) CountAll() (total int64, err error) {
+	err = c.DB.Model(&model.Category{}).Count(&total).Error
+	return
+}
+
 func (c *Category) FindAll(req types.ShowCategoryReq) (ca []*model.Category, err error) {
 	db := c.DB
 	//db = db.Table("category").Select("category.*")
