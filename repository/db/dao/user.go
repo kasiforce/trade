@@ -19,6 +19,10 @@ func NewUser(ctx context.Context) *User {
 	return &User{NewDBClient(ctx)}
 }
 
+func (user *User) CountAll() (total int64, err error) {
+	err = user.DB.Model(&model.User{}).Count(&total).Error
+	return
+}
 func (user *User) FindAll(req types.ShowUserReq) (users []model.User, err error) {
 	db := user.DB
 	query := db.Table("users").Select("users.*").Preload("School")

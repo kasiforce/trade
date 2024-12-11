@@ -30,6 +30,11 @@ func (cs *CategoryService) ShowCategory(ctx context.Context, req types.ShowCateg
 		util.LogrusObj.Error(err)
 		return
 	}
+	total, err := c.CountAll()
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return
+	}
 	var respList []types.CategoryInfo
 	for _, ca := range categoryList {
 		respList = append(respList, types.CategoryInfo{
@@ -41,7 +46,7 @@ func (cs *CategoryService) ShowCategory(ctx context.Context, req types.ShowCateg
 	var response types.CategoryList
 	response.Categories = respList
 	response.PageNum = req.PageNum
-	response.Total = len(respList)
+	response.Total = int(total)
 	return response, nil
 }
 func (cs *CategoryService) ShowUserCategory(ctx context.Context) (resp interface{}, err error) {

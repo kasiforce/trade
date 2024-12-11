@@ -35,6 +35,11 @@ func (s *UserService) ShowAllUser(ctx context.Context, req types.ShowUserReq) (r
 		util.LogrusObj.Error(err)
 		return
 	}
+	total, err := user.CountAll()
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return
+	}
 	var respList []types.UserInfo
 	for _, userInfo := range userList {
 		respList = append(respList, types.UserInfo{
@@ -52,7 +57,7 @@ func (s *UserService) ShowAllUser(ctx context.Context, req types.ShowUserReq) (r
 	var response types.UserListResp
 	response.UsersList = respList
 	response.PageNum = req.PageNum
-	response.Total = len(respList)
+	response.Total = int(total)
 	return response, nil
 }
 
