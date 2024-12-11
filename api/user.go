@@ -97,7 +97,7 @@ func DeleteUserHandler() gin.HandlerFunc {
 func ShowIntroductionHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req types.ID
-		if err := c.ShouldBind(&req); err != nil {
+		if err := c.ShouldBindQuery(&req); err != nil {
 			util.LogrusObj.Infoln("Error occurred:", err)
 			c.JSON(http.StatusOK, ErrorResponse(c, err))
 			return
