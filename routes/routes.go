@@ -50,11 +50,10 @@ func NewRouter() *gin.Engine {
 		v1.GET("/admin/product", api.AdminShowAllGoodsHandler())
 		//删除商品
 		v1.DELETE("/admin/product/:id", api.DeleteGoodsHandler())
-		//获取商品详情
-		//v1.GET("/detail", api.ShowGoodsDetailHandler())
+		//管理员处理售后
+		v1.POST("/admin/afterSale", api.UpdateRefundHandler())
 		//退货信息
 		v1.GET("/admin/afterSale", api.ShowAllrefundHandler())
-
 		//查询所有评论
 		v1.GET("/admin/comment", api.ShowAllCommentsHandler())
 		//删除评论

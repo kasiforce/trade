@@ -24,6 +24,7 @@ type RefundRecord struct {
 	ShippingCost float64   `gorm:"type:decimal(10,2);not null;check:turnoverAmount >= 0;column:turnoverAmount"`
 	Price        float64   `gorm:"type:decimal(10,2);not null;check:price >= 0;column:price"`
 	BuyerReason  string    `gorm:"column:buyerReason;type:text"`
+	SellerReason string    `gorm:"column:sellerReason;type:text"`
 	CStatus      int       `gorm:"type:tinyint;not null;default:0;column:cStatus"`
 }
 

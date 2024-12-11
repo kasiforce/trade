@@ -5,15 +5,13 @@ import (
 )
 
 type RefundInfo struct {
-	RefundID     int     `json:"adminID"`
-	TradeID      int     `json:"tradeID"`
-	GoodsName    string  `json:"goodsName"`
-	Price        float64 `json:"price"`
-	ShippingCost float64 `json:"shippingCost"`
-	SellerName   string  `json:"sellerName"`
-	//SellerReason string    `json:"sellerReason" gorm:"column:cReason"`
-	BuyerName string `json:"buyerName"`
-	//BuyerReason  string    `json:"buyerReason" gorm:"column:cReason"`
+	RefundID     int       `json:"refundID"`
+	TradeID      int       `json:"tradeID"`
+	GoodsName    string    `json:"goodsName"`
+	Price        float64   `json:"price"`
+	ShippingCost float64   `json:"shippingCost"`
+	SellerName   string    `json:"sellerName"`
+	BuyerName    string    `json:"buyerName"`
 	SellerID     int       `json:"sellerID"`
 	BuyerID      int       `json:"buyerID"`
 	OrderTime    time.Time `json:"orderTime"`
@@ -21,7 +19,8 @@ type RefundInfo struct {
 	RefundTime   time.Time `json:"refundTime"`
 	ShippingTime time.Time `json:"shippingTime"`
 	TurnoverTime time.Time `json:"turnoverTime"`
-	BuyerReason  string    `json:"BuyerReason"`
+	BuyerReason  string    `json:"buyerReason"`
+	SellerReason string    `json:"sellerReason"`
 	CStatus      string    `json:"status"`
 }
 
@@ -35,4 +34,9 @@ type ShowRefundReq struct {
 	SearchQuery string `form:"searchQuery" json:"searchQuery"` // 模糊搜索条件
 	PageNum     int    `form:"pageNum" json:"pageNum"`         // 当前页码
 	PageSize    int    `form:"pageSize" json:"pageSize"`       // 每页记录数
+}
+
+type UpdateRefundReq struct {
+	Action  string `json:"action"`  // 模糊搜索条件
+	TradeID int    `json:"tradeID"` // 当前页码
 }
