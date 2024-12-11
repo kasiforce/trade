@@ -79,10 +79,9 @@ func NewRouter() *gin.Engine {
 			authed.GET("/profiles/comment/given", api.ShowCommentsByUserHandler())
 			//根据用户ID获取收到的评价
 			authed.GET("/profiles/comment/received", api.GetReceivedCommentsHandler())
-			//用户商品查询
+			//用户商品查询 发布中和已售出
 			authed.GET("/profiles/finished", api.IsSoldGoodsHandler())
 			authed.GET("/profiles/published", api.PublishedGoodsHandler())
-			authed.GET("/orders/selled", api.IsSoldGoodsHandler())
 			//修改订单状态
 			authed.POST("/orders/operate/:id", api.UpdateOrderStatusHandler())
 			//修改订单地址
