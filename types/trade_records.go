@@ -48,6 +48,7 @@ type ShowOrdersReq struct {
 type UpdateOrderStatusReq struct {
 	ID           int    `json:"id" binding:"required"`     // 订单编号
 	Status       string `json:"status" binding:"required"` // 目标状态
+	RejectReason string `json:"rejectReason"`              //拒绝退款理由
 	RefundReason string `json:"refundReason"`              // 退款理由
 	Comment      string `json:"comment"`                   // 评价内容
 }
