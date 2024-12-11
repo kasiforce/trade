@@ -83,7 +83,6 @@ func NewRouter() *gin.Engine {
 			authed.GET("/profiles/finished", api.IsSoldGoodsHandler())
 			authed.GET("/profiles/published", api.PublishedGoodsHandler())
 			authed.GET("/orders/selled", api.IsSoldGoodsHandler())
-			//authed.GET("/orders/purchased", api.IsPurchasedGoodsHandler())
 			//修改订单状态
 			authed.POST("/orders/operate/:id", api.UpdateOrderStatusHandler())
 			//修改订单地址
@@ -93,9 +92,11 @@ func NewRouter() *gin.Engine {
 			//获取-我买到的
 			authed.GET("/orders/purchased", api.GetMyOrdersHandler())
 			//获取商品详情
-			authed.GET("/detail", api.ShowGoodsDetailHandler())
+			authed.GET("/detail", api.IncreaseGoodsViewHandler(), api.ShowGoodsDetailHandler())
 			//发布闲置
 			authed.POST("/postProduct", api.CreateGoodsHandler())
+			//获取收藏
+			authed.PUT("/detail/;id", api.UpdateGoodsIsStarredHandler())
 		}
 	}
 	return router
