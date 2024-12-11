@@ -96,6 +96,7 @@ func NewRouter() *gin.Engine {
 			authed.GET("/detail", api.ShowGoodsDetailHandler())
 			//发布闲置
 			authed.POST("/postProduct", api.CreateGoodsHandler())
+			authed.GET("/collection", api.ShowCollectionHandler())
 		}
 	}
 	return router
