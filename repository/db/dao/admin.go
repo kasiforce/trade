@@ -20,6 +20,11 @@ func NewAdmin(ctx context.Context) *Admin {
 	return &Admin{NewDBClient(ctx)}
 }
 
+func (admin *Admin) CountAll() (total int64, err error) {
+	err = admin.DB.Model(&model.Admin{}).Count(&total).Error
+	return
+}
+
 func (admin *Admin) FindAll(req types.ShowAdminReq) (admins []model.Admin, err error) {
 	db := admin.DB
 	query := db.Table("admins").Select("admins.*")
