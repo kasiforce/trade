@@ -29,6 +29,11 @@ func (c *CollectionService) ShowCollection(ctx *gin.Context, req types.ShowColle
 		util.LogrusObj.Error(err)
 		return
 	}
+	total, err := co.CountAll(id)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return
+	}
 	var collection []types.Collection
 	for _, v := range collectionList {
 		collection = append(collection, types.Collection{
@@ -42,6 +47,6 @@ func (c *CollectionService) ShowCollection(ctx *gin.Context, req types.ShowColle
 	}
 	var listResp types.CollectionListResp
 	listResp.Collections = collection
-	listResp.Total = len(collection)
+	listResp.Total = int(total)
 	return listResp, nil
 }
