@@ -32,7 +32,7 @@ func (c *Comment) GetAllComments(req types.ShowCommentsReq) (r []*types.CommentI
 	if req.SearchQuery != "" {
 		query = query.Joins("As co left join users as u on u.userID = co.commentatorID").
 			Joins("left join goods as g on g.goodsID = co.goodsID").
-			Where("u.userName LIKE ?", "%"+req.SearchQuery+"%").
+			Where("u.userName LIKE ?", "%"+req.SearchQuery+"%").Count(&total).
 			Offset((req.PageNum - 1) * req.PageSize).Limit(req.PageSize).
 			Select("co.commentID as CommentID," +
 				"g.goodsName as GoodsName," +
@@ -42,19 +42,13 @@ func (c *Comment) GetAllComments(req types.ShowCommentsReq) (r []*types.CommentI
 	} else {
 		// 构建查询
 		query = query.Joins("As co left join users as u on u.userID = co.commentatorID").
-			Joins("left join goods as g on g.goodsID = co.goodsID").
+			Joins("left join goods as g on g.goodsID = co.goodsID").Count(&total).
 			Offset((req.PageNum - 1) * req.PageSize).Limit(req.PageSize).
 			Select("co.commentID as CommentID," +
 				"g.goodsName as GoodsName," +
 				"u.userName as CommentatorName," +
 				"co.commentContent as CommentContent," +
 				"co.commentTime as CommentTime")
-	}
-
-	// 获取总记录数
-	err = query.Count(&total).Error
-	if err != nil {
-		return
 	}
 
 	// 执行查询
