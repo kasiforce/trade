@@ -11,24 +11,26 @@ type CommentInfo struct {
 	CommentTime     time.Time `json:"commentTime,omitempty"` // 评价时间
 }
 
-// CommentInfoByID 表示评论信息（获取发布的评价的d返回结构）
+// CommentInfoByID 表示评论信息（获取发布的评价的返回结构）
 type CommentInfoByID struct {
-	CommentID       int       `json:"commentID"` // 评价ID
-	GoodsID         int       `json:"goodsID"`   // 商品ID
-	CommentatorID   int       `json:"commentatorID"`
-	CommentatorName string    `json:"commentatorName"`       // 评价者名
-	CommentContent  string    `json:"commentContent"`        // 评价内容
-	CommentTime     time.Time `json:"commentTime,omitempty"` // 评价时间
+	CommentID         int       `json:"commentID"` // 评价ID
+	GoodsID           int       `json:"goodsID"`   // 商品ID
+	CommentatorID     int       `json:"commentatorID"`
+	CommentatorName   string    `json:"commentatorName"`       // 评价者名
+	CommentContent    string    `json:"commentContent"`        // 评价内容
+	CommentTime       time.Time `json:"commentTime,omitempty"` // 评价时间
+	CommentatorAvatar string    `json:"commentatorAvatar"`     //评论人头像
 }
 
 // ReceivedCommentInfo 表示收到的评价信息
 type ReceivedCommentInfo struct {
-	CommentID       int       `json:"commentID"`             // 评价ID
-	GoodsID         int       `json:"goodsID"`               // 商品ID
-	CommentatorID   int       `json:"commentatorID"`         // 评价者ID
-	CommentatorName string    `json:"commentatorName"`       // 评价者名
-	CommentContent  string    `json:"commentContent"`        // 评价内容
-	CommentTime     time.Time `json:"commentTime,omitempty"` // 评价时间
+	CommentID         int       `json:"commentID"`             // 评价ID
+	GoodsID           int       `json:"goodsID"`               // 商品ID
+	CommentatorID     int       `json:"commentatorID"`         // 评价者ID
+	CommentatorName   string    `json:"commentatorName"`       // 评价者名
+	CommentContent    string    `json:"commentContent"`        // 评价内容
+	CommentTime       time.Time `json:"commentTime,omitempty"` // 评价时间
+	CommentatorAvatar string    `json:"commentatorAvatar"`     //评论人头像
 }
 
 // ShowCommentsReq 表示查询评论列表的请求
