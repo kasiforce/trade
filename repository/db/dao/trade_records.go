@@ -180,21 +180,21 @@ func (c *TradeRecords) UpdateOrderStatus(req types.UpdateOrderStatusReq) (resp i
 	// 更新订单状态
 	if req.Status == "未发货" {
 		updateData := map[string]interface{}{
-			"Status":  req.Status,
+			"status":  req.Status,
 			"payTime": time.Now().In(location),
 		}
-		err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ?", req.ID).Updates(updateData).
+		err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ? AND (payTime IS NULL ", req.ID).Updates(updateData).
 			Error
 	} else if req.Status == "已发货" {
 		updateData := map[string]interface{}{
-			"Status":       req.Status,
-			"ShippingTime": time.Now().In(location),
+			"status":       req.Status,
+			"shippingTime": time.Now().In(location),
 		}
-		err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ?", req.ID).Updates(updateData).
+		err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ? AND ShippingTime IS NULL ", req.ID).Updates(updateData).
 			Error
 	} else if req.Status == "交易完成" || req.Status == "已取消" || req.Status == "已退款" {
 		updateData := map[string]interface{}{
-			"Status":       req.Status,
+			"status":       req.Status,
 			"turnoverTime": time.Now().In(location),
 		}
 		err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ?", req.ID).Updates(updateData).
@@ -217,6 +217,16 @@ func (c *TradeRecords) UpdateOrderStatus(req types.UpdateOrderStatusReq) (resp i
 			CStatus:     0,
 		}
 		err = c.DB.Create(&refundComplaint).Error
+		if err != nil {
+			return
+		}
+	}
+	//rejectReason如果存在拒绝退款理由，插入退款申诉
+	if req.RejectReason != "" {
+		updateData := map[string]interface{}{
+			"sellerReason": req.RejectReason,
+		}
+		err = c.DB.Model(&model.RefundComplaint{}).Where("tradeID = ?", req.ID).Updates(updateData).Error
 		if err != nil {
 			return
 		}
