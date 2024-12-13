@@ -120,7 +120,7 @@ func (g *Goods) IsSoldGoods(id int) (goods []model.Goods, err error) {
 	return
 }
 
-// 用户查询自己发布的所有商品
+// 用户查询自己发布的未售出商品
 func (g *Goods) UserFindAll(id int) (goods []model.Goods, err error) {
 	db := g.DB
 	// 关联查询 goods, users, address 表
@@ -135,7 +135,8 @@ func (g *Goods) UserFindAll(id int) (goods []model.Goods, err error) {
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
 		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
-
+	// 添加 isSold = 0 的条件
+	query = query.Where("goods.isSold = ?", 0)
 	if id != 0 {
 		query = query.Where("goods.userID = ?", id)
 	}
@@ -372,5 +373,63 @@ func (g *Goods) RemoveFromCollection(goodsID int, userID int) error {
 	if err != nil {
 		return fmt.Errorf("failed to remove from collection: %w", err)
 	}
+	return nil
+}
+
+// 更新商品信息
+func (g *Goods) UpdateGoods(req types.UpdateGoodsReq) error {
+	db := g.DB
+
+	// 查询用户ID
+	var userID int
+	err := db.Table("users").
+		Select("userID").
+		Where("userName = ?", req.UserName).
+		Scan(&userID).Error
+	if err != nil {
+		return fmt.Errorf("failed to find userID: %w", err)
+	}
+
+	// 查询分类ID
+	var categoryID int
+	err = db.Table("category").
+		Select("categoryID").
+		Where("categoryName = ?", req.Category).
+		Scan(&categoryID).Error
+	if err != nil {
+		return fmt.Errorf("failed to find categoryID: %w", err)
+	}
+
+	// 将 DeliveryMethod 转换为 int
+	var deliveryMethod int
+	switch req.DeliveryMethod {
+	case "无需快递":
+		deliveryMethod = 0
+	case "自提":
+		deliveryMethod = 1
+	case "邮寄":
+		deliveryMethod = 2
+	default:
+		return fmt.Errorf("invalid delivery method: %s", req.DeliveryMethod)
+	}
+
+	// 更新商品信息
+	err = db.Table("goods").
+		Where("id = ?", req.GoodsID).
+		Updates(map[string]interface{}{
+			"goodsName":      req.GoodsName,
+			"price":          req.Price,
+			"categoryID":     categoryID,
+			"description":    req.Details,
+			"imageUrl":       req.ImageUrl,
+			"shippingCost":   req.ShippingCost,
+			"userID":         userID,
+			"addrID":         req.AddrID,
+			"deliveryMethod": deliveryMethod,
+		}).Error
+	if err != nil {
+		return fmt.Errorf("failed to update goods: %w", err)
+	}
+
 	return nil
 }

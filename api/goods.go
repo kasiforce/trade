@@ -254,3 +254,28 @@ func UpdateGoodsIsStarredHandler() gin.HandlerFunc {
 		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
 	}
 }
+
+// 修改发布中商品
+func UpdateGoodsHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 获取请求体中的 JSON 数据
+		var req types.UpdateGoodsReq
+		if err := c.ShouldBindJSON(&req); err != nil {
+			util.LogrusObj.Infoln("Invalid JSON body:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+
+		// 调用服务层方法更新商品信息
+		s := service.GetGoodsService()
+		resp, err := s.UpdateGoods(c, req)
+		if err != nil {
+			util.LogrusObj.Infoln("Failed to update goods:", err)
+			c.JSON(http.StatusOK, ErrorResponse(c, err))
+			return
+		}
+
+		// 返回成功响应
+		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
+	}
+}
