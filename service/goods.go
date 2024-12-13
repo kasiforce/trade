@@ -350,3 +350,19 @@ func (s *GoodsService) UpdateGoodsIsStarred(ctx *gin.Context, goodsID int, r typ
 	}
 	return resp, nil
 }
+
+// 更新商品信息
+func (s *GoodsService) UpdateGoods(ctx *gin.Context, req types.UpdateGoodsReq) (resp interface{}, err error) {
+	goods := dao.NewGoods(ctx)
+	err = goods.UpdateGoods(req)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return nil, err
+	}
+	// 创建响应数据
+	respData := map[string]interface{}{
+		"message": "商品信息更新成功",
+		"goodsID": req.GoodsID,
+	}
+	return respData, nil
+}

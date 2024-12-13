@@ -93,10 +93,11 @@ func NewRouter() *gin.Engine {
 			authed.GET("/detail", api.IncreaseGoodsViewHandler(), api.ShowGoodsDetailHandler())
 			//发布闲置
 			authed.POST("/postProduct", api.CreateGoodsHandler())
-
+			//修改发布中商品详情
+			authed.POST("/profiles/published", api.UpdateGoodsHandler())
 			//更新收藏
 			authed.PUT("/detail/:id", api.UpdateGoodsIsStarredHandler())
-      //获取收藏
+			//获取收藏
 			authed.GET("/collection", api.ShowCollectionHandler())
 
 		}
