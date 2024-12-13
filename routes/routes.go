@@ -99,6 +99,8 @@ func NewRouter() *gin.Engine {
 			authed.POST("/createOrder", api.CreateOrderHandler())
 			//获取-我买到的
 			authed.GET("/orders/purchased", api.GetMyOrdersHandler())
+			//获取-我卖出的
+			authed.GET("/orders/selled", api.GetMySoldOrdersHandler())
 			//获取商品详情
 			authed.GET("/detail", api.IncreaseGoodsViewHandler(), api.ShowGoodsDetailHandler())
 			//发布闲置
