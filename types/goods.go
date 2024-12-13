@@ -145,3 +145,16 @@ type CreateGoodsReq struct {
 type IsStarred struct {
 	IsStarred bool `json:"isStarred"`
 }
+
+type UpdateGoodsReq struct {
+	GoodsID        int     `form:"id" json:"id"`       // 商品名称模糊查询
+	GoodsName      string  `form:"title" json:"title"` // 当前页码
+	Price          float64 `form:"price" json:"price"`
+	Category       string  `form:"category" json:"category"`
+	Details        string  `form:"description" json:"description"`
+	ImageUrl       string  `form:"imageUrl" json:"imageUrl"`
+	ShippingCost   float64 `form:"shippingCost" json:"shippingCost"`
+	UserName       string  `form:"userName" json:"userName"`
+	AddrID         int     `form:"addrID" json:"addrID"`
+	DeliveryMethod string  `form:"deliveryMethod" json:"deliveryMethod"`
+}
