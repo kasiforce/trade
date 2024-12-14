@@ -23,7 +23,7 @@ func GetRefundService() *RefundService {
 }
 
 func (s *RefundService) ShowAllRefund(ctx context.Context, req types.ShowRefundReq) (resp interface{}, err error) {
-	refund := dao.NewRefundRecord(ctx)
+	refund := dao.NewRefundComplaint(ctx)
 	// 获取数据库中所有待退货的商品
 	total, err := refund.CountAll()
 	if err != nil {
@@ -50,7 +50,6 @@ func (s *RefundService) ShowAllRefund(ctx context.Context, req types.ShowRefundR
 			status = "未知"
 		}
 		respList = append(respList, types.RefundInfo{
-			RefundID:     refundInfo.RefundID,
 			TradeID:      refundInfo.TradeID,
 			GoodsName:    refundInfo.GoodsName,
 			Price:        refundInfo.Price,
@@ -61,7 +60,7 @@ func (s *RefundService) ShowAllRefund(ctx context.Context, req types.ShowRefundR
 			BuyerID:      refundInfo.BuyerID,
 			OrderTime:    refundInfo.OrderTime,
 			PayTime:      refundInfo.PayTime,
-			RefundTime:   refundInfo.RefundAgreedTime,
+			RefundTime:   refundInfo.CTime,
 			ShippingTime: refundInfo.ShippingTime,
 			TurnoverTime: refundInfo.TurnoverTime,
 			CStatus:      status,
