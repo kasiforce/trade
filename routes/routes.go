@@ -58,7 +58,6 @@ func NewRouter() *gin.Engine {
 		v1.GET("/admin/comment", api.ShowAllCommentsHandler())
 		//删除评论
 		v1.DELETE("/admin/comment/:id", api.DeleteCommentHandler())
-
 		//查询订单
 		v1.GET("/admin/order", api.GetAllOrdersHandler())
 		//商品列表
@@ -67,6 +66,8 @@ func NewRouter() *gin.Engine {
 		v1.GET("/product/select", api.FilterGoodsHandler())
 		//修改发布中商品详情
 		v1.POST("/profiles/published", api.UpdateGoodsHandler())
+		//用户删除商品
+		v1.DELETE("/product/delete/:id", api.DeleteGoodsHandler())
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())
 		{
