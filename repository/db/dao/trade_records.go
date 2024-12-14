@@ -528,3 +528,10 @@ func (c *TradeRecords) GetMySoldOrders(req types.GetMyOrdersReq, id int) (r []ty
 
 	return
 }
+
+// GetOrderDetail 获取订单详情
+func (c *TradeRecords) GetOrderDetail(orderID int) (model.TradeRecords, error) {
+	var order model.TradeRecords
+	err := c.DB.Where("tradeID = ?", orderID).First(&order).Error
+	return order, err
+}
