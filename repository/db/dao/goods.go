@@ -415,13 +415,13 @@ func (g *Goods) UpdateGoods(req types.UpdateGoodsReq) error {
 
 	// 更新商品信息
 	err = db.Table("goods").
-		Where("id = ?", req.GoodsID).
+		Where("goodsid = ?", req.GoodsID).
 		Updates(map[string]interface{}{
 			"goodsName":      req.GoodsName,
 			"price":          req.Price,
 			"categoryID":     categoryID,
-			"description":    req.Details,
-			"imageUrl":       req.ImageUrl,
+			"details":        req.Details,
+			"goodsImages":    req.ImageUrl,
 			"shippingCost":   req.ShippingCost,
 			"userID":         userID,
 			"addrID":         req.AddrID,

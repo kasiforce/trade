@@ -65,6 +65,8 @@ func NewRouter() *gin.Engine {
 		v1.GET("/products", api.ShowAllGoodsHandler())
 		//筛选商品
 		v1.GET("/product/select", api.FilterGoodsHandler())
+		//修改发布中商品详情
+		v1.POST("/profiles/published", api.UpdateGoodsHandler())
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())
 		{
@@ -93,8 +95,6 @@ func NewRouter() *gin.Engine {
 			authed.GET("/detail", api.IncreaseGoodsViewHandler(), api.ShowGoodsDetailHandler())
 			//发布闲置
 			authed.POST("/postProduct", api.CreateGoodsHandler())
-			//修改发布中商品详情
-			authed.POST("/profiles/published", api.UpdateGoodsHandler())
 			//更新收藏
 			authed.PUT("/detail/:id", api.UpdateGoodsIsStarredHandler())
 			//获取收藏
