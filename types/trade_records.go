@@ -125,3 +125,21 @@ type AddressInfo struct {
 	Tel        string `json:"tel"`        // 联系电话
 	Name       string `json:"name"`       // 联系人
 }
+
+// GetOrderDetailReq 表示获取订单详情的请求
+type GetOrderDetailReq struct {
+	ID int `uri:"id" binding:"required"` // 订单id
+}
+
+// GetOrderDetailResp 表示获取订单详情的响应
+type GetOrderDetailResp struct {
+	ID             int     `json:"id"`             // 订单id
+	Countdown      int     `json:"countdown"`      // 支付倒计时
+	SellerID       int     `json:"sellerID"`       // 卖家ID
+	GoodsID        int     `json:"goodsID"`        // 商品ID
+	Price          float64 `json:"price"`          // 价格
+	DeliveryMethod string  `json:"deliveryMethod"` // 交易方式
+	ShippingCost   float64 `json:"shippingCost"`   // 运费
+	SenderAddrID   int     `json:"SenderAddrID"`   // 发货地址ID
+	ShippingAddrID int     `json:"shippingAddrID"` // 收货地址ID
+}

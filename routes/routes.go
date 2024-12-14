@@ -100,6 +100,9 @@ func NewRouter() *gin.Engine {
 			authed.POST("/orders/address/:id", api.UpdateOrderAddressHandler())
 			//生成订单
 			authed.POST("/createOrder", api.CreateOrderHandler())
+			//获取订单详情（以及支付结果）
+			authed.GET("/order/:id", api.GetOrderDetailHandler())
+
 			//获取-我买到的
 			authed.GET("/orders/purchased", api.GetMyOrdersHandler())
 			//获取-我卖出的
