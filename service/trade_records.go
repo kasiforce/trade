@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"sync"
+	"time"
+
 	//"github.com/gin-gonic/gin"
 	"github.com/kasiforce/trade/pkg/util"
 	"github.com/kasiforce/trade/repository/db/dao"
@@ -107,4 +109,61 @@ func (s *Trade_recordsService) GetMySoldOrders(ctx *gin.Context, req types.GetMy
 		OrderList: orders,
 	}
 	return
+}
+
+// GetOrderDetail 获取订单详情
+func (s *Trade_recordsService) GetOrderDetail(ctx *gin.Context, req types.GetOrderDetailReq) (resp types.GetOrderDetailResp, err error) {
+	// 获取订单ID
+	orderID := req.ID
+
+	// 查询订单详情
+	u := dao.NewTradeRecords(ctx)
+	order, err := u.GetOrderDetail(orderID)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return resp, err
+	}
+
+	// 计算倒计时
+	countdown := calculateCountdown(order.OrderTime)
+
+	// 构建响应
+	resp = types.GetOrderDetailResp{
+		ID:             order.TradeID,
+		Countdown:      countdown,
+		SellerID:       order.SellerID,
+		GoodsID:        order.GoodsID,
+		Price:          order.TurnoverAmount,
+		DeliveryMethod: getDeliveryMethod(order.PayMethod),
+		ShippingCost:   order.ShippingCost,
+		SenderAddrID:   order.ShippingAddrID,
+		ShippingAddrID: order.DeliveryAddrID,
+	}
+
+	return resp, nil
+}
+
+// calculateCountdown 计算倒计时
+func calculateCountdown(orderTime time.Time) int {
+	const countdownDuration = 300 // 倒计时总时长为300秒
+	elapsedTime := time.Since(orderTime).Seconds()
+	remainingTime := countdownDuration - int(elapsedTime)
+	if remainingTime < 0 {
+		return -1
+	}
+	return remainingTime
+}
+
+// getDeliveryMethod 根据支付方式获取交易方式
+func getDeliveryMethod(payMethod int) string {
+	switch payMethod {
+	case 0:
+		return "无需快递"
+	case 1:
+		return "自提"
+	case 2:
+		return "邮寄"
+	default:
+		return "未知"
+	}
 }
