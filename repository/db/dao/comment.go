@@ -90,7 +90,8 @@ func (c *Comment) GetCommentsByUser(id int) (r []types.CommentInfoByID, err erro
 			"co.commentatorID as CommentatorID," +
 			"u.userName as CommentatorName," +
 			"co.commentContent as CommentContent," +
-			"co.commentTime as CommentTime").
+			"co.commentTime as CommentTime," +
+			"u.picture as CommentatorAvatar").
 		Find(&r).Error
 
 	return
@@ -107,7 +108,8 @@ func (c *Comment) GetReceivedComments(userID int) (r []types.ReceivedCommentInfo
 			"co.commentatorID as CommentatorID," +
 			"u.userName as CommentatorName," +
 			"co.commentContent as CommentContent," +
-			"co.commentTime as CommentTime").
+			"co.commentTime as CommentTime," +
+			"u.picture as CommentatorAvatar").
 		Find(&r).Error
 
 	return

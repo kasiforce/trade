@@ -68,6 +68,16 @@ func NewRouter() *gin.Engine {
 		v1.POST("/profiles/published", api.UpdateGoodsHandler())
 		//用户删除商品
 		v1.DELETE("/product/delete/:id", api.DeleteGoodsHandler())
+
+		//查询所有公告
+		v1.GET("/admin/announcement", api.ShowAllAnnouncementsHandler())
+		//添加公告
+		v1.POST("/admin/announcement", api.CreateAnnouncementHandler())
+		//修改公告
+		v1.PUT("/admin/announcement/:announcementID", api.UpdateAnnouncementHandler())
+		//删除公告
+		v1.DELETE("/admin/announcement/:announcementID", api.DeleteAnnouncementHandler())
+
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())
 		{
@@ -92,6 +102,8 @@ func NewRouter() *gin.Engine {
 			authed.POST("/createOrder", api.CreateOrderHandler())
 			//获取-我买到的
 			authed.GET("/orders/purchased", api.GetMyOrdersHandler())
+			//获取-我卖出的
+			authed.GET("/orders/selled", api.GetMySoldOrdersHandler())
 			//获取商品详情
 			authed.GET("/detail", api.IncreaseGoodsViewHandler(), api.ShowGoodsDetailHandler())
 			//发布闲置
@@ -100,6 +112,9 @@ func NewRouter() *gin.Engine {
 			authed.PUT("/detail/:id", api.UpdateGoodsIsStarredHandler())
 			//获取收藏
 			authed.GET("/collection", api.ShowCollectionHandler())
+
+			// SSE 推送公告
+			v1.GET("/announcements/sse", api.SSEAnnouncementsHandler())
 
 		}
 	}

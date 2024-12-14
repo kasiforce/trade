@@ -183,7 +183,7 @@ func (c *TradeRecords) UpdateOrderStatus(req types.UpdateOrderStatusReq) (resp i
 			"status":  req.Status,
 			"payTime": time.Now().In(location),
 		}
-		err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ? AND (payTime IS NULL ", req.ID).Updates(updateData).
+		err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ? AND payTime IS NULL ", req.ID).Updates(updateData).
 			Error
 	} else if req.Status == "已发货" {
 		updateData := map[string]interface{}{
