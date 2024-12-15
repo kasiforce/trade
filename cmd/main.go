@@ -7,6 +7,7 @@ import (
 	"github.com/kasiforce/trade/repository/cache"
 	"github.com/kasiforce/trade/repository/db/dao"
 	"github.com/kasiforce/trade/routes"
+	"github.com/kasiforce/trade/service/pay"
 )
 
 func main() {
@@ -21,4 +22,5 @@ func loading() {
 	util.InitLog()    //日志文件初始化
 	dao.InitMySQL()   //数据库初始化
 	cache.InitCache() //redis初始化
+	pay.InitAlipay()  //支付包SDK初始化
 }
