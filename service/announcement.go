@@ -37,6 +37,16 @@ func (s *AnnouncementService) ShowAllAnnouncements(ctx context.Context, req type
 	return resp, nil
 }
 
+func (s *AnnouncementService) ClientShowAllAnnouncements(ctx context.Context) (resp interface{}, err error) {
+	announcement := dao.NewAnnouncement(ctx)
+	announcements, err := announcement.ClientGetAllAnnouncements()
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return nil, err
+	}
+	return announcements, nil
+}
+
 // CreateAnnouncement 创建公告
 func (s *AnnouncementService) CreateAnnouncement(ctx context.Context, req types.CreateAnnouncementReq) error {
 	return dao.NewAnnouncement(ctx).CreateAnnouncement(req)

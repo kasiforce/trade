@@ -58,6 +58,30 @@ func (a *Announcement) GetAllAnnouncements(req types.ShowAnnouncementsReq) (r []
 	return
 }
 
+func (a *Announcement) ClientGetAllAnnouncements() (r []types.AnnouncementInfo, err error) {
+	// 构建查询条件
+	query := a.DB.Model(&model.Announcement{})
+
+	// 构建查询
+	query = query.
+		Select("announcementID as AnnouncementID," +
+			"anTitle as AnTitle," +
+			"anContent as AnContent," +
+					"anTime as AnTime").
+		Order("anTime DESC"). // 按 anTime 降序排序
+		Limit(3)              // 限制返回最新的3条
+
+	// 执行查询
+	err = query.Find(&r).Error
+	if err != nil {
+		return
+	}
+
+	// 打印 r 的值以进行调试
+	fmt.Printf("Debug: r = %+v\n", r)
+	return
+}
+
 // CreateAnnouncement 创建公告
 func (a *Announcement) CreateAnnouncement(req types.CreateAnnouncementReq) error {
 	newAnnouncement := model.Announcement{

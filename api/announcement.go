@@ -8,7 +8,6 @@ import (
 	"github.com/kasiforce/trade/service"
 	"github.com/kasiforce/trade/types"
 	"net/http"
-	"sort"
 	"strconv"
 	"time"
 )
@@ -99,7 +98,7 @@ func DeleteAnnouncementHandler() gin.HandlerFunc {
 	}
 }
 
-// / SSEAnnouncementsHandler 使用 SSE 推送公告
+// SSEAnnouncementsHandler 使用 SSE 推送公告
 func SSEAnnouncementsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("Content-Type", "text/event-stream")
@@ -114,30 +113,14 @@ func SSEAnnouncementsHandler() gin.HandlerFunc {
 			select {
 			case <-ticker.C:
 				s := service.GetAnnouncementService()
-				req := types.ShowAnnouncementsReq{
-					PageNum:  1,
-					PageSize: 10000, // 假设获取10条，然后从中筛选最新的3条
-				}
-				resp, err := s.ShowAllAnnouncements(c, req)
+				resp, err := s.ClientShowAllAnnouncements(c)
 				if err != nil {
 					util.LogrusObj.Infoln("Error occurred:", err)
 					continue
 				}
 
-				data, _ := resp.(*types.AnnouncementListResp)
-				// 确保公告列表是按 anTime 降序排列的
-				sort.Slice(data.AnnouncementList, func(i, j int) bool {
-					// 假设 Announcement 结构体中有一个字段 anTime 表示创建时间
-					return data.AnnouncementList[i].AnTime.After(data.AnnouncementList[j].AnTime)
-				})
-
-				// 只处理最新的3条公告
-				announcements := data.AnnouncementList
-				if len(announcements) > 3 {
-					announcements = announcements[:3]
-				}
-
-				for _, announcement := range announcements {
+				data, _ := resp.([]types.AnnouncementInfo)
+				for _, announcement := range data {
 					event := fmt.Sprintf("data: %v\n\n", announcement)
 					_, err := c.Writer.WriteString(event)
 					if err != nil {
