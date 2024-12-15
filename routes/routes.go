@@ -75,6 +75,9 @@ func NewRouter() *gin.Engine {
 		//删除公告
 		v1.DELETE("/admin/announcement/:announcementID", api.DeleteAnnouncementHandler())
 
+		//支付宝消息通知回调接口
+		v1.POST("/alipay/notify", api.AlipayNotifyHandler)
+
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())
 		{
@@ -101,8 +104,6 @@ func NewRouter() *gin.Engine {
 			authed.GET("/order/:id", api.GetOrderDetailHandler())
 			//支付宝支付
 			authed.GET("/pay/aliPay", api.AlipayHandler)
-			//支付宝回调接口
-			authed.POST("/alipay/notify", api.AlipayNotifyHandler)
 
 			//获取-我买到的
 			authed.GET("/orders/purchased", api.GetMyOrdersHandler())
