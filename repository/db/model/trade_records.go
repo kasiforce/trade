@@ -10,8 +10,8 @@ type TradeRecords struct {
 	BuyerID        int       `gorm:"not null;column:buyerID"`
 	GoodsID        int       `gorm:"not null;column:goodsID"`
 	TurnoverAmount float64   `gorm:"type:decimal(10,2);not null;check:turnoverAmount >= 0;column:turnoverAmount"`
-	ShippingAddrID int       `gorm:"not null;column:shippingAddrID"`
-	DeliveryAddrID int       `gorm:"not null;column:deliveryAddrID"`
+	ShippingAddrID *int      `gorm:"column:shippingAddrID"`
+	DeliveryAddrID *int      `gorm:"column:deliveryAddrID"`
 	OrderTime      time.Time `gorm:"type:datetime;not null;column:orderTime"`
 	PayTime        time.Time `gorm:"type:datetime;column:payTime;default:NULL"`
 	ShippingTime   time.Time `gorm:"type:datetime;column:shippingTime;default:NULL"`

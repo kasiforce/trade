@@ -78,6 +78,8 @@ func NewRouter() *gin.Engine {
 		//删除公告
 		v1.DELETE("/admin/announcement/:announcementID", api.DeleteAnnouncementHandler())
 
+		//支付宝支付
+		v1.GET("/pay/aliPay", api.AlipayHandler)
 		//支付宝消息通知回调接口
 		v1.POST("/alipay/notify", api.AlipayNotifyHandler)
 
@@ -105,8 +107,6 @@ func NewRouter() *gin.Engine {
 			authed.POST("/createOrder", api.CreateOrderHandler())
 			//获取订单详情（以及支付结果）
 			authed.GET("/order/:id", api.GetOrderDetailHandler())
-			//支付宝支付
-			authed.GET("/pay/aliPay", api.AlipayHandler)
 
 			//获取-我买到的
 			authed.GET("/orders/purchased", api.GetMyOrdersHandler())
