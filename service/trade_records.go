@@ -136,8 +136,8 @@ func (s *Trade_recordsService) GetOrderDetail(ctx *gin.Context, req types.GetOrd
 		Price:          order.TurnoverAmount,
 		DeliveryMethod: getDeliveryMethod(order.PayMethod),
 		ShippingCost:   order.ShippingCost,
-		SenderAddrID:   order.ShippingAddrID,
-		ShippingAddrID: order.DeliveryAddrID,
+		SenderAddrID:   *order.ShippingAddrID,
+		ShippingAddrID: *order.DeliveryAddrID,
 	}
 
 	return resp, nil

@@ -70,13 +70,13 @@ type UpdateOrderAddressReq struct {
 
 // CreateOrderReq 表示生成订单的请求
 type CreateOrderReq struct {
-	SellerID       int     `json:"sellerID" binding:"required"`       // 卖家ID
-	GoodsID        int     `json:"goodsID" binding:"required"`        // 商品ID
-	Price          float64 `json:"price" binding:"required"`          // 价格
-	DeliveryMethod string  `json:"deliveryMethod" binding:"required"` // 交易方式
-	ShippingCost   float64 `json:"shippingCost" binding:"required"`   // 运费
-	SenderAddrID   int     `json:"SenderAddrID" binding:"required"`   // 发货地址
-	ShippingAddrID int     `json:"shippingAddrID" binding:"required"` // 收货地址
+	SellerID       int     `json:"sellerID" binding:"required"` // 卖家ID
+	GoodsID        int     `json:"goodsID" binding:"required"`  // 商品ID
+	Price          float64 `json:"price" binding:"required"`    // 价格
+	DeliveryMethod string  `json:"deliveryMethod"`              // 交易方式
+	ShippingCost   float64 `json:"shippingCost"`                // 运费
+	SenderAddrID   int     `json:"SenderAddrID" `               // 发货地址
+	ShippingAddrID int     `json:"shippingAddrID"`              // 收货地址
 }
 
 // CreateOrderResp 表示生成订单的返回信息

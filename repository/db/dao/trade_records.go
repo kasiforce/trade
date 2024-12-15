@@ -281,12 +281,24 @@ func (c *TradeRecords) CreateOrder(req types.CreateOrderReq, id int) (resp inter
 		GoodsID:        req.GoodsID,
 		TurnoverAmount: req.Price,
 		ShippingCost:   req.ShippingCost,
-		ShippingAddrID: req.SenderAddrID,
-		DeliveryAddrID: req.ShippingAddrID,
 		OrderTime:      time.Now(),
 		Status:         "未付款",
 		BuyerID:        id,
 	}
+	// 处理 ShippingAddrID
+	if req.SenderAddrID != 0 {
+		order.ShippingAddrID = &req.SenderAddrID // 设置为实际值
+	} else {
+		order.ShippingAddrID = nil // 设置为 NULL
+	}
+
+	// 处理 DeliveryAddrID
+	if req.ShippingAddrID != 0 {
+		order.DeliveryAddrID = &req.ShippingAddrID // 设置为实际值
+	} else {
+		order.DeliveryAddrID = nil // 设置为 NULL
+	}
+
 	switch req.DeliveryMethod {
 	case "无需快递":
 		order.PayMethod = 0

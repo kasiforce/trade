@@ -58,13 +58,16 @@ func NewRouter() *gin.Engine {
 		v1.GET("/admin/comment", api.ShowAllCommentsHandler())
 		//删除评论
 		v1.DELETE("/admin/comment/:id", api.DeleteCommentHandler())
-
 		//查询订单
 		v1.GET("/admin/order", api.GetAllOrdersHandler())
 		//商品列表
 		v1.GET("/products", api.ShowAllGoodsHandler())
 		//筛选商品
 		v1.GET("/product/select", api.FilterGoodsHandler())
+		//修改发布中商品详情
+		v1.POST("/profiles/published", api.UpdateGoodsHandler())
+		//用户删除商品
+		v1.DELETE("/product/delete/:id", api.DeleteGoodsHandler())
 
 		//查询所有公告
 		v1.GET("/admin/announcement", api.ShowAllAnnouncementsHandler())
@@ -75,6 +78,8 @@ func NewRouter() *gin.Engine {
 		//删除公告
 		v1.DELETE("/admin/announcement/:announcementID", api.DeleteAnnouncementHandler())
 
+		//支付宝支付
+		v1.GET("/pay/aliPay", api.AlipayHandler)
 		//支付宝消息通知回调接口
 		v1.POST("/alipay/notify", api.AlipayNotifyHandler)
 
@@ -102,8 +107,6 @@ func NewRouter() *gin.Engine {
 			authed.POST("/createOrder", api.CreateOrderHandler())
 			//获取订单详情（以及支付结果）
 			authed.GET("/order/:id", api.GetOrderDetailHandler())
-			//支付宝支付
-			authed.GET("/pay/aliPay", api.AlipayHandler)
 
 			//获取-我买到的
 			authed.GET("/orders/purchased", api.GetMyOrdersHandler())
@@ -113,8 +116,6 @@ func NewRouter() *gin.Engine {
 			authed.GET("/detail", api.IncreaseGoodsViewHandler(), api.ShowGoodsDetailHandler())
 			//发布闲置
 			authed.POST("/postProduct", api.CreateGoodsHandler())
-			//修改发布中商品详情
-			authed.POST("/profiles/published", api.UpdateGoodsHandler())
 			//更新收藏
 			authed.PUT("/detail/:id", api.UpdateGoodsIsStarredHandler())
 			//获取收藏

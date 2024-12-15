@@ -5,7 +5,7 @@ import (
 )
 
 type RefundInfo struct {
-	RefundID     int       `json:"refundID"`
+	//RefundID     int       `json:"refundID"`
 	TradeID      int       `json:"tradeID"`
 	GoodsName    string    `json:"goodsName"`
 	Price        float64   `json:"price"`
