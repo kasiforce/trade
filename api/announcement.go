@@ -113,18 +113,14 @@ func SSEAnnouncementsHandler() gin.HandlerFunc {
 			select {
 			case <-ticker.C:
 				s := service.GetAnnouncementService()
-				req := types.ShowAnnouncementsReq{
-					PageNum:  1,
-					PageSize: 10,
-				}
-				resp, err := s.ShowAllAnnouncements(c, req)
+				resp, err := s.ClientShowAllAnnouncements(c)
 				if err != nil {
 					util.LogrusObj.Infoln("Error occurred:", err)
 					continue
 				}
 
-				data, _ := resp.(*types.AnnouncementListResp)
-				for _, announcement := range data.AnnouncementList {
+				data, _ := resp.([]types.AnnouncementInfo)
+				for _, announcement := range data {
 					event := fmt.Sprintf("data: %v\n\n", announcement)
 					_, err := c.Writer.WriteString(event)
 					if err != nil {
