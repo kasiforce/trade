@@ -175,7 +175,7 @@ func (g *Goods) FilterGoods(req types.ShowGoodsReq) (goods []model.Goods, err er
 		query = query.Where("address.city = ?", req.City)
 	}
 	if req.District != "" {
-		query = query.Where("address.district = ?", req.District)
+		query = query.Where("address.districts = ?", req.District)
 	}
 	if req.DeliveryMethod != "" {
 		var deliveryMethod int
