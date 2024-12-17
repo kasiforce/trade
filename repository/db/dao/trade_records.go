@@ -24,46 +24,6 @@ func NewTradeRecords(ctx context.Context) *TradeRecords {
 	return &TradeRecords{NewDBClient(ctx)}
 }
 
-//	func (tr *TradeRecords) FindAll() (tradeRecords []*model.TradeRecords, err error) {
-//		err = tr.DB.Model(&model.TradeRecords{}).Find(&tradeRecords).Error
-//		return
-//	}
-//
-//	func (tr *TradeRecords) FindByID(id int) (t *model.TradeRecords, err error) {
-//		err = tr.DB.Model(&model.TradeRecords{}).Where("tradeID = ?", id).First(&t).Error
-//		return
-//	}
-//
-//	func (tr *TradeRecords) FindBySellerID(sellerID int) (tradeRecords []*model.TradeRecords, err error) {
-//		err = tr.DB.Model(&model.TradeRecords{}).Where("sellerID = ?", sellerID).Find(&tradeRecords).Error
-//		return
-//	}
-//
-//	func (tr *TradeRecords) FindByBuyerID(buyerID int) (tradeRecords []*model.TradeRecords, err error) {
-//		err = tr.DB.Model(&model.TradeRecords{}).Where("buyerID = ?", buyerID).Find(&tradeRecords).Error
-//		return
-//	}
-//
-//	func (tr *TradeRecords) FindByGoodsID(goodsID int) (tradeRecords []*model.TradeRecords, err error) {
-//		err = tr.DB.Model(&model.TradeRecords{}).Where("goodsID = ?", goodsID).Find(&tradeRecords).Error
-//		return
-//	}
-//
-//	func (tr *TradeRecords) CreateTradeRecord(t *model.TradeRecords) (err error) {
-//		err = tr.DB.Model(&model.TradeRecords{}).Create(&t).Error
-//		return
-//	}
-//
-//	func (tr *TradeRecords) UpdateTradeRecord(id int, t *model.TradeRecords) (err error) {
-//		err = tr.DB.Model(&model.TradeRecords{}).Where("tradeID = ?", id).Updates(&t).Error
-//		return
-//	}
-//
-//	func (tr *TradeRecords) DeleteTradeRecord(id int) (err error) {
-//		err = tr.DB.Model(&model.TradeRecords{}).Where("tradeID = ?", id).Delete(&model.TradeRecords{}).Error
-//		return
-//	}
-//
 // GetAllOrders 获取所有订单
 func (c *TradeRecords) GetAllOrders(req types.ShowOrdersReq) (r []types.OrderInfo, total int64, err error) {
 	query := c.DB.Model(&model.TradeRecords{})
@@ -194,13 +154,37 @@ func (c *TradeRecords) UpdateOrderStatus(req types.UpdateOrderStatusReq) (resp i
 		}
 		err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ? AND ShippingTime IS NULL ", req.ID).Updates(updateData).
 			Error
-	} else if req.Status == "交易完成" || req.Status == "已取消" || req.Status == "已退款" {
+	} else if req.Status == "交易完成" || req.Status == "已取消" {
 		updateData := map[string]interface{}{
 			"status":       req.Status,
 			"turnoverTime": time.Now().In(location),
 		}
 		err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ?", req.ID).Updates(updateData).
 			Error
+	} else if req.Status == "已退款" {
+		// 更新 TradeRecords 表的 status 和 turnoverTime 字段
+		updateData := map[string]interface{}{
+			"status":       req.Status,
+			"turnoverTime": time.Now().In(location),
+		}
+		err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ?", req.ID).Updates(updateData).Error
+		if err != nil {
+			return
+		}
+
+		// 获取 TradeRecords 中的 GoodsID
+		var tradeRecord model.TradeRecords
+		err = c.DB.Where("tradeID = ?", req.ID).First(&tradeRecord).Error
+		if err != nil {
+			return
+		}
+
+		// 更新 goods 表的 isSold 字段
+		err = c.DB.Model(&model.Goods{}).Where("goodsID = ?", tradeRecord.GoodsID).Update("isSold", 0).Error
+		if err != nil {
+			return
+		}
+
 	} else {
 		err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ?", req.ID).Update("status", req.Status).
 			Error
@@ -276,7 +260,10 @@ func (c *TradeRecords) UpdateOrderAddress(req types.UpdateOrderAddressReq) (err 
 
 // CreateOrder 生成订单
 func (c *TradeRecords) CreateOrder(req types.CreateOrderReq, id int) (resp interface{}, err error) {
-
+	err = c.DB.Model(&model.Goods{}).Where("goodsID=?", req.GoodsID).Update("isSold", 1).Error
+	if err != nil {
+		return
+	}
 	// 创建订单
 	order := model.TradeRecords{
 		SellerID:       req.SellerID,
@@ -347,6 +334,10 @@ func (c *TradeRecords) CreateOrder(req types.CreateOrderReq, id int) (resp inter
 			if err != nil {
 				// 处理错误，例如记录日志
 				log.Printf("Error updating order status: %v", err)
+			}
+			err = c.DB.Model(&model.Goods{}).Where("goodsID=?", req.GoodsID).Update("isSold", 0).Error
+			if err != nil {
+				return
 			}
 		}
 	})
