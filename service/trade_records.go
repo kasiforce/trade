@@ -176,3 +176,16 @@ func getDeliveryMethod(payMethod int) string {
 		return "未知"
 	}
 }
+
+func (s *Trade_recordsService) PaySuccess(ctx context.Context, req types.PaySuccessReq) (resp interface{}, err error) {
+	u := dao.NewTradeRecords(ctx)
+	err = u.UpdateOrderStatusToUnshipped(req)
+	if err != nil {
+		util.LogrusObj.Error(err)
+		return
+	}
+	resp = map[string]string{
+		"message": "支付成功，订单状态已更新为未发货",
+	}
+	return
+}

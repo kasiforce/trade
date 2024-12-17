@@ -167,3 +167,26 @@ func GetOrderDetailHandler() gin.HandlerFunc {
 		c.JSON(http.StatusOK, ctl.RespSuccess(c, resp))
 	}
 }
+
+// PaySuccessHandler 支付成功后改变订单状态为未发货
+func PaySuccessHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req types.PaySuccessReq
+		if err := c.ShouldBindJSON(&req); err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusBadRequest, ErrorResponse(c, err))
+			return
+		}
+		ctx := c.Request.Context()
+		s := service.GetTrade_recordsService()
+		resp, err := s.PaySuccess(ctx, req)
+
+		if err != nil {
+			util.LogrusObj.Infoln("Error occurred:", err)
+			c.JSON(http.StatusInternalServerError, ErrorResponse(c, err))
+			return
+		}
+
+		c.JSON(http.StatusOK, resp)
+	}
+}
