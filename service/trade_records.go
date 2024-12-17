@@ -127,7 +127,6 @@ func (s *Trade_recordsService) GetOrderDetail(ctx *gin.Context, req types.GetOrd
 	// 计算倒计时
 	countdown := calculateCountdown(order.OrderTime)
 
-	// 构建响应
 	resp = types.GetOrderDetailResp{
 		ID:             order.TradeID,
 		Countdown:      countdown,
@@ -136,8 +135,18 @@ func (s *Trade_recordsService) GetOrderDetail(ctx *gin.Context, req types.GetOrd
 		Price:          order.TurnoverAmount,
 		DeliveryMethod: getDeliveryMethod(order.PayMethod),
 		ShippingCost:   order.ShippingCost,
-		SenderAddrID:   *order.ShippingAddrID,
-		ShippingAddrID: *order.DeliveryAddrID,
+	}
+	// 检查 ShippingAddrID 是否为 nil
+	if order.ShippingAddrID != nil {
+		resp.SenderAddrID = *order.ShippingAddrID
+	} else {
+		resp.SenderAddrID = 0
+	}
+	// 检查 DeliveryAddrID 是否为 nil
+	if order.DeliveryAddrID != nil {
+		resp.ShippingAddrID = *order.DeliveryAddrID
+	} else {
+		resp.ShippingAddrID = 0
 	}
 
 	return resp, nil

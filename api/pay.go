@@ -51,14 +51,14 @@ func AlipayHandler(c *gin.Context) {
 		})
 		return
 	}
-
+	total := order.TurnoverAmount + order.ShippingCost
 	// 生成支付宝支付请求
 	var p = alipay.TradePagePay{}
 	p.NotifyURL = pay.GetServerDomain() + "/alipay/notify" // 异步通知地址
 	p.ReturnURL = redirectURL                              // 支付后跳转地址
 	p.Subject = "订单支付" + strconv.Itoa(order.TradeID)
 	p.OutTradeNo = strconv.Itoa(order.TradeID)
-	p.TotalAmount = strconv.FormatFloat(order.TurnoverAmount, 'f', 2, 64)
+	p.TotalAmount = strconv.FormatFloat(total, 'f', 2, 64)
 	p.ProductCode = "FAST_INSTANT_TRADE_PAY"
 
 	// 获取支付链接
