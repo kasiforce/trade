@@ -158,6 +158,7 @@ func (g *Goods) FilterGoods(req types.ShowGoodsReq) (goods []model.Goods, err er
 		Joins("LEFT JOIN collection ON goods.goodsID = collection.goodsID").
 		Joins("LEFT JOIN trade_records ON trade_records.goodsID = goods.goodsID").
 		Group("goods.goodsID, goods.goodsName, goods.userID, goods.price, category.categoryName, goods.details, goods.isSold, goods.goodsImages, goods.createdTime, users.userName, address.province, address.city, address.districts, address.address")
+	query = query.Where("goods.isSold = ?", 0)
 	if req.SearchQuery != "" {
 		query = query.Where("goods.goodsName LIKE ?", "%"+req.SearchQuery+"%")
 	}
@@ -174,7 +175,7 @@ func (g *Goods) FilterGoods(req types.ShowGoodsReq) (goods []model.Goods, err er
 		query = query.Where("address.city = ?", req.City)
 	}
 	if req.District != "" {
-		query = query.Where("address.district = ?", req.District)
+		query = query.Where("address.districts = ?", req.District)
 	}
 	if req.DeliveryMethod != "" {
 		var deliveryMethod int
