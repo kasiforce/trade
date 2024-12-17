@@ -92,6 +92,7 @@ func (c *Comment) GetCommentsByUser(id int) (r []types.CommentInfoByID, err erro
 			"co.commentContent as CommentContent," +
 			"co.commentTime as CommentTime," +
 			"u.picture as CommentatorAvatar").
+		Order("CommentTime DESC").
 		Find(&r).Error
 
 	return
@@ -110,6 +111,7 @@ func (c *Comment) GetReceivedComments(userID int) (r []types.ReceivedCommentInfo
 			"co.commentContent as CommentContent," +
 			"co.commentTime as CommentTime," +
 			"u.picture as CommentatorAvatar").
+		Order("CommentTime DESC").
 		Find(&r).Error
 
 	return
