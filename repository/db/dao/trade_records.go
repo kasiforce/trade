@@ -186,6 +186,39 @@ func (c *TradeRecords) UpdateOrderStatus(req types.UpdateOrderStatusReq) (resp i
 			return
 		}
 
+	} else if req.Status == "取消退款" {
+		// 根据发货时间 shippingTime 是否为空确定有没有发货
+		var tradeRecord model.TradeRecords
+		err = c.DB.Where("tradeID = ?", req.ID).First(&tradeRecord).Error
+		if err != nil {
+			return
+		}
+
+		if tradeRecord.ShippingTime.IsZero() {
+			// 发货时间为空，修改状态为 "未发货"
+			updateData := map[string]interface{}{
+				"status": "未发货",
+			}
+			err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ?", req.ID).Updates(updateData).Error
+			if err != nil {
+				return
+			}
+			resp = types.UpdateOrderStatusResp{
+				Status: "未发货",
+			}
+		} else {
+			// 发货时间不为空，修改状态为 "已发货"
+			updateData := map[string]interface{}{
+				"status": "已发货",
+			}
+			err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ?", req.ID).Updates(updateData).Error
+			if err != nil {
+				return
+			}
+			resp = types.UpdateOrderStatusResp{
+				Status: "已发货",
+			}
+		}
 	} else {
 		err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ?", req.ID).Update("status", req.Status).
 			Error
@@ -203,7 +236,7 @@ func (c *TradeRecords) UpdateOrderStatus(req types.UpdateOrderStatusReq) (resp i
 			CTime:       time.Now(),
 			CStatus:     0,
 		}
-		err = c.DB.Create(&refundComplaint).Error
+		err = c.DB.Select("TradeID", "BuyerReason", "CTime", "CStatus").Create(&refundComplaint).Error
 		if err != nil {
 			return
 		}
@@ -239,8 +272,10 @@ func (c *TradeRecords) UpdateOrderStatus(req types.UpdateOrderStatusReq) (resp i
 		}
 	}
 
-	resp = types.UpdateOrderStatusResp{
-		Status: req.Status,
+	if resp == nil {
+		resp = types.UpdateOrderStatusResp{
+			Status: req.Status,
+		}
 	}
 	return
 }
