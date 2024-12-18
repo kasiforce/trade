@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"log"
+	"trade/pkg/util"
 
 	//"errors"
 	//"fmt"
@@ -572,4 +573,22 @@ func (c *TradeRecords) GetOrderDetail(orderID int) (model.TradeRecords, error) {
 	var order model.TradeRecords
 	err := c.DB.Where("tradeID = ?", orderID).First(&order).Error
 	return order, err
+}
+
+// UpdateOrderStatusToUnshipped 更新订单状态为“未发货”
+func (c *TradeRecords) UpdateOrderStatusToUnshipped(req types.PaySuccessReq) error {
+	location := time.FixedZone("Asia/Shanghai", 8*60*60)
+
+	updateData := map[string]interface{}{
+		"status":  "未发货",
+		"payTime": time.Now().In(location),
+	}
+
+	err := c.DB.Model(&model.TradeRecords{}).Where("tradeID = ? AND payTime IS NULL", req.TradeID).Updates(updateData).Error
+	if err != nil {
+		util.LogrusObj.Error("Error updating order status:", err)
+		return err
+	}
+
+	return nil
 }

@@ -82,6 +82,8 @@ func NewRouter() *gin.Engine {
 		v1.GET("/pay/aliPay", api.AlipayHandler)
 		//支付宝消息通知回调接口
 		v1.POST("/alipay/notify", api.AlipayNotifyHandler)
+		//支付宝支付-成功
+		v1.POST("/alipay/success",api.PaySuccessHandler())
 
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.AuthToken())

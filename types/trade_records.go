@@ -143,3 +143,16 @@ type GetOrderDetailResp struct {
 	SenderAddrID   int     `json:"SenderAddrID"`   // 发货地址ID
 	ShippingAddrID int     `json:"shippingAddrID"` // 收货地址ID
 }
+
+// PaySuccessReq 支付成功请求
+type PaySuccessReq struct {
+	TradeID int `json:"tradeId" binding:"required"` // 订单id，必需
+}
+
+// PaySuccessResp 支付成功响应
+type PaySuccessResp struct {
+	Code int    `json:"code"` // 业务状态码，1为成功
+	Msg  string `json:"msg"`  // 响应消息
+	Data struct {
+	} `json:"data"` // 响应结果
+}
