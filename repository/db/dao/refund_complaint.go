@@ -31,7 +31,8 @@ func (rc *RefundComplaint) FindAll(req types.ShowRefundReq) (refundComplaints []
 		Joins("JOIN users buyer ON buyer.userID = t.buyerID").
 		Joins("JOIN goods ON goods.goodsID = t.goodsID").
 		//Joins("JOIN refund_complaint rc ON rc.tradeID = refund_records.tradeID").
-		Select("refund_complaint.tradeID, refund_complaint.cTime, t.orderTime, t.payTime, t.shippingTime, t.turnoverTime, seller.userName AS sellerName, buyer.userName AS buyerName, goods.goodsName AS goodsName, goods.price AS price, t.shippingCost AS shippingCost, refund_complaint.buyerReason AS buyerReason, refund_complaint.sellerReason AS sellerReason, refund_complaint.cStatus AS cStatus, seller.userID AS sellerID, buyer.userID AS buyerID")
+		Select("refund_complaint.tradeID, refund_complaint.cTime, t.orderTime, t.payTime, t.shippingTime, t.turnoverTime, seller.userName AS sellerName, buyer.userName AS buyerName, goods.goodsName AS goodsName, goods.price AS price, t.shippingCost AS shippingCost, refund_complaint.buyerReason AS buyerReason, refund_complaint.sellerReason AS sellerReason, refund_complaint.cStatus AS cStatus, seller.userID AS sellerID, buyer.userID AS buyerID").
+	        Where("t.status=?","处理中")
 	if req.SearchQuery != "" {
 		query = query.Where("refund_complaint.tradeID = ?", req.SearchQuery)
 	}
