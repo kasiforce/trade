@@ -108,10 +108,10 @@ type GetMyOrderInfo struct {
 	ShippingCost    float64     `json:"shippingCost"`    // 运费
 	SenderAddress   AddressInfo `json:"senderAddress"`   // 发货地址
 	ShippingAddress AddressInfo `json:"shippingAddress"` // 收货地址
-	OrderTime       string      `json:"orderTime"`       // 下单时间
-	PayTime         string      `json:"payTime"`         // 支付时间
-	ShippingTime    string      `json:"shippingTime"`    // 发货时间
-	TurnoverTime    string      `json:"turnoverTime"`    // 成交时间
+	OrderTime       time.Time   `json:"orderTime"`       // 下单时间
+	PayTime         time.Time   `json:"payTime"`         // 支付时间
+	ShippingTime    time.Time   `json:"shippingTime"`    // 发货时间
+	TurnoverTime    time.Time   `json:"turnoverTime"`    // 成交时间
 	Status          string      `json:"status"`          // 订单状态
 }
 

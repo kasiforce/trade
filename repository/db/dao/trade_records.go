@@ -481,10 +481,10 @@ func (c *TradeRecords) GetMyOrdersPurchased(req types.GetMyOrdersReq, id int) (r
 				Tel:        order.DeliveryTel,
 				Name:       order.DeliveryName,
 			},
-			OrderTime:    order.OrderTime.Format("2006-01-02 15:04:05"),
-			PayTime:      order.PayTime.Format("2006-01-02 15:04:05"),
-			ShippingTime: order.ShippingTime.Format("2006-01-02 15:04:05"),
-			TurnoverTime: order.TurnoverTime.Format("2006-01-02 15:04:05"),
+			OrderTime:    order.OrderTime,
+			PayTime:      order.PayTime,
+			ShippingTime: order.ShippingTime,
+			TurnoverTime: order.TurnoverTime,
 			Status:       order.Status,
 		})
 	}
@@ -592,10 +592,10 @@ func (c *TradeRecords) GetMySoldOrders(req types.GetMyOrdersReq, id int) (r []ty
 				Tel:        order.DeliveryTel,
 				Name:       order.DeliveryName,
 			},
-			OrderTime:    order.OrderTime.Format("2006-01-02 15:04:05"),
-			PayTime:      order.PayTime.Format("2006-01-02 15:04:05"),
-			ShippingTime: order.ShippingTime.Format("2006-01-02 15:04:05"),
-			TurnoverTime: order.TurnoverTime.Format("2006-01-02 15:04:05"),
+			OrderTime:    order.OrderTime,
+			PayTime:      order.PayTime,
+			ShippingTime: order.ShippingTime,
+			TurnoverTime: order.TurnoverTime,
 			Status:       order.Status,
 		})
 	}
