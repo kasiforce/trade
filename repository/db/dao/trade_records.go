@@ -150,8 +150,9 @@ func (c *TradeRecords) UpdateOrderStatus(req types.UpdateOrderStatusReq) (resp i
 			Error
 	} else if req.Status == "已发货" {
 		updateData := map[string]interface{}{
-			"status":       req.Status,
-			"shippingTime": time.Now().In(location),
+			"status":         req.Status,
+			"shippingTime":   time.Now().In(location),
+			"trackingNumber": req.TrackingNumber,
 		}
 		err = c.DB.Model(&model.TradeRecords{}).Where("tradeID = ? AND ShippingTime IS NULL ", req.ID).Updates(updateData).
 			Error
@@ -421,6 +422,7 @@ func (c *TradeRecords) GetMyOrdersPurchased(req types.GetMyOrdersReq, id int) (r
 		ShippingName       string
 		DeliveryTel        string
 		DeliveryName       string
+		TrackingNumber     string
 	}
 
 	err = query.Offset((req.Page - 1) * req.PageSize).Limit(req.PageSize).
@@ -448,7 +450,8 @@ func (c *TradeRecords) GetMyOrdersPurchased(req types.GetMyOrdersReq, id int) (r
 			"trade_records.payTime as PayTime," +
 			"trade_records.shippingTime as ShippingTime," +
 			"trade_records.turnoverTime as TurnoverTime," +
-			"trade_records.status as Status").
+			"trade_records.status as Status," +
+			"trade_records.trackingNumber as TrackingNumber").
 		Scan(&orders).Error
 
 	if err != nil {
@@ -481,11 +484,12 @@ func (c *TradeRecords) GetMyOrdersPurchased(req types.GetMyOrdersReq, id int) (r
 				Tel:        order.DeliveryTel,
 				Name:       order.DeliveryName,
 			},
-			OrderTime:    order.OrderTime,
-			PayTime:      order.PayTime,
-			ShippingTime: order.ShippingTime,
-			TurnoverTime: order.TurnoverTime,
-			Status:       order.Status,
+			OrderTime:      order.OrderTime,
+			PayTime:        order.PayTime,
+			ShippingTime:   order.ShippingTime,
+			TurnoverTime:   order.TurnoverTime,
+			Status:         order.Status,
+			TrackingNumber: order.TrackingNumber,
 		})
 	}
 
@@ -532,6 +536,7 @@ func (c *TradeRecords) GetMySoldOrders(req types.GetMyOrdersReq, id int) (r []ty
 		ShippingName       string
 		DeliveryTel        string
 		DeliveryName       string
+		TrackingNumber     string
 	}
 
 	err = query.Offset((req.Page - 1) * req.PageSize).Limit(req.PageSize).
@@ -559,7 +564,8 @@ func (c *TradeRecords) GetMySoldOrders(req types.GetMyOrdersReq, id int) (r []ty
 			"trade_records.payTime as PayTime," +
 			"trade_records.shippingTime as ShippingTime," +
 			"trade_records.turnoverTime as TurnoverTime," +
-			"trade_records.status as Status").
+			"trade_records.status as Status," +
+			"trade_records.trackingNumber as TrackingNumber").
 		Scan(&orders).Error
 
 	if err != nil {
@@ -592,11 +598,12 @@ func (c *TradeRecords) GetMySoldOrders(req types.GetMyOrdersReq, id int) (r []ty
 				Tel:        order.DeliveryTel,
 				Name:       order.DeliveryName,
 			},
-			OrderTime:    order.OrderTime,
-			PayTime:      order.PayTime,
-			ShippingTime: order.ShippingTime,
-			TurnoverTime: order.TurnoverTime,
-			Status:       order.Status,
+			OrderTime:      order.OrderTime,
+			PayTime:        order.PayTime,
+			ShippingTime:   order.ShippingTime,
+			TurnoverTime:   order.TurnoverTime,
+			Status:         order.Status,
+			TrackingNumber: order.TrackingNumber,
 		})
 	}
 

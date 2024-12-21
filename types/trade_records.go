@@ -46,11 +46,12 @@ type ShowOrdersReq struct {
 
 // UpdateOrderStatusReq 表示修改订单状态的请求
 type UpdateOrderStatusReq struct {
-	ID           int    `json:"id" binding:"required"`     // 订单编号
-	Status       string `json:"status" binding:"required"` // 目标状态
-	RejectReason string `json:"rejectReason"`              //拒绝退款理由
-	RefundReason string `json:"refundReason"`              // 退款理由
-	Comment      string `json:"comment"`                   // 评价内容
+	ID             int    `json:"id" binding:"required"`     // 订单编号
+	Status         string `json:"status" binding:"required"` // 目标状态
+	RejectReason   string `json:"rejectReason"`              //拒绝退款理由
+	RefundReason   string `json:"refundReason"`              // 退款理由
+	Comment        string `json:"comment"`                   // 评价内容
+	TrackingNumber string `json:"trackingNumber"`            //快递单号
 }
 
 // UpdateOrderStatusResp 表示修改订单状态的返回信息
@@ -113,6 +114,7 @@ type GetMyOrderInfo struct {
 	ShippingTime    time.Time   `json:"shippingTime"`    // 发货时间
 	TurnoverTime    time.Time   `json:"turnoverTime"`    // 成交时间
 	Status          string      `json:"status"`          // 订单状态
+	TrackingNumber  string      `json:"trackingNumber"`  //快递单号
 }
 
 // AddressInfo 表示地址信息
